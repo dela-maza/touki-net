@@ -1,0 +1,28 @@
+<!-- ntrusted_book/confirm_delete.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>受託簿の削除確認</title>
+  <link href="{{ url_for('static', filename='css/bootstrap/bootstrap.css') }}" rel="stylesheet" />
+</head>
+<body>
+  <div class="container mt-5">
+    <h1 class="mb-4">受託簿の削除確認</h1>
+
+    <div class="alert alert-warning" role="alert">
+      本当に以下の受託簿を削除してよろしいですか？
+      <strong>{{ book.name }}</strong>
+    </div>
+
+    <form method="POST" action="{{ url_for('entrusted_book.delete', book_id=book.id) }}">
+       {{ form.csrf_token }}
+
+      <a href="{{ url_for('entrusted_book.index') }}" class="btn btn-secondary">キャンセル</a>
+      <button type="submit" class="btn btn-danger">削除する</button>
+    </form>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>

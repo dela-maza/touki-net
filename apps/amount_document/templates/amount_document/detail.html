@@ -1,0 +1,76 @@
+<!-- amount_document/templates/amount_document/detail.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8" />
+    <title>金額文書詳細</title>
+    <link href="{{ url_for('static', filename='css/bootstrap/bootstrap.css') }}" rel="stylesheet" />
+</head>
+<body>
+<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+
+<div class="container mt-5">
+    <h1 class="mb-4">金額文書詳細</h1>
+
+    <dl class="row">
+        <dt class="col-sm-3">ID</dt>
+        <dd class="col-sm-9">{{ document.id }}</dd>
+
+        <dt class="col-sm-3">書類タイプ</dt>
+        <dd class="col-sm-9">{{ document.document_type | int | amount_document_type_label }}</dd>
+
+        <dt class="col-sm-3">受託簿名</dt>
+        <dd class="col-sm-9">{{ document.entrusted_book_name }}</dd>
+
+        <dt class="col-sm-3">委任者名</dt>
+        <dd class="col-sm-9">{{ document.client.name if document.client else '' }}</dd>
+
+        <dt class="col-sm-3">押印有</dt>
+        <dd class="col-sm-9">{{ 'はい' if document.has_stamp else 'いいえ' }}</dd>
+
+        <dt class="col-sm-3">消費税あり</dt>
+        <dd class="col-sm-9">{{ 'はい' if document.apply_consumption_tax else 'いいえ' }}</dd>
+
+        <dt class="col-sm-3">源泉徴収あり</dt>
+        <dd class="col-sm-9">{{ 'はい' if document.apply_withholding else 'いいえ' }}</dd>
+
+        <dt class="col-sm-3">前払金</dt>
+        <dd class="col-sm-9">{{ document.advance_payment or '' }}</dd>
+
+        <dt class="col-sm-3">発行日</dt>
+        <dd class="col-sm-9">{{ document.issued_date.strftime('%Y-%m-%d') if document.issued_date else '' }}</dd>
+
+        <dt class="col-sm-3">備考</dt>
+        <dd class="col-sm-9">{{ document.note or '' }}</dd>
+    </dl>
+
+    <h2 class="mt-4">明細</h2>
+    {% set items = document.get_items() %}
+    {% if items.item_types %}
+    <table class="table table-bordered table-sm">
+        <thead class="table-light">
+            <tr>
+                <th>種別</th>
+                <th>報酬額</th>
+                <th>実費額</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in range(items.item_types|length) %}
+            <tr>
+                <td>{{ items.item_types[i] or '' }}</td>
+                <td>{{ items.reward_amounts[i] or '' }}</td>
+                <td>{{ items.expense_amounts[i] or '' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>明細データはありません。</p>
+    {% endif %}
+
+    <a href="{{ url_for('amount_document.edit', document_id=document.id) }}" class="btn btn-warning">編集</a>
+    <a href="{{ url_for('amount_document.index') }}" class="btn btn-secondary">一覧に戻る</a>
+</div>
+</body>
+</html>

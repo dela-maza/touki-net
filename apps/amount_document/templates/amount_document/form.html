@@ -1,0 +1,101 @@
+<!--### amount_document/templates/form.html-->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8"/>
+    <title>金額文書フォーム</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="/static/css/style.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="container bg-white shadow-sm border rounded p-4">
+    <h1 class="h4 text-center mb-4 text-secondary">金額文書フォーム</h1>
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-success">
+        {% for msg in messages %}<div>{{ msg }}</div>{% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <form method="POST" novalidate>
+        {{ form.hidden_tag() }}
+        {{ form.client_id() }}
+        <div class="d-flex align-items-center gap-3 mb-3 p-3 border rounded bg-light">
+            <div class="form-check mb-0">
+                {{ form.has_stamp(class="form-check-input") }}
+                {{ form.has_stamp.label(class="form-check-label") }}
+            </div>
+            <div class="form-check mb-0">
+                {{ form.apply_consumption_tax(class="form-check-input") }}
+                {{ form.apply_consumption_tax.label(class="form-check-label") }}
+            </div>
+            <div class="form-check mb-0">
+                {{ form.apply_withholding(class="form-check-input") }}
+                {{ form.apply_withholding.label(class="form-check-label") }}
+            </div>
+            <button type="submit" class="btn btn-primary ms-auto" style="width: 200px;">送信</button>
+        </div>
+
+        <div class="row g-3 mb-3">
+            <div class="col-md-3">
+                {{ form.document_type.label(class="form-label") }}
+                {{ form.document_type(class="form-select") }}
+            </div>
+            <div class="col-md-4">
+                {{ form.entrusted_book_name.label(class="form-label") }}
+                {{ form.entrusted_book_name(class="form-control") }}
+            </div>
+            <div class="col-md-5">
+                {{ form.client_name.label(class="form-label") }}
+                {{ form.client_name(class="form-control") }}
+            </div>
+        </div>
+
+        <hr/>
+        <h3 class="h6 text-muted">明細（20行）</h3>
+        <table class="table table-bordered table-sm align-middle">
+            <thead class="table-light">
+            <tr><th>種別</th><th>報酬額</th><th>実費額</th></tr>
+            </thead>
+            <tbody>
+            {% for i in range(form.item_types.min_entries) %}
+            <tr>
+                <td>{{ form.item_types[i](class="form-control form-control-sm") }}</td>
+                <td>{{ form.reward_amounts[i](class="form-control form-control-sm") }}</td>
+                <td>{{ form.expense_amounts[i](class="form-control form-control-sm") }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="mb-3">
+            {{ form.note.label(class="form-label") }}
+            {{ form.note(class="form-control", rows="4") }}
+        </div>
+
+        <div class="mb-3">
+            {{ form.issued_date.label(class="form-label") }}
+            {{ form.issued_date(class="form-control") }}
+        </div>
+    </form>
+
+    {% if totals %}
+    <div class="totals mt-4">
+        <h6 class="text-muted">集計結果</h6>
+        <table class="table table-borderless table-sm">
+            <tbody>
+            <tr><td>報酬合計</td><td class="text-end">{{ totals.reward }}</td></tr>
+            <tr><td>実費合計</td><td class="text-end">{{ totals.expense }}</td></tr>
+            <tr><td>消費税額</td><td class="text-end">{{ totals.tax }}</td></tr>
+            <tr><td>源泉徴収額</td><td class="text-end">{{ totals.withholding }}</td></tr>
+            <tr class="border-top"><th>総合計</th><th class="text-end">{{ totals.grand_total }}</th></tr>
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

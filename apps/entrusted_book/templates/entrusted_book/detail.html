@@ -1,0 +1,68 @@
+<!-- entrusted_book/templates/entrusted_book/detail.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8" />
+    <title>受託簿詳細</title>
+    <link href="{{ url_for('static', filename='css/bootstrap/bootstrap.css') }}" rel="stylesheet" />
+</head>
+<body>
+<div class="container mt-5">
+    <h1>受託簿詳細</h1>
+    <div class="row mb-3">
+        <div class="col-sm-3 fw-bold">ID</div>
+        <div class="col-sm-9">{{ book.id }}</div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-sm-3 fw-bold">受託簿名</div>
+        <div class="col-sm-9">{{ book.name }}</div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-sm-3 fw-bold">備考</div>
+        <div class="col-sm-9">{{ book.note or '-' }}</div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-sm-3 fw-bold">作成日</div>
+        <div class="col-sm-9">{{ book.created_at.strftime('%Y-%m-%d') if book.created_at else '' }}</div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-sm-3 fw-bold">更新日</div>
+        <div class="col-sm-9">{{ book.updated_at.strftime('%Y-%m-%d') if book.updated_at else '' }}</div>
+    </div>
+
+    <a href="{{ url_for('entrusted_book.index') }}" class="btn btn-secondary">一覧に戻る</a>
+    <a href="{{ url_for('entrusted_book.edit', book_id=book.id) }}" class="btn btn-primary">編集</a>
+
+    <h2 class="mt-5">紐づくクライアント一覧</h2>
+    {% if book.clients %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>名前</th>
+                <th>種別</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for client in book.clients %}
+            <tr>
+                <td>{{ client.id }}</td>
+                <td>{{ client.name }}</td>
+                <td>{{ client.client_type.label }}</td>
+                <td>
+                    <a href="{{ url_for('client.detail', client_id=client.id) }}" class="btn btn-sm btn-info">詳細</a>
+                    <a href="{{ url_for('client.edit', client_id=client.id) }}" class="btn btn-sm btn-warning">編集</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>この受託簿に紐づくクライアントは登録されていません。</p>
+    {% endif %}
+</div>
+
+<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>

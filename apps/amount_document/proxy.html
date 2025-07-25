@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<form action="" name='form' method='post'>
+    <table id="button-list">
+        <tr>
+            <td><input class="button" name="save" type="submit" value="保　存"/></td>
+            <td><input class="button" name="auto" type="submit" value="初期値"/></td>
+        </tr>
+    </table>
+
+    <div id="wrapper">
+
+        <div id="main-frame">
+            <table>
+                <tr>
+                    <td width="50">
+                    <td width="50">
+                    <td width="50">
+                    <td width="50">
+                    <td width="50">
+
+                    <td width="50">
+                    <td width="50">
+                    <td width="50">
+                    <td width="50">
+                    <td width="50">
+
+                    <td width="50">
+                    <td width="50">
+                    <td width="50">
+                    <td width="50">
+                    <td width="50">
+
+                    <td width="50">
+                    <td width="50">
+                    <td width="70">
+                </tr>
+                <tr>
+                    <td colspan=5><input name="client_name" class='atena' type="text" value="{ proxy.client.name }"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=18><input name="title" class='dai' type="text" value="{ proxy.title }"/></td>
+                </tr>
+                <tr>
+                    <td height="50">　</td>
+                </tr>
+                <tr>
+                    <td colspan=18><input name="attorney" type="text" value="{ Attorney.info }"/></td>
+                </tr>
+                <tr>
+                    <td height="50">　</td>
+                </tr>
+                <tr>
+                    <td colspan=18>{ proxy.input_items</tr>
+                <tr>
+                    <td colspan=18>
+                        <CENTER><br><br>記<br><br></ENTER>
+                    </td>
+                </tr>
+                <tr>
+                    <td height="30">　</td>
+                </tr>
+                <tr>
+                    <td colspan=1></td>
+                    <td colspan=4 valign='top'><input name='midasi-toukiNoMokuteki' type='text' value='登記の目的'/>
+                    </td>
+                    <td colspan=16><textarea name="toukiNoMokuteki"
+                                             rows="<?php echo $登記の目的行数;?>"><?php echo $委任状->
+                        登記の目的;?></textarea></td>
+                </tr>
+                <tr>
+
+                    <td colspan=1></td>
+                    <td colspan=4 valign='top'><input name='midasi-genin' type='text' value='原　　　因'/></td>
+                    <td colspan=16><input name="genin" type="text" value="<?php echo $委任状->原因; ?>"/></td>
+                </tr>
+                <tr>
+                    <td colspan=1></td>
+                    <td colspan=4 valign='top'><input name='midasi-toukijikou1' type='text'
+                                                      value="<?php echo $委任状->登記事項1見出;?>"/></td>
+                    <td colspan=16><textarea name="toukijikou1" rows=<?php echo $登記事項1行数;?>><?php echo $委任状->登記事項1;?></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=1></td>
+                    <td colspan=4 valign='top'><input name='midasi-toukijikou2' type='text'
+                                                      value="<?php echo $委任状->登記事項2見出;?>"/></td>
+                    <td colspan=16><textarea name="toukijikou2" rows=<?php echo $登記事項2行数;?>><?php echo $委任状->登記事項2;?></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td height="30">　</td>
+                </tr>
+                <tr>
+                    <td colspan=1>　</td>
+                    <td colspan=6 valign='top'>不動産の表示</td>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan=4>
+                    <td colspan=14><textarea name="fudousanNoHyouji1"
+                                             rows="<?php echo $不動産の表示行数;?>"><?php echo $委任状->
+                        不動産の表示1;?></textarea></td>
+                </tr>
+            </table>
+            <table>
+                <tr>
+                    <td colspan=2></td>
+                    <td colspan=1 valign='top' class='hizuke'><input name="hizuke" type="text"
+                                                                     value="<?php echo $委任状->日付; ?>"/></td>
+                </tr>
+            </table>
+            <table class='syomeiRan'>
+                <tr>
+                    <td width='170' class='solid smallString' rowspan="2"><input name="inkan" class='inkan' type="text"
+                                                                                 leftmargin="12px"
+                                                                                 value="<?php echo $委任状->印鑑;?>"/>
+                    </td>
+                    <td width='120' class='bottom-dotted'><textarea name="jyuushoKatagaki" rows="2"><?php echo $委任状->
+                        住所肩書;?></textarea></td>
+                    <td class='bottom-dotted'><textarea class='jyuusyo' name="jyuusyo" rows="2"><?php echo $委任状->
+                        住所;?></textarea></td>
+                    <td width='170' class='solid smallString' rowspan="2"><input name="inkan2" class='inkan' type="text"
+                                                                                 leftmargin="12px"
+                                                                                 value="<?php echo $委任状->印鑑;?>"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td width='120' class=''><textarea name="simeiKatagaki" rows="2"><?php echo $委任状->
+                        氏名肩書;?></textarea></td>
+                    <td class=''><textarea class='simei' name="simei" rows="2"><?php echo $委任状->氏名;?></textarea>
+                    </td>
+                </tr>
+            </table>
+        </div><!-- main-frame -->
+
+
+        <div id="left-frame">
+            <table>
+                <tr>
+                    <td id="fudousan-hyouji" colspan=2>不動産の表示</td>
+                </tr>
+                <tr>
+                    <td><textarea name="fudousanNoHyouji2" rows="50"><?php echo $委任状->不動産の表示2;?></textarea>
+                    </td>
+                    <td><textarea name="fudousanNoHyouji3" rows="50"><?php echo $委任状->不動産の表示3;?></textarea>
+                    </td>
+                </tr>
+            </table>
+        </div><!-- left-frame -->
+
+    </div><!-- wrapper -->
+</form>
+</body>
+</html>
+
+</body>
+</html>

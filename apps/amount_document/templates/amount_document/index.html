@@ -1,0 +1,55 @@
+<!-- amount_document/templates/amount_document/index.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8" />
+    <title>金額文書一覧</title>
+    <link href="{{ url_for('static', filename='css/bootstrap/bootstrap.css') }}" rel="stylesheet" />
+</head>
+<body>
+<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+
+<div class="container mt-5">
+    <h1 class="mb-4">金額文書一覧</h1>
+
+    <a href="{{ url_for('amount_document.create') }}" class="btn btn-primary mb-3">新規作成</a>
+
+    {% if documents %}
+    <table class="table table-bordered table-striped">
+        <thead class="table-light">
+            <tr>
+                <th>ID</th>
+                <th>書類タイプ</th>
+                <th>受託簿名</th>
+                <th>作成日</th>
+                <th>備考</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for doc in documents %}
+            <tr>
+                <td>{{ doc.id }}</td>
+                <td>{{ doc.document_type | amount_document_type_label }}</td>
+                <td>{{ doc.entrusted_book_name }}</td>
+                <td>{{ doc.issued_date.strftime('%Y-%m-%d') if doc.issued_date else '' }}</td>
+                <td>{{ doc.note or '' }}</td>
+                <td>
+                    <a href="{{ url_for('amount_document.detail', document_id=doc.id) }}" class="btn btn-sm btn-info">詳細</a>
+                    <a href="{{ url_for('amount_document.edit', document_id=doc.id) }}" class="btn btn-sm btn-warning">編集</a>
+                    <form action="{{ url_for('amount_document.delete', document_id=doc.id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('本当に削除しますか？');">
+                        {{ csrf_token() }}
+                        <button type="submit" class="btn btn-sm btn-danger">削除</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>登録された金額文書はありません。</p>
+    {% endif %}
+</div>
+
+</body>
+</html>

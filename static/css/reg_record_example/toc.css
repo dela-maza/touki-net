@@ -1,0 +1,39 @@
+/* 目次画面 */
+#tocScreen #toc {
+  padding: 20px 40px;
+  font-size: 1.03em;
+  /* border: solid 1px rgb(221, 221, 221); */
+}
+
+#tocScreen li.selected {
+  font-weight: normal;
+  margin-top: 4px;
+  padding-top: 4px;
+  margin-bottom: 5px;
+  padding-bottom: 4px;
+
+  border: solid 1px rgb(226, 238, 244);
+  background-color: rgb(239, 249, 255);
+  margin-right: 0px;
+  margin-left: -30;
+}
+
+.breadcrumb {
+  display: block;
+  margin-top: 110px;
+  margin-bottom: 130px;
+  padding: 120px;
+  font-size: 0.9em;
+  letter-spacing: 0pt;
+  border-top: solid 1px #f1f0f0;
+  border-bottom: solid 1px #f1f0f0;
+}
+.breadcrumb a {
+  color: #000;
+  text-decoration: none;
+  padding: 20px;
+}
+.breadcrumb .symbol {
+  color: #97525a;
+  padding-right: 10px;
+}
