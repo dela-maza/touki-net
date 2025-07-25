@@ -8,3 +8,4 @@ class UploadPDFForm(FlaskForm):
         FileAllowed(['pdf'], 'PDFファイルのみアップロードできます')
     ])
     submit = SubmitField('アップロード')
+    #test

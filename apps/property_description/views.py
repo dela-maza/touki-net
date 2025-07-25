@@ -11,7 +11,7 @@ property_bp = Blueprint(
     static_folder='static/property',
     static_url_path='/property/static'
 )
-
+# test
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True) # apps/property_description/uploads
