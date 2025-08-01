@@ -1,4 +1,3 @@
-
 ### entrusted_book/view.py
 from flask import Blueprint, render_template, redirect, url_for, flash
 from apps.entrusted_book.forms import EntrustedBookForm
@@ -20,7 +19,7 @@ def index():
     return render_template('entrusted_book/index.html', books=books)
 
 
-@entrusted_book_bp.route('/create', methods=['GET', 'POST'])
+@entrusted_book_bp.route("/create", methods=["GET", "POST"])
 def create():
     form = EntrustedBookForm()
     if form.validate_on_submit():

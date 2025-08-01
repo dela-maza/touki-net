@@ -1,7 +1,13 @@
+// Settings for Visual Studio Code
 {
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.formatOnPaste": true,
   "cSpell.words": ["mojimoji"],
-  "notebook.defaultFormatter": "esbenp.prettier-vscode"
+  "notebook.defaultFormatter": "esbenp.prettier-vscode",
+  "python.linting.enabled": true,
+  "python.linting.mypyEnabled": true,
+  "python.linting.mypyArgs": ["--ignore-missing-imports"],
+  "python.analysis.typeCheckingMode": "basic", // or "strict" if you prefer
+  "python.linting.pylintEnabled": false // 競合を避けたいなら他のリンターは無効化
 }

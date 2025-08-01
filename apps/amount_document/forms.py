@@ -2,10 +2,10 @@
 from flask_wtf import FlaskForm
 from wtforms import (
     StringField, BooleanField, TextAreaField, DateField,
-    IntegerField, FieldList, SelectField,HiddenField
+    IntegerField, FieldList, SelectField, HiddenField
 )
 from wtforms.validators import DataRequired, Optional
-from apps.amount_document.models import AmountDocumentType,MIN_ENTRIES
+from apps.amount_document.models import AmountDocumentType, MIN_ENTRIES
 
 
 class AmountDocumentForm(FlaskForm):
@@ -15,7 +15,7 @@ class AmountDocumentForm(FlaskForm):
         coerce=int,
         default=AmountDocumentType.ESTIMATE.value
     )
-    client_id = HiddenField(validators=[DataRequired()]) # client_idの隠しフィールド
+    client_id = HiddenField(validators=[DataRequired()])  # client_idの隠しフィールド
 
     entrusted_book_name = StringField('受託簿名', validators=[DataRequired()])
     client_name = StringField('委任者名', validators=[DataRequired()])
@@ -40,3 +40,5 @@ class AmountDocumentForm(FlaskForm):
 
     note = TextAreaField('備考', validators=[Optional()])
     issued_date = DateField('作成日', format='%Y-%m-%d', validators=[Optional()])
+
+

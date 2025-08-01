@@ -6,7 +6,7 @@ from apps.client.forms import ClientForm
 from apps.client.models import Client
 from apps.entrusted_book.models import EntrustedBook
 
-client_bp = Blueprint('client', __name__, url_prefix='/client', template_folder='templates', static_folder='static')
+client_bp = Blueprint("client", __name__, url_prefix="/client", template_folder="templates", static_folder="static")
 
 
 @client_bp.route('/')
