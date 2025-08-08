@@ -31,7 +31,7 @@ def create():
         db.session.commit()
         flash('受託簿を作成しました。')
         return redirect(url_for('entrusted_book.index'))
-    return render_template('entrusted_book/form.html', form=form)
+    return render_template('entrusted_book/__form.html', form=form)
 
 
 @entrusted_book_bp.route('/<int:book_id>/edit', methods=['GET', 'POST'])
@@ -43,7 +43,7 @@ def edit(book_id):
         db.session.commit()
         flash('受託簿情報を更新しました。')
         return redirect(url_for('entrusted_book.index'))
-    return render_template('entrusted_book/form.html', form=form)
+    return render_template('entrusted_book/__form.html', form=form)
 
 @entrusted_book_bp.route('/<int:book_id>')
 def detail(book_id):

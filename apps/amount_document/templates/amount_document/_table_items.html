@@ -1,0 +1,39 @@
+<!-- amount_document/templates/amount_document/_table_items.html -->
+<thead>
+<tr class="border-top-strong">
+    <th class="item-type cell-right-border" colspan="2" align="center">区 分</th>
+    <th class="item-type cell-right-border" colspan="5" align="center">種 別</th>
+    <th class="item-type cell-right-border" colspan="3" align="center">報 酬（円）</th>
+    <th class="item-type cell-right-border" colspan="3" align="center">登録免許税等・印紙税（円）</th>
+</tr>
+</thead>
+
+<!-- 手続の代理・書類作成等（0〜14） -->
+{% for i in range(15) %}
+<tr {% if i== 0 %}class="border-top-strong" {% endif %}>
+    {% if i == 0 %}
+    <td class="item-type cell-right-border" colspan="2" rowspan="15" align="center">手続の代理<br>・<br>書類作成等</td>
+    {% endif %}
+    <td class="cell-right-border" colspan="5">{{ form.item_types[i]( style="width: 100%; box-sizing: border-box;") }}</td>
+    <td class="cell-right-border text-end" colspan="3">{{ form.reward_amounts[i]( style="width: 100%; box-sizing: border-box;") }}</td>
+    <td class="cell-right-border text-end" colspan="3">{{ form.expense_amounts[i]( style="width: 100%; box-sizing: border-box;") }}</td>
+</tr>
+{% endfor %}
+
+<!-- その他費用（15〜19） -->
+{% for i in range(15, 20) %}
+<tr
+        {% if i== 15 %}
+        class="border-top-strong"
+        {% elif i== 19 %}
+        class="border-bottom-strong"
+        {% endif %}
+>
+    {% if i == 15 %}
+    <td class="item-type  cell-right-border" colspan="2" rowspan="5" align="center">その他<br>費 用</td>
+    {% endif %}
+    <td class="cell-right-border" colspan="5">{{ form.item_types[i]( style="width: 100%; box-sizing: border-box;") }}</td>
+    <td class="cell-right-border text-end" colspan="3">{{ form.reward_amounts[i]( style="width: 100%; box-sizing: border-box;") }}</td>
+    <td class="cell-right-border text-end" colspan="3">{{ form.expense_amounts[i]( style="width: 100%; box-sizing: border-box;") }}</td>
+</tr>
+{% endfor %}
