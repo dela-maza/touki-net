@@ -1,0 +1,11 @@
+{% macro render_wareki_date(date) %}
+    {% if date %}
+        {% set y = date.year %}
+        {% set m = date.month %}
+        {% set d = date.day %}
+        {% set wareki_year = y - 2018 %}
+        令和{{ wareki_year }}年{{ m }}月{{ d }}日
+    {% else %}
+        -
+    {% endif %}
+{% endmacro %}

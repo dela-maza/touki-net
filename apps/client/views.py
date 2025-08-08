@@ -30,8 +30,8 @@ def detail(client_id):
 @client_bp.route('/create', methods=['GET', 'POST'])
 def create():
     form = ClientForm()
-    form.entrusted_book_id.choices = [(b.id, b.property_name) for b in
-                                      EntrustedBook.query.order_by(EntrustedBook.property_name).all()]
+    form.entrusted_book_id.choices = [(b.id, b.name) for b in
+                                      EntrustedBook.query.order_by(EntrustedBook.name).all()]
 
     if form.validate_on_submit():
         client = Client(
@@ -59,8 +59,8 @@ def create():
 def edit(client_id):
     client = Client.query.get_or_404(client_id)
     form = ClientForm(obj=client)
-    form.entrusted_book_id.choices = [(b.id, b.property_name) for b in
-                                      EntrustedBook.query.order_by(EntrustedBook.property_name).all()]
+    form.entrusted_book_id.choices = [(b.id, b.name) for b in
+                                      EntrustedBook.query.order_by(EntrustedBook.name).all()]
 
     if form.validate_on_submit():
         form.populate_obj(client)

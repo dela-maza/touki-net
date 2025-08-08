@@ -2,75 +2,233 @@
 <!-- amount_document/templates/amount_document/detail.html -->
 <html lang="ja">
 <head>
-    <meta charset="UTF-8" />
-    <title>金額文書詳細</title>
-    <link href="{{ url_for('static', filename='css/bootstrap/bootstrap.css') }}" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('amount_document.static', filename='css/amount_document.css') }}">
+    <title>{{ document_type_label }}書</title>
 </head>
 <body>
-<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
 
-<div class="container mt-5">
-    <h1 class="mb-4">金額文書詳細</h1>
+<!-- ここにリンクボタン群 -->
+<div class="btn-group mb-3 print-hide" role="group" aria-label="帳票リンク">
+    {% set estimate_label = AmountDocumentType(AmountDocumentType.ESTIMATE).label %}
+    {% set invoice_label = AmountDocumentType(AmountDocumentType.INVOICE).label %}
+    {% set receipt_label = AmountDocumentType(AmountDocumentType.RECEIPT).label %}
 
-    <dl class="row">
-        <dt class="col-sm-3">ID</dt>
-        <dd class="col-sm-9">{{ document.id }}</dd>
-
-        <dt class="col-sm-3">書類タイプ</dt>
-        <dd class="col-sm-9">{{ document.document_type | int | amount_document_type_label }}</dd>
-
-        <dt class="col-sm-3">受託簿名</dt>
-        <dd class="col-sm-9">{{ document.entrusted_book_name }}</dd>
-
-        <dt class="col-sm-3">委任者名</dt>
-        <dd class="col-sm-9">{{ document.client.name if document.client else '' }}</dd>
-
-        <dt class="col-sm-3">押印有</dt>
-        <dd class="col-sm-9">{{ 'はい' if document.has_stamp else 'いいえ' }}</dd>
-
-        <dt class="col-sm-3">消費税あり</dt>
-        <dd class="col-sm-9">{{ 'はい' if document.apply_consumption_tax else 'いいえ' }}</dd>
-
-        <dt class="col-sm-3">源泉徴収あり</dt>
-        <dd class="col-sm-9">{{ 'はい' if document.apply_withholding else 'いいえ' }}</dd>
-
-        <dt class="col-sm-3">前払金</dt>
-        <dd class="col-sm-9">{{ document.advance_payment or '' }}</dd>
-
-        <dt class="col-sm-3">発行日</dt>
-        <dd class="col-sm-9">{{ document.issued_date.strftime('%Y-%m-%d') if document.issued_date else '' }}</dd>
-
-        <dt class="col-sm-3">備考</dt>
-        <dd class="col-sm-9">{{ document.note or '' }}</dd>
-    </dl>
-
-    <h2 class="mt-4">明細</h2>
-    {% set items = document.get_items() %}
-    {% if items.item_types %}
-    <table class="table table-bordered table-sm">
-        <thead class="table-light">
+    <button type="button" class="btn-outline-primary" data-doc-label="{{ estimate_label }}">{{ estimate_label }}書
+    </button>
+    <button type="button" class="btn-outline-primary" data-doc-label="{{ invoice_label }}">{{ invoice_label }}書
+    </button>
+    <button type="button" class="btn-outline-primary" data-doc-label="{{ receipt_label }}">{{ receipt_label }}書
+    </button>
+    <button type="button" class="btn-outline-primary" data-doc-label="押印">押印</button>
+    <a href="{{ url_for('amount_document.index') }}">一覧</a>
+</div>
+<div id="wrapper">
+    <div id="main-frame">
+        <table class="header-frame">
             <tr>
-                <th>種別</th>
-                <th>報酬額</th>
-                <th>実費額</th>
+                {% for _ in range(13) %}
+                <td></td>
+                {% endfor %}
             </tr>
-        </thead>
-        <tbody>
-            {% for i in range(items.item_types|length) %}
+            {% import "macros.html" as macros %}
             <tr>
-                <td>{{ items.item_types[i] or '' }}</td>
-                <td>{{ items.reward_amounts[i] or '' }}</td>
-                <td>{{ items.expense_amounts[i] or '' }}</td>
+                <td colspan="10"></td>
+                <td colspan="3" align="right">
+                    <span id="estimate_date"
+                          class="date-label">{{ macros.render_wareki_date(document.estimate_date) }}</span>
+                    <span id="invoice_date" class="date-label" style="display:none;">{{ macros.render_wareki_date(document.invoice_date) }}</span>
+                    <span id="receipt_date" class="date-label" style="display:none;">{{ macros.render_wareki_date(document.receipt_date) }}</span>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="document-title" colspan="13" align="center">
+                    {{ document_type_label }}書
+                </td>
+            </tr>
+
+            <tr>
+                <td height="60" colspan="13">　</td>
+            </tr>
+
+            <tr>
+                <td id="client-name" class="client-name" colspan="5">
+                    {{ client_name }}
+                </td>
+                <td colspan="1">殿</td>
+                <td colspan="2"></td>
+                <td colspan="5">{{ param['affiliation']}}</td>
+            </tr>
+
+            <tr>
+                <td colspan="8" height="40">　</td>
+                <td colspan="5" align="left">〒{{ param['post_code'] }}</td>
+            </tr>
+
+            <tr>
+                <td colspan="1">物件名</td>
+                <td colspan="7" style="word-break: break-word;">
+                    {{ document.entrusted_book_name }}
+                </td>
+                <td colspan="4" align="left">〒{{ param['address'] | safe}}</td>
+            </tr>
+
+            <tr>
+                <td colspan="8"></td>
+                <td colspan="5" align="left" style="word-break: break-word;">　　　　　 　{{ param['name'] | safe }}</td>
+            </tr>
+
+            <tr>
+                <td id="amount-label" colspan="1">{{ document_type_label }}額</td>
+                <td id="amount-price" class="amount-price" colspan="4" align="right">
+                    {{ document.format_number(document.calculate_final_amounts()['grand_total']) }}円
+                </td>
+                <td colspan="3"></td>
+                <td colspan="5" align="left" style="word-break: break-word;">Mail：{{ param['mail'] }}</td>
+            </tr>
+
+            <tr>
+                <td class="smallString" colspan=7">
+                    （税込）100円以下端数御値引き
+                </td>
+                <td colspan="1"></td>
+                <td colspan="5" align="left" style="word-break: break-word;">Tell：{{ param['tell'] }}</td>
+            </tr>
+
+            <tr>
+                <td colspan="13" height="50"></td>
+            </tr>
+        </table>
+
+        <table class="frame">
+
+            <thead>
+            <tr class="border-top-strong">
+                <th class="item-type cell-right-border" colspan="2" align="center">区 分</th>
+                <th class="item-type cell-right-border" colspan="5" align="center">種 別</th>
+                <th class="item-type cell-right-border" colspan="3" align="center">報 酬（円）</th>
+                <th class="item-type cell-right-border" colspan="3" align="center">登録免許税等・印紙税</th>
+            </tr>
+            </thead>
+            <tr class="offset">
+                {% for _ in range(13) %}
+                <td></td>
+                {% endfor %}
+            </tr>
+            {# itemsテーブルを読み込み（ただしフォームフィールドではなく、値を表示） #}
+            {% for i in range(20) %}
+            <tr {% if i== 0 or i== 15 %}class="border-top-strong" {% endif %}>
+                {% if i == 0 %}
+                <td class="item-type cell-right-border" colspan="2" rowspan="15" align="center">手続の代理<br>・<br>書類作成等
+                </td>
+                {% elif i == 15 %}
+                <td class="item-type cell-right-border" colspan="2" rowspan="5" align="center">その他<br>費 用</td>
+                {% endif %}
+                <td class="cell-right-border" colspan="5">
+                    {{ document.item_types[i] if document.item_types and i < document.item_types|length else "" }}
+                </td>
+                <td class="cell-right-border text-end" colspan="3">
+                    {% if document.reward_amounts and i < document.reward_amounts|length and document.reward_amounts[i]
+                    != 0 %}
+                    {{ document.format_number(document.reward_amounts[i]) }}
+                    {% else %}
+                    &nbsp;
+                    {% endif %}
+                </td>
+                <td class="cell-right-border text-end" colspan="3">
+                    {% if document.expense_amounts and i < document.expense_amounts|length and
+                    document.expense_amounts[i] != 0 %}
+                    {{ document.format_number(document.expense_amounts[i]) }}
+                    {% else %}
+                    &nbsp;
+                    {% endif %}
+                </td>
             </tr>
             {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <p>明細データはありません。</p>
-    {% endif %}
+            <!-- amount_document/templates/amount_document/detail.html -->
+            {% if document %}
+            {% set amounts = display_totals if display_totals is defined else document.calculate_final_amounts() %}
 
-    <a href="{{ url_for('amount_document.edit', document_id=document.id) }}" class="btn btn-warning">編集</a>
-    <a href="{{ url_for('amount_document.index') }}" class="btn btn-secondary">一覧に戻る</a>
+            <tr class="border-top-strong">
+                <td colspan="7" class="item-type cell-right-border text-center">小　計</td>
+                <td colspan="1" class="text-end">①</td>
+                <td colspan="2" class="cell-right-border text-end">{{ document.format_number(amounts.reward) }}</td>
+                <td colspan="1" class="text-end">②</td>
+                <td colspan="2" class="cell-right-border text-end">{{ document.format_number(amounts.expense) }}</td>
+            </tr>
+
+            <tr class="border-top-strong">
+                <td colspan="2" class="item-type border-top-strong cell-right-border">合計</td>
+                <td colspan="5" class="border-top-strong cell-right-border text-end">① ＋ ②</td>
+                <td colspan="1" class="border-top-strong text-end">③</td>
+                <td colspan="2" class="border-top-strong cell-right-border text-end">{{
+                    document.format_number(amounts.subtotal) }}
+                </td>
+                <td colspan="3" class="border-top-strong text-center"></td>
+            </tr>
+
+            <tr>
+                <td colspan="2" class="item-type cell-right-border">消費税</td>
+                <td colspan="5" class="cell-right-border text-end">① × {{ (tax_config.consumption_tax * 100) | round(0)
+                    | int }}%
+                </td>
+                <td colspan="1" class="text-end">④</td>
+                <td colspan="2" class="cell-right-border text-end">{{ document.format_number(amounts.tax) }}</td>
+                <td colspan="3" class="text-center"></td>
+            </tr>
+
+            <tr class="">
+                <td colspan="2" class="item-type cell-right-border">源泉徴収</td>
+                <td colspan="5" class="cell-right-border text-end">（① ー {{ tax_config.withholding_exemption }} ）× {{
+                    tax_config.withholding_tax }}
+                </td>
+                <td colspan="1" class="text-end">▲ ⑤</td>
+                <td colspan="2" class="cell-right-border text-end">{{ document.format_number(amounts.withholding) }}
+                </td>
+                <td colspan="3"></td>
+            </tr>
+
+            <tr class="border-top-strong">
+                <td colspan="2" class="item-type cell-right-border">差引請求額</td>
+                <td colspan="5" class="cell-right-border text-end">③ ＋ ④ − ⑤</td>
+                <td colspan="1" class="text-end">⑥</td>
+                <td colspan="2" class="cell-right-border text-end">{{ document.format_number(amounts.grand_total) }}
+                </td>
+                <td colspan="3"></td>
+            </tr>
+
+            <tr>
+                <td colspan="2" class="item-type cell-right-border">前払金</td>
+                <td colspan="5" class="cell-right-border text-end"></td>
+                <td colspan="1" class="text-end">▲ ⑦</td>
+                <td colspan="2" class="cell-right-border text-end fw-bold">
+                    {{ document.format_number(document.advance_payment or 0) }}
+                </td>
+                <td colspan="3"></td>
+            </tr>
+
+            <tr class="border-bottom-strong">
+                <td colspan="2" class="item-type cell-right-border">差引請求額</td>
+                <td colspan="5" class="cell-right-border text-end">⑥ − ⑦</td>
+                <td colspan="1" class="text-center">税込額</td>
+                <td colspan="2" class="cell-right-border text-end fw-bold">
+                    {{ document.format_number((amounts.grand_total or 0) - (document.advance_payment or 0)) }}
+                </td>
+                <td colspan="3"></td>
+            </tr>
+            {% endif %}
+
+            <tr>
+                <td class="border-top-double" colspan="13" style="white-space: pre-wrap;">{{ document_note }}</td>
+            </tr>
+        </table>
+    </div>
 </div>
+
 </body>
+<script>
+    const stampImageUrl = "{{ url_for('amount_document.static', filename='images/stamp.png') }}";
+</script>
+<script src="{{ url_for('amount_document.static', filename='js/amount_document_ui.js') }}"></script>
 </html>

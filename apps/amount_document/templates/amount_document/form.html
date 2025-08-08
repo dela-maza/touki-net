@@ -1,101 +1,148 @@
 <!DOCTYPE html>
-<!-- amount_document/templates/form.html-->
+<!-- amount_document/templates/amount_document/form.html -->
 <html lang="ja">
 <head>
-    <meta charset="UTF-8"/>
-    <title>金額文書フォーム</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-    <link href="/static/css/style.css" rel="stylesheet"/>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('amount_document.static', filename='css/amount_document.css') }}">
+    <title>{{ document_type_label }}書</title>
 </head>
 <body>
-<div class="container bg-white shadow-sm border rounded p-4">
-    <h1 class="h4 text-center mb-4 text-secondary">金額文書フォーム</h1>
 
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    <div class="alert alert-success">
-        {% for msg in messages %}<div>{{ msg }}</div>{% endfor %}
-    </div>
-    {% endif %}
-    {% endwith %}
+{% set action_url = (
+url_for('amount_document.edit', document_id=document.id)
+if document else
+url_for('amount_document.create', client_id=form.client_id.data)
+) %}
 
-    <form method="POST" novalidate>
-        {{ form.hidden_tag() }}
-        {{ form.client_id() }}
-        <div class="d-flex align-items-center gap-3 mb-3 p-3 border rounded bg-light">
-            <div class="form-check mb-0">
-                {{ form.has_stamp(class="form-check-input") }}
-                {{ form.has_stamp.label(class="form-check-label") }}
-            </div>
-            <div class="form-check mb-0">
-                {{ form.apply_consumption_tax(class="form-check-input") }}
-                {{ form.apply_consumption_tax.label(class="form-check-label") }}
-            </div>
-            <div class="form-check mb-0">
+<form method="POST" action="{{ action_url }}">
+    {{ form.hidden_tag() }}
+    {{ form.client_id }}
+
+    <!-- ナビゲーション部 -->
+    <table class="btn-group ">
+        <tr>
+                                    <td><input type="submit" class="button" name="submit" value="登録"/></td>
+
+            <td>
                 {{ form.apply_withholding(class="form-check-input") }}
                 {{ form.apply_withholding.label(class="form-check-label") }}
-            </div>
-            <button type="submit" class="btn btn-primary ms-auto" style="width: 200px;">送信</button>
+            </td>
+            <td>
+                {{ form.apply_consumption_tax(class="form-check-input") }}
+                {{ form.apply_consumption_tax.label(class="form-check-label") }}
+            </td>
+
+        </tr>
+    </table>
+
+    <div id="wrapper">
+        <div id="main-frame">
+            <table>
+                <tr>
+                    {% for _ in range(13) %}
+                    <td></td>
+                    {% endfor %}
+                </tr>
+
+                <tr>
+                    <td colspan="13"></td>
+                </tr>
+
+                <tr>
+                    <td class="document-title" colspan="13" align="center">
+                        帳票（見積・領収・請求）
+                    </td>
+                </tr>
+
+                <tr>
+                    <td height="50" colspan="13">　</td>
+                </tr>
+
+                <tr>
+                    <td id="client-name" class="client-name" colspan="5">
+                        {{ client_name }}
+                    </td>
+                    <td colspan="1">殿</td>
+                    <td colspan="4" height="40">　</td>
+                    <td colspan="1" class="text-end">
+                        {{ form.estimate_date.label }}
+                    </td>
+                    <td colspan="1" class="text-end">
+                        {{ form.estimate_date(class="issued-date") }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="8" height="40">　</td>
+                    <td colspan="2" height="40">　</td>
+                    <td colspan="1" class="text-end">
+                        {{ form.receipt_date.label }}
+                    </td>
+                    <td colspan="1" class="text-end">
+                        {{ form.receipt_date(class="issued-date") }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="1">物件名</td>
+                    <td colspan="7" style="word-break: break-word;">
+                        {{ form.entrusted_book_name(class="form-control", style="width: 100%; box-sizing: border-box;")
+                        }}
+                    </td>
+                  <td colspan="2" height="40">　</td>
+                    <td colspan="1" class="text-end">
+                        {{ form.invoice_date.label }}
+                    </td>
+                    <td colspan="1" class="text-end">
+                        {{ form.invoice_date(class="issued-date") }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="13">　</td>
+
+                </tr>
+
+                <tr>
+                    <td colspan="1">帳票額</td>
+                    <td id="amount-price" class="amount-price" colspan="4" align="right">
+                        {% if document %}
+                        {{ document.format_number(document.calculate_final_amounts()['grand_total']) }}円
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                    <td colspan="3"></td>
+                    <td colspan="5" align="right" style="word-break: break-word;"></td>
+                </tr>
+                <tr>
+                    <td class="smallString" colspan="13">
+                        （税込）100円以下端数御値引き
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="13" height="40"></td>
+                </tr>
+            </table>
+
+            <table class="frame">
+                <tr>
+                    {% for _ in range(13) %}
+                    <td width="75"></td>
+                    {% endfor %}
+                </tr>
+
+                {% include 'amount_document/_table_items.html' %}
+                {% include 'amount_document/_summary_totals.html' %}
+                <tr>
+                    <td class="border-top-double" colspan="13">
+                        {{ form.note(class="form-control", style="width: 100%; box-sizing: border-box;") }}
+                    </td>
+                </tr>
+            </table>
         </div>
-
-        <div class="row g-3 mb-3">
-            <div class="col-md-3">
-                {{ form.document_type.label(class="form-label") }}
-                {{ form.document_type(class="form-select") }}
-            </div>
-            <div class="col-md-4">
-                {{ form.entrusted_book_name.label(class="form-label") }}
-                {{ form.entrusted_book_name(class="form-control") }}
-            </div>
-            <div class="col-md-5">
-                {{ form.client_name.label(class="form-label") }}
-                {{ form.client_name(class="form-control") }}
-            </div>
-        </div>
-
-        <hr/>
-        <h3 class="h6 text-muted">明細（20行）</h3>
-        <table class="table table-bordered table-sm align-middle">
-            <thead class="table-light">
-            <tr><th>種別</th><th>報酬額</th><th>実費額</th></tr>
-            </thead>
-            <tbody>
-            {% for i in range(form.item_types.min_entries) %}
-            <tr>
-                <td>{{ form.item_types[i](class="form-control form-control-sm") }}</td>
-                <td>{{ form.reward_amounts[i](class="form-control form-control-sm") }}</td>
-                <td>{{ form.expense_amounts[i](class="form-control form-control-sm") }}</td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-
-        <div class="mb-3">
-            {{ form.note.label(class="form-label") }}
-            {{ form.note(class="form-control", rows="4") }}
-        </div>
-
-        <div class="mb-3">
-            {{ form.issued_date.label(class="form-label") }}
-            {{ form.issued_date(class="form-control") }}
-        </div>
-    </form>
-
-    {% if totals %}
-    <div class="totals mt-4">
-        <h6 class="text-muted">集計結果</h6>
-        <table class="table table-borderless table-sm">
-            <tbody>
-            <tr><td>報酬合計</td><td class="text-end">{{ totals.reward }}</td></tr>
-            <tr><td>実費合計</td><td class="text-end">{{ totals.expense }}</td></tr>
-            <tr><td>消費税額</td><td class="text-end">{{ totals.tax }}</td></tr>
-            <tr><td>源泉徴収額</td><td class="text-end">{{ totals.withholding }}</td></tr>
-            <tr class="border-top"><th>総合計</th><th class="text-end">{{ totals.grand_total }}</th></tr>
-            </tbody>
-        </table>
     </div>
-    {% endif %}
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</form>
 </body>
 </html>

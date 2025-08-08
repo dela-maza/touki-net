@@ -110,3 +110,5 @@ env/
 .venv/
 env.bak/
 venv.bak/
+# Sandbox (学習・テスト用)
+sandbox/
