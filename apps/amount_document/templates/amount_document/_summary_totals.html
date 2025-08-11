@@ -1,36 +1,34 @@
 <!-- amount_document/templates/amount_document/_summary_totals.html -->
 {% if document %}
-{% set amounts = display_totals if display_totals is defined else document.calculate_final_amounts() %}
-
 <tr class="border-top-strong">
     <td colspan="7" class="item-type cell-right-border text-center">小　計</td>
     <td colspan="1" class="text-end">①</td>
-    <td colspan="2" class="cell-right-border text-end">{{ document.format_number(amounts.reward) }}</td>
+    <td colspan="2" class="cell-right-border text-end">{{ document.format_number(totals['reward']) }}</td>
     <td colspan="1" class="text-end">②</td>
-    <td colspan="2" class="cell-right-border text-end">{{ document.format_number(amounts.expense) }}</td>
+    <td colspan="2" class="cell-right-border text-end">{{ document.format_number(totals['expense']) }}</td>
 </tr>
 
 <tr class="border-top-strong">
     <td colspan="2" class="item-type border-top-strong cell-right-border">合計</td>
     <td colspan="5" class="border-top-strong cell-right-border text-end">① ＋ ②</td>
     <td colspan="1" class="border-top-strong text-end">③</td>
-    <td colspan="2" class="border-top-strong cell-right-border text-end">{{ document.format_number(amounts.subtotal) }}</td>
+    <td colspan="2" class="border-top-strong cell-right-border text-end">{{ document.format_number(totals['subtotal']) }}</td>
     <td colspan="3" class="border-top-strong text-center"></td>
 </tr>
 
 <tr>
     <td colspan="2" class="item-type cell-right-border">消費税</td>
-    <td colspan="5" class="cell-right-border text-end">① × {{ (tax_config.consumption_tax * 100) | round(0) | int }}%</td>
+    <td colspan="5" class="cell-right-border text-end">① × {{ (tax.consumption_tax * 100) | round(0) | int }}%</td>
     <td colspan="1" class="text-end">④</td>
-    <td colspan="2" class="cell-right-border text-end">{{ document.format_number(amounts.tax) }}</td>
+    <td colspan="2" class="cell-right-border text-end">{{ document.format_number(totals['tax']) }}</td>
     <td colspan="3" class="text-center"></td>
 </tr>
 
-<tr class="">
+<tr>
     <td colspan="2" class="item-type cell-right-border">源泉徴収</td>
-    <td colspan="5" class="cell-right-border text-end">（① ー {{ tax_config.withholding_exemption }} ）× {{ tax_config.withholding_tax }}</td>
+    <td colspan="5" class="cell-right-border text-end">（① ー {{ tax.withholding_exemption }} ）× {{ tax.withholding_tax }}</td>
     <td colspan="1" class="text-end">▲ ⑤</td>
-    <td colspan="2" class="cell-right-border text-end">{{ document.format_number(amounts.withholding) }}</td>
+    <td colspan="2" class="cell-right-border text-end">{{ document.format_number(totals['withholding']) }}</td>
     <td colspan="3"></td>
 </tr>
 
@@ -38,7 +36,7 @@
     <td colspan="2" class="item-type cell-right-border">差引請求額</td>
     <td colspan="5" class="cell-right-border text-end">③ ＋ ④ − ⑤</td>
     <td colspan="1" class="text-end">⑥</td>
-    <td colspan="2" class="cell-right-border text-end">{{ document.format_number(amounts.grand_total) }}</td>
+    <td colspan="2" class="cell-right-border text-end">{{ document.format_number(totals['grand_total']) }}</td>
     <td colspan="3"></td>
 </tr>
 
@@ -47,7 +45,11 @@
     <td colspan="5" class="cell-right-border text-end"></td>
     <td colspan="1" class="text-end">▲ ⑦</td>
     <td colspan="2" class="cell-right-border text-end">
+        {% if form is defined %}
         {{ form.advance_payment(class="form-control", style="width: 100%; box-sizing: border-box;") }}
+        {% else %}
+        {{ document.format_number(document.advance_payment or 0) }}
+        {% endif %}
     </td>
     <td colspan="3"></td>
 </tr>
@@ -57,7 +59,7 @@
     <td colspan="5" class="cell-right-border text-end">⑥ − ⑦</td>
     <td colspan="1" class="text-center">税込額</td>
     <td colspan="2" class="cell-right-border text-end fw-bold">
-        {{ document.format_number((amounts.grand_total or 0) - (document.advance_payment or 0)) }}
+        {{ document.format_number((totals['grand_total'] or 0) - (document.advance_payment or 0)) }}
     </td>
     <td colspan="3"></td>
 </tr>

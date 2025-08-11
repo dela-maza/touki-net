@@ -14,13 +14,13 @@ def get_client_type_choices():
 
 class ClientForm(FlaskForm):
     entrusted_book_id = SelectField(
-        '受託簿',
+        'Entrusted Book',
         coerce=int,
         validators=[DataRequired()]
     )
 
     client_type_id = SelectField(
-        'クライアント種別',
+        'Client Type',
         choices=get_client_type_choices(),
         coerce=int,
         default=ClientType.RIGHT_HOLDER.value,
@@ -28,17 +28,17 @@ class ClientForm(FlaskForm):
     )
 
     # 基本情報
-    name = StringField('名前', validators=[DataRequired(), MAX_LEN_255])
-    name_furigana = StringField('ふりがな', validators=[Optional(), MAX_LEN_255])
-    birth_date = DateField('生年月日', format='%Y-%m-%d', validators=[Optional()])
+    name = StringField('Client Name', validators=[DataRequired(), MAX_LEN_255])
+    name_kana = StringField('kana', validators=[Optional(), MAX_LEN_255])
+    birth_date = DateField('Birth Date', format='%Y-%m-%d', validators=[Optional()])
 
     # 住所・連絡先
-    postal_code = StringField('郵便番号', validators=[Optional(), MAX_LEN_20])
-    address = StringField('住所', validators=[Optional(), MAX_LEN_255])
-    phone_number = StringField('電話番号', validators=[Optional(), MAX_LEN_50])
-    fax = StringField('FAX', validators=[Optional(), MAX_LEN_50])
-    email = StringField('メールアドレス', validators=[Optional(), Email(), MAX_LEN_255])
+    postal_code = StringField('ZIP Code', validators=[Optional(), MAX_LEN_20])
+    address = StringField('Address', validators=[Optional(), MAX_LEN_255])
+    phone_number = StringField('Phone Number', validators=[Optional(), MAX_LEN_50])
+    fax = StringField('Fax', validators=[Optional(), MAX_LEN_50])
+    email = StringField('Mail', validators=[Optional(), Email(), MAX_LEN_255])
 
     # その他
-    intention_confirmed_at = DateField('意思確認日', format='%Y-%m-%d', validators=[Optional()])
-    note = TextAreaField('備考', validators=[Optional()])
+    intention_confirmed_at = DateField('Intent Confirmation Date', format='%Y-%m-%d', validators=[Optional()])
+    note = TextAreaField('Notes', validators=[Optional()])

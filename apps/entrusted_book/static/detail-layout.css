@@ -1,0 +1,31 @@
+/* 全体レイアウト */
+.detail-layout {
+    display: flex;
+    gap: 1.5rem; /* カラム間の余白 */
+    max-width: 2000px;
+    margin: 0 auto;
+}
+
+/* entrusted_book（左 30%） */
+.detail-book {
+    flex: 0 0 30%;
+    min-width: 260px; /* 狭すぎ防止 */
+}
+
+/* clients（中央 40%） */
+.detail-clients {
+    flex: 0 0 40%;
+    min-width: 320px;
+
+}
+
+/* application（右 30%） */
+.detail-application {
+    flex: 0 0 30%;
+    min-width: 260px;
+}
+
+/* 各カラムの中のセクション */
+.detail-section {
+    margin-bottom: 1.5rem;
+}

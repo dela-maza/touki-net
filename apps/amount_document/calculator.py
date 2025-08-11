@@ -1,24 +1,28 @@
-### amount_document/calculator.py
-from typing import List, Dict, Final,Union
-from apps.amount_document.config_loader import load_config
+# apps/amount_document/calculator.py
+from typing import List, Dict, Final, Union, Iterable
+
 
 class AmountDocumentCalculator:
     def __init__(
             self,
-            reward_amounts: List[int],
-            expense_amounts: List[int],
+            reward_amounts: list[int],   # 報酬
+            expense_amounts: list[int],  # 経費
             apply_consumption_tax: bool,
             apply_withholding: bool,
     ) -> None:
-        tax_config = AmountDocumentCalculator.get_tax_config()
-        self.consumption_tax_rate: Final[float] = tax_config["consumption_tax"] # 消費税率
-        self.withholding_exemption_amount: Final[int] = tax_config["withholding_exemption"] # 源泉徴収控除額
-        self.withholding_tax_rate: Final[float] = tax_config["withholding_tax"] # 源泉徴収額
+        from flask import current_app
+        tax = current_app.config["TAX_RATE"]
 
-        self.reward_amounts: Final[List[int]] = reward_amounts
-        self.expense_amounts: Final[List[int]] = expense_amounts
-        self.apply_consumption_tax: Final[bool] = apply_consumption_tax
-        self.apply_withholding: Final[bool] = apply_withholding
+        self.consumption_tax_rate: float = tax["consumption_tax"]
+        self.withholding_exemption_amount: int = tax["withholding_exemption"]
+        self.withholding_tax_rate: float = tax["withholding_tax"]
+
+        # None を 0 に変換したいならここで吸収
+        self.reward_amounts = [x or 0 for x in reward_amounts]
+        self.expense_amounts = [x or 0 for x in expense_amounts]
+
+        self.apply_consumption_tax = apply_consumption_tax
+        self.apply_withholding = apply_withholding
 
     def total_reward_amount(self) -> int:
         return sum(self.reward_amounts)
@@ -27,52 +31,36 @@ class AmountDocumentCalculator:
         return sum(self.expense_amounts)
 
     def consumption_tax_amount(self) -> int:
-        if self.apply_consumption_tax:
-            return int(self.total_reward_amount() * self.consumption_tax_rate)
-        return 0
+        return int(self.total_reward_amount() * self.consumption_tax_rate) if self.apply_consumption_tax else 0
 
     def withholding_tax_amount(self) -> int:
-        if self.apply_withholding:
-            taxable: Final[int] = max(0, self.total_reward_amount() - self.withholding_exemption_amount)
-            return int(taxable * self.withholding_tax_rate)
-        return 0
+        if not self.apply_withholding:
+            return 0
+        taxable: Final[int] = max(0, self.total_reward_amount() - self.withholding_exemption_amount)
+        return int(taxable * self.withholding_tax_rate)
 
-    def calculate_totals(self) -> Dict[str, int]:
+    def calculate_totals(self, round_to_hundred: bool = False, *, round_unit: int | None = None) -> Dict[str, int]:
+        """
+        round_to_hundred=True か round_unit=100 のどちらでも100円未満切り捨て。
+        将来 10円単位などにしたい時は round_unit に任意の整数を渡せる。
+        """
         reward: Final[int] = self.total_reward_amount()
         expense: Final[int] = self.total_expense_amount()
         tax: Final[int] = self.consumption_tax_amount()
         withholding: Final[int] = self.withholding_tax_amount()
-        grand_total: Final[int] = reward + tax + expense - withholding
+        subtotal: Final[int] = reward + expense
+
+        grand_total = subtotal + tax - withholding
+
+        unit = 100 if (round_to_hundred and round_unit is None) else round_unit
+        if unit and unit > 1:
+            grand_total = (grand_total // unit) * unit  # 切り捨て
+
         return {
+            "subtotal": subtotal,
             "reward": reward,
             "expense": expense,
             "tax": tax,
             "withholding": withholding,
             "grand_total": grand_total,
-        }
-
-    @staticmethod
-    def get_tax_config() -> Dict[str, Union[int, float]]:
-        """TAX_RATE設定を返す"""
-        return load_config()["TAX_RATE"]
-
-    def get_display_totals(self) -> Dict[str, int]:
-        """
-        テンプレートで使いやすい計算済みの金額をまとめて取得
-        ＊消費税と源泉徴収額はフラグによって0になる可能性あり
-        """
-        reward = self.total_reward_amount()
-        expense = self.total_expense_amount()
-        tax = self.consumption_tax_amount() if self.apply_consumption_tax else 0
-        withholding = self.withholding_tax_amount() if self.apply_withholding else 0
-        subtotal = reward + expense
-        total = subtotal + tax - withholding
-
-        return {
-            "subtotal": subtotal,              # 小計（報酬＋実費）
-            "reward": reward,                  # 報酬合計
-            "expense": expense,                # 実費合計
-            "tax": tax,                        # 消費税額（フラグ有効時のみ）
-            "withholding": withholding,        # 源泉徴収額（フラグ有効時のみ）
-            "grand_total": total,              # 差引請求額（合計）
         }

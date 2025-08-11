@@ -1,4 +1,4 @@
-### client/models.py
+### apps/client/models.py
 from datetime import datetime
 from db import db
 from enum import Enum
@@ -39,7 +39,7 @@ class Client(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     client_type_id = db.Column(db.Integer, nullable=False, default=ClientType.RIGHT_HOLDER.value)
     name = db.Column(db.String(MAX_LEN_NAME), nullable=False)
-    name_furigana = db.Column(db.String(MAX_LEN_NAME), nullable=True)
+    name_kana = db.Column(db.String(MAX_LEN_NAME), nullable=True)
     birth_date = db.Column(db.DateTime, nullable=True)
     postal_code = db.Column(db.String(MAX_LEN_POSTAL), nullable=True)
     address = db.Column(db.String(MAX_LEN_NAME), nullable=True)

@@ -1,50 +1,69 @@
+<!-- apps/entrusted_book/templates/entrusted_book/form.html -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8"/>
-    <title>受託簿フォーム</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title or "Entrusted Book" }}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
+    <link rel="stylesheet" href="{{ url_for('entrusted_book.static', filename='style.css') }}">
 </head>
 <body>
-<div class="container bg-white shadow-sm border rounded p-4 mt-4">
-    <h1 class="h4 text-center mb-4 text-secondary">受託簿フォーム</h1>
 
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-    <div class="alert alert-success">
-        {% for msg in messages %}
-        <div>{{ msg }}</div>
-        {% endfor %}
-    </div>
-    {% endif %}
-    {% endwith %}
+<h3 class="form-title">
+    {{ title }}
+</h3>
 
-    <form method="POST" novalidate>
-    <form method="POST" novalidate>
-        {{ form.hidden_tag() }}
+<form method="POST" class="form-box">
+    {{ form.hidden_tag() }}
 
-        <div class="mb-3">
-            {{ form.name.label(class="form-label") }}
-            {{ form.name(class="form-control") }}
+    <div class="form-group">
+        {{ form.name.label(class="form-label") }}
+        {{ form.name(class="form-input", placeholder="受託簿名を入力") }}
+        {% if form.name.errors %}
+        <ul class="form-errors">
             {% for error in form.name.errors %}
-                <div class="text-danger small">{{ error }}</div>
+            <li>{{ error }}</li>
             {% endfor %}
-        </div>
+        </ul>
+        {% endif %}
+    </div>
 
-        <div class="mb-3">
-            {{ form.note.label(class="form-label") }}
-            {{ form.note(class="form-control", rows="3") }}
+    <div class="form-group">
+        {{ form.note.label(class="form-label") }}
+        {{ form.note(class="form-textarea", rows="10", placeholder="備考（任意）") }}
+        {% if form.note.errors %}
+        <ul class="form-errors">
             {% for error in form.note.errors %}
-                <div class="text-danger small">{{ error }}</div>
+            <li>{{ error }}</li>
             {% endfor %}
-        </div>
+        </ul>
+        {% endif %}
+    </div>
 
-        <div class="d-flex justify-content-center">
-            <button type="submit" class="btn btn-primary px-5">送信</button>
-        </div>
-    </form>
-</div>
+    <div class="form-actions">
+        <button type="submit" class="btn primary">
+            {% if title == "Edit Entrusted Book" %}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"></path></svg>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            Update
+            {% else %}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" fill="currentColor">
+                <path d="M8 1a.75.75 0 0 1 .75.75V7h5.25a.75.75 0 0 1 0 1.5H8.75v5.25a.75.75 0 0 1-1.5 0V8.5H2a.75.75 0 0 1 0-1.5h5.25V1.75A.75.75 0 0 1 8 1Z"></path>
+            </svg>
+            New entrusted book
+            {% endif %}
+        </button>
+
+        <a href="{{ url_for('entrusted_book.index') }}" class="btn secondary">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"></path></svg>
+            Cansel
+        </a>
+    </div>
+</form>
+
 </body>
 </html>

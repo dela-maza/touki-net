@@ -1,4 +1,4 @@
-### entrusted_book/view.py
+### apps/entrusted_book/view.py
 from flask import Blueprint, render_template, redirect, url_for, flash
 from apps.entrusted_book.forms import EntrustedBookForm
 from apps.entrusted_book.models import EntrustedBook
@@ -12,13 +12,13 @@ entrusted_book_bp = Blueprint(
     static_folder='static'
 )
 
-
+# --------- / ---------
 @entrusted_book_bp.route('/')
 def index():
     books = EntrustedBook.query.order_by(EntrustedBook.name).all()
     return render_template('entrusted_book/index.html', books=books)
 
-
+# --------- /create ---------
 @entrusted_book_bp.route("/create", methods=["GET", "POST"])
 def create():
     form = EntrustedBookForm()
@@ -31,32 +31,46 @@ def create():
         db.session.commit()
         flash('受託簿を作成しました。')
         return redirect(url_for('entrusted_book.index'))
-    return render_template('entrusted_book/__form.html', form=form)
+    return render_template('entrusted_book/form.html',
+                           form=form,
+                           title="Create Entrusted Book",)
 
-
-@entrusted_book_bp.route('/<int:book_id>/edit', methods=['GET', 'POST'])
+# --------- /edit ---------
+@entrusted_book_bp.route("/<int:book_id>/edit", methods=["GET", "POST"])
 def edit(book_id):
     book = EntrustedBook.query.get_or_404(book_id)
-    form = EntrustedBookForm(obj=book)
-    if form.validate_on_submit():
-        form.populate_obj(book)
-        db.session.commit()
-        flash('受託簿情報を更新しました。')
-        return redirect(url_for('entrusted_book.index'))
-    return render_template('entrusted_book/__form.html', form=form)
+    form = EntrustedBookForm(obj=book)  # 既存データをフォームに反映
 
+    if form.validate_on_submit():
+        form.populate_obj(book)  # フォームの値で既存オブジェクトを更新
+        db.session.commit()
+        flash("Entrusted Book updated successfully!", "success")
+        return redirect(url_for("entrusted_book.index"))
+
+    return render_template(
+        "entrusted_book/form.html",
+        form=form,
+        title="Edit Entrusted Book",
+    )
+
+# --------- /detail ---------
 @entrusted_book_bp.route('/<int:book_id>')
 def detail(book_id):
     book = EntrustedBook.query.get_or_404(book_id)
-    return render_template('entrusted_book/detail.html', book=book)
+    return render_template(
+        'entrusted_book/detail_layout.html',
+        book=book,
+        clients=book.clients
+    )
 
+# --------- /confirm_delete ---------
 @entrusted_book_bp.route('/<int:book_id>/confirm_delete')
 def confirm_delete(book_id):
     form = EntrustedBookForm()
     book = EntrustedBook.query.get_or_404(book_id)
     return render_template('entrusted_book/confirm_delete.html', book=book,form=form)
 
-
+# --------- /delete ---------
 @entrusted_book_bp.route('/<int:book_id>/delete', methods=['POST'])
 def delete(book_id):
     book = EntrustedBook.query.get_or_404(book_id)

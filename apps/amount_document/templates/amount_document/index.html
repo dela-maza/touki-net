@@ -2,61 +2,78 @@
 <!-- amount_document/templates/amount_document/index.html -->
 <html lang="ja">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap demo</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>AmountDocuments</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
+    <link rel="stylesheet" href="{{ url_for('amount_document.static', filename='style.css') }}">
 </head>
 <body>
 
-<div class="container mt-5">
-    <h1 class="mb-4">金額文書一覧</h1>
+<h3>Amount Documents</h3>
 
-    <a href="{{ url_for('amount_document.create') }}" class="btn btn-primary mb-3">新規作成</a>
-
-    {% if documents %}
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped">
-            <thead class="table-light">
-            <tr>
-                <th>ID</th>
-                <th>受託簿名</th>
-                        <th>委任者</th>
-                <th>作成日</th>
-                <th>操作</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for doc in documents %}
-            <tr>
-                <td>{{ doc.id }}</td>
-                <td>{{ doc.entrusted_book_name }}</td>
-                        <td>{{ doc.client.name }}</td>
-                <td>{{ doc.issued_date.strftime('%Y-%m-%d') if doc.create_at else '' }}</td>
-                <td>
-                    <a href="{{ url_for('amount_document.detail', document_id=doc.id) }}"
-                       class="btn btn-sm btn-info">詳細</a>
-                    <a href="{{ url_for('amount_document.edit', document_id=doc.id) }}" class="btn btn-sm btn-warning">編集</a>
-                    <form action="{{ url_for('amount_document.delete', document_id=doc.id) }}" method="POST"
-                          style="display:inline-block;" onsubmit="return confirm('本当に削除しますか？');">
-                        {{ form.csrf_token() }}
-                        <button type="submit" class="btn btn-sm btn-danger">削除</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% else %}
-    <p>登録された金額文書はありません。</p>
-    {% endif %}
+<div class="button-list">
+    <a class="btn"
+       href="{{ url_for('amount_document.create', client_id=client_id) }}">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+            <path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z"></path>
+        </svg>
+        New Amount Document
+    </a>
+    <a class="btn" href="{{ url_for('entrusted_book.index',client_id=client_id ) }}">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+            <path d="M5.75 2.5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM2 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path>
+        </svg>
+        Entrusted Books
+    </a>
 </div>
-<!-- Bootstrap Bundle JS (Popper付き) -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
-        crossorigin="anonymous"></script>
 
+{% if documents %}
+<table class="table table--fixed">
+    <thead>
+    <tr>
+        <th style="width: 5%;">id</th>
+        <th style="width: 15%;">client</th>
+        <th style="width: 55%;">entrusted_book_name</th>
+        <th style="width: 13%;">created_at</th>
+        <th style="width: 12%;">action</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for doc in documents %}
+    <tr class="clickable-row"
+        data-href="{{ url_for('amount_document.detail', document_id=doc.id) }}">
+        <td>{{ doc.id }}</td>
+        <td class="truncate">{{ doc.client.name }}</td>
+        <td class="truncate">{{ doc.entrusted_book_name }}</td>
+        <td>{{ doc.created_at.strftime('%Y-%m-%d') if doc.created_at else '' }}</td>
+        <td class="actions">
+            <a class="btn"
+               href="{{ url_for('amount_document.edit', document_id=doc.id) }}"
+               aria-label="edit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+                    <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"></path>
+                </svg>
+            </a>
+            <a class="btn"
+               href="{{ url_for('amount_document.confirm_delete', document_id=doc.id) }}"
+               aria-label="delete">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+                    <path d="M11 1.75V3h2.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75ZM4.496 6.675l.66 6.6a.25.25 0 0 0 .249.225h5.19a.25.25 0 0 0 .249-.225l.66-6.6a.75.75 0 0 1 1.492.149l-.66 6.6A1.748 1.748 0 0 1 10.595 15h-5.19a1.75 1.75 0 0 1-1.741-1.575l-.66-6.6a.75.75 0 1 1 1.492-.15ZM6.5 1.75V3h3V1.75a.25.25 0 0 0-.25-.25h-2.5a.25.25 0 0 0-.25.25Z"></path>
+                </svg>
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div style="width:1000px;margin:1.5rem auto;color:#57606a;">No documents yet.</div>
+{% endif %}
+
+<script src="{{ url_for('static', filename='js/table.js') }}" defer></script>
 </body>
 </html>

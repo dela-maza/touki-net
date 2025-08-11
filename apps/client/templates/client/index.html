@@ -1,57 +1,13 @@
-<!-- client/templates/client/index.html -->
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8" />
-    <title>クライアント一覧</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-</head>
-<body>
-<div class="container mt-5">
-    <h1 class="mb-4">クライアント一覧</h1>
-
-    <a href="{{ url_for('client.create') }}" class="btn btn-primary mb-3">新規作成</a>
-
-    {% if clients %}
-    <table class="table table-bordered table-striped">
-        <thead class="table-light">
-            <tr>
-                <th>ID</th>
-                <th>名前</th>
-                <th>受託簿名</th>
-                <th>種別</th>
-                <th>電話番号</th>
-                <th>メールアドレス</th>
-                <th>操作</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for client in clients %}
-            <tr>
-                <td>{{ client.id }}</td>
-                <td>{{ client.name }}</td>
-                <td>{{ client.entrusted_book.property_name }}</td>
-                <td>{{ client.client_type.label }}</td>
-                <td>{{ client.phone_number or '' }}</td>
-                <td>{{ client.email or '' }}</td>
-                <td>
-                    <a href="{{ url_for('client.detail', client_id=client.id) }}" class="btn btn-sm btn-info">詳細</a>
-                    <a href="{{ url_for('client.edit', client_id=client.id) }}" class="btn btn-sm btn-warning">編集</a>
-                    <form action="{{ url_for('client.delete', client_id=client.id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('本当に削除しますか？');">
-                        {{ delete_form.hidden_tag() }}
-                        <button type="submit" class="btn btn-sm btn-danger">削除</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <p>登録されたクライアントはありません。</p>
-    {% endif %}
-</div>
-<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
-</body>
-</html>
+<!-- apps/client/templates/client/index.html -->
+<!doctype html>
+<title>Clients</title>
+<h3>Clients</h3>
+<ul>
+    {% for c in clients %}
+    <li>
+        #{{ c.id }} {{ c.name }}
+        <a class="btn" href="{{ url_for('client.edit', client_id=c.id) }}">Edit</a>
+    </li>
+    {% endfor %}
+</ul>
+<a class="btn" href="{{ url_for('entrusted_book.index') }}">Back to Entrusted Books</a>

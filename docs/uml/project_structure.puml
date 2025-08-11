@@ -1,0 +1,6 @@
+@startuml
+awk 'NR==1{print; print "!include ./theme-dark.puml"; next}1' \
+  docs/uml/amount_document.puml > docs/uml/amount_document.tmp && \
+  mv docs/uml/amount_document.tmp docs/uml/amount_document.puml
+
+@enduml

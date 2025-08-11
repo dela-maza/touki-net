@@ -1,46 +1,34 @@
-### amount_document/views.py
+### apps/amount_document/views.py
 # from pprint import pprint
 from flask import Blueprint, render_template, flash, redirect, url_for, request
 from db import db
 from apps.entrusted_book.models import EntrustedBook
+from flask import current_app
 from apps.amount_document.calculator import AmountDocumentCalculator
 from apps.amount_document.forms import AmountDocumentForm
-from apps.amount_document.models import AmountDocumentType, AmountDocument
+from apps.amount_document.models import AmountDocument
 from apps.client.models import Client
+from sqlalchemy.orm import joinedload
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.wrappers.response import Response as WerkzeugResponse
 from typing import Dict, Union, Optional
 from apps.amount_document.config_loader import load_config
 
-param = load_config()["OFFICE"]
+# param = load_config()["OFFICE"]
 
 amount_document_bp = Blueprint(
     "amount_document", __name__, url_prefix="/amount-document", template_folder="templates", static_folder="static"
 )
 
 
-def get_document_or_404(document_id: int) -> AmountDocument:
-    return AmountDocument.query.get_or_404(document_id)
+def _get_document_or_404(document_id: int) -> AmountDocument:
+    return (  # options(joinedload(AmountDocument.client)) AmountDocumentに紐つけられたclientをAmountDocumentと同時に一括取得
+        AmountDocument.query
+        .options(joinedload(AmountDocument.client))
+        .get_or_404(document_id))
 
 
-def populate_form_items(form: AmountDocumentForm, items: Dict[str, list]) -> None:
-    for field_list_name in ("item_types", "reward_amounts", "expense_amounts"):
-        data_list = items.get(field_list_name, [])
-        form_field_list = getattr(form, field_list_name, [])
-        for i, value in enumerate(data_list):
-            if i < len(form_field_list):
-                form_field_list[i].data = value
-
-
-def extract_items_from_form(form: AmountDocumentForm) -> Dict[str, list]:
-    return {
-        "item_types_list": [field.data for field in form.item_types],
-        "reward_list": [field.data for field in form.reward_amounts],
-        "expense_list": [field.data for field in form.expense_amounts],
-    }
-
-
-def commit_session_with_flash(success_message: str, error_message: str) -> bool:
+def _commit_session_with_flash(success_message: str, error_message: str) -> bool:
     try:
         db.session.commit()
         flash(success_message)
@@ -51,91 +39,81 @@ def commit_session_with_flash(success_message: str, error_message: str) -> bool:
         return False
 
 
-# ============================================= / =============================================
+# -------------- / --------------
 @amount_document_bp.route("/")
 def index() -> str:
-    documents = AmountDocument.query.order_by(
-        AmountDocument.created_at.desc().nullslast(), AmountDocument.id.desc()
-    ).all()
-    return render_template("amount_document/index.html",
-                           documents=documents,
-                           form=AmountDocumentForm(),  # 空フォームを生成（CSRFトークン用）
-                           )
+    entrusted_book_id = request.args.get("entrusted_book_id", type=int)
+    client_id = request.args.get("client_id", type=int)
 
+    q = (AmountDocument.query
+         .options(joinedload(AmountDocument.client))
+         .order_by(AmountDocument.created_at.desc().nullslast(),
+                   AmountDocument.id.desc()))
+    if client_id:
+        q = q.filter(AmountDocument.client_id == client_id)
 
-# ============================================= /detail =============================================
+    documents = q.all()
+    return render_template(
+        "amount_document/index.html",
+        documents=documents,
+        client_id=client_id, # client_idで抽出用
+        form=AmountDocumentForm(),
+    )
+
+# -------------- /detail --------------
 @amount_document_bp.route("/<int:document_id>")
 def detail(document_id: int) -> str:
-    document = get_document_or_404(document_id)
-    client_name = document.client.name if document.client else ""
-    # AmountDocumentCalculatorのインスタンスを生成して計算済み合計値を取得
+    document = _get_document_or_404(document_id)
+
     calc = AmountDocumentCalculator(
         reward_amounts=document.reward_amounts or [],
         expense_amounts=document.expense_amounts or [],
         apply_consumption_tax=document.apply_consumption_tax,
         apply_withholding=document.apply_withholding,
     )
-    display_totals = calc.get_display_totals()
+    totals = calc.calculate_totals(round_unit=100)
 
     return render_template(
         "amount_document/detail.html",
-        AmountDocumentType=AmountDocumentType,
+        doc_labels={"estimate": "見積", "invoice": "請求", "receipt": "領収"},
         document=document,
-        document_type_label=AmountDocumentType.ESTIMATE.label,
-        document_note=str.replace(str(document.note), '\\n', '\n'),
-        param=load_config()["OFFICE"],
-        client_name=client_name,
-        tax_config=AmountDocumentCalculator.get_tax_config(),
-        display_totals=display_totals,
+        totals=totals, # 詳細画面のみ集計あり
+        document_note=str.replace(str(document.note), "\\n", "\n"),
     )
 
-
-# ============================================= /create =============================================
+# -------------- /create --------------
 @amount_document_bp.route("/create", methods=["GET", "POST"])
-def create() -> Union[str, WerkzeugResponse]:
+def create():
     form = AmountDocumentForm()
-    client_id: Optional[int] = request.args.get("client_id", type=int)
 
+    client_id = request.args.get("client_id", type=int)
     if not client_id:
         flash("クライアント情報が指定されていません。", "danger")
         return redirect(url_for("client.index"))
 
-    entrusted_book_id: Optional[int] = request.args.get("entrusted_book_id", type=int)
-    client_name = ""
+    client = (Client.query
+              .options(joinedload(Client.entrusted_book))
+              .get_or_404(client_id))
 
-    # クライアント取得
-    if client_id:
-        client = Client.query.get(client_id)
-        if client:
-            form.client_id.data = client_id
-            client_name = client.name
+    if request.method == "GET":
+        # 受託簿名
+        if client.entrusted_book:
+            form.entrusted_book_name.data = client.entrusted_book.name
 
-            # クライアント種別に応じたデフォルトエントリを設定
-            from apps.amount_document.config_loader import get_default_entries_for_client_type
-            default_entries = get_default_entries_for_client_type(client.client_type)
-
-            # デフォルト値をセット
-            for i, (item_type, reward, expense) in enumerate(zip(
-                    default_entries["item_types"],
-                    default_entries["reward_amounts"],
-                    default_entries["expense_amounts"]
-            )):
-                if i < len(form.item_types):
-                    form.item_types[i].data = item_type
-                    form.reward_amounts[i].data = reward
-                    form.expense_amounts[i].data = expense
-
-    if entrusted_book_id:
-        entrusted_book = EntrustedBook.query.get(entrusted_book_id)
-        if entrusted_book:
-            form.entrusted_book_name.data = entrusted_book.name
-
-    # 備考の初期値設定
-    from apps.amount_document.config_loader import get_note_default_by_document_type
+        # デフォ行注入
+        from apps.amount_document.config_loader import get_default_entries_for_client_type
+        defaults = get_default_entries_for_client_type(client.client_type)
+        for i, (it, rw, ex) in enumerate(
+                zip(defaults["item_types"], defaults["reward_amounts"], defaults["expense_amounts"])
+        ):
+            if i < len(form.item_types):
+                form.item_types[i].data = it
+                form.reward_amounts[i].data = rw
+                form.expense_amounts[i].data = ex
 
     if form.validate_on_submit():
         document = AmountDocument(
-            client_id=form.client_id.data,
+            client_id=client_id,
             entrusted_book_name=form.entrusted_book_name.data,
             apply_consumption_tax=form.apply_consumption_tax.data,
             apply_withholding=form.apply_withholding.data,
@@ -145,75 +123,81 @@ def create() -> Union[str, WerkzeugResponse]:
             receipt_date=form.receipt_date.data,
             invoice_date=form.invoice_date.data,
         )
-        items = extract_items_from_form(form)
-        document.set_items(
-            item_types_list=items["item_types_list"],
-            reward_list=items["reward_list"],
-            expense_list=items["expense_list"],
+        document.set_items_normalized(
+            item_types_list=[f.data for f in form.item_types],
+            reward_list=[f.data for f in form.reward_amounts],
+            expense_list=[f.data for f in form.expense_amounts],
         )
         db.session.add(document)
-        if commit_session_with_flash("金額文書を作成しました。",
-                                     "金額文書の作成に失敗しました。"):
-            return redirect(url_for("amount_document.detail", document_id=document.id))
+        try:
+            db.session.commit()
+            flash("金額文書を作成しました。")
+            return redirect(url_for("amount_document.index", client_id=client.id))
+        except SQLAlchemyError:
+            db.session.rollback()
+            flash("金額文書の作成に失敗しました。", "error")
 
-    _param = load_config()["OFFICE"]
-    document_type_label = dict(form.document_type.choices).get(form.document_type.data, "")
-    return render_template("amount_document/form.html",
-                           form=form,
-                           document=None,
-                           document_type_label=document_type_label,
-                           param=_param,
-                           client_name=client_name,
-                           tax_config=AmountDocumentCalculator.get_tax_config())
+    return render_template(
+        "amount_document/form.html",
+        form=form,
+        client=client,
+        is_edit=False,
+    )
 
-
-# ============================================= /edit =============================================
+# -------------- /edit --------------
 @amount_document_bp.route("/<int:document_id>/edit", methods=["GET", "POST"])
 def edit(document_id: int) -> Union[str, WerkzeugResponse]:
-    document = get_document_or_404(document_id)
+    document = _get_document_or_404(document_id)
     form = AmountDocumentForm(obj=document)
 
+    # 一覧から戻るためのクエリ（無ければ None）
+    client_id = request.args.get("client_id", type=int)
+
     if request.method == "GET":
-        populate_form_items(form, document.get_items())
+        items = document.get_items()
+        for field_list_name in ("item_types", "reward_amounts", "expense_amounts"):
+            values = items.get(field_list_name, []) or []
+            field_list = getattr(form, field_list_name)
+            while len(values) < len(field_list):
+                values.append("" if field_list_name == "item_types" else 0)
+            for fld, val in zip(field_list, values):
+                fld.data = val
 
     if form.validate_on_submit():
         form.populate_obj(document)
-        items = extract_items_from_form(form)
-        document.set_items(
-            item_types_list=items["item_types_list"],
-            reward_list=items["reward_list"],
-            expense_list=items["expense_list"],
+        document.set_items_normalized(
+            item_types_list=[f.data for f in form.item_types],
+            reward_list=[f.data for f in form.reward_amounts],
+            expense_list=[f.data for f in form.expense_amounts],
         )
-        if commit_session_with_flash("金額文書を更新しました。", "金額文書の更新に失敗しました。"):
-            return redirect(url_for("amount_document.detail", document_id=document.id))
-
-    _param = load_config()["OFFICE"]
-    client_name = document.client.name if document.client else ""
-
-    # AmountDocumentCalculatorのインスタンスを生成して計算済み合計値を取得
-    calc = AmountDocumentCalculator(
-        reward_amounts=document.reward_amounts or [],
-        expense_amounts=document.expense_amounts or [],
-        apply_consumption_tax=document.apply_consumption_tax,
-        apply_withholding=document.apply_withholding,
-    )
-    display_totals = calc.get_display_totals()
+        try:
+            db.session.commit()
+            flash("金額文書を更新しました。")
+            if client_id:
+                return redirect(url_for("amount_document.index", client_id=client_id))
+            return redirect(url_for("amount_document.index"))
+        except SQLAlchemyError:
+            db.session.rollback()
+            flash("金額文書の更新に失敗しました。", "error")
 
     return render_template(
         "amount_document/form.html",
         form=form,
         document=document,
-        param=_param,
-        client_name=client_name,
-        tax_config=AmountDocumentCalculator.get_tax_config(),
-        display_totals=display_totals  # 計算済みの合計値をテンプレートに渡す
+        client=document.client, # /createは、documentオブジェクトが存在しないため、document.createを参照できない
+        is_edit=True,
     )
+# -------------- /confirm_delete --------------
+@amount_document_bp.route("/<int:document_id>/confirm_delete")
+def confirm_delete(document_id: int):
+    document = _get_document_or_404(document_id)
+    return render_template("amount_document/confirm_delete.html", document=document)
 
 
-# ============================================= /delete =============================================
+# -------------- /delete --------------
 @amount_document_bp.route("/<int:document_id>/delete", methods=["POST"])
 def delete(document_id: int) -> WerkzeugResponse:
-    document = get_document_or_404(document_id)
+    document = _get_document_or_404(document_id)
     try:
         db.session.delete(document)
         db.session.commit()

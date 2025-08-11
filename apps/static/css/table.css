@@ -1,0 +1,70 @@
+/* apps/static/css/table.css */
+
+/* ===== 基本レイアウト ===== */
+table {
+    width: 1000px;
+    margin: 1.5rem auto;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 14px;
+    border: 1px solid #a9b2bb;
+    border-radius: 3px;
+    overflow: hidden; /* 角丸を活かすため */
+}
+
+table thead {
+    background-color: #f6f8fa;
+}
+
+table th,
+table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #d0d7de;
+}
+
+.table th {
+    font-weight: 600;
+    color: #57606a;
+}
+
+/* 行ホバー */
+table tbody tr:hover td {
+    background-color: #f3f4f6;
+}
+
+/* 固定レイアウト（%幅を効かせたいときに併用） */
+.table--fixed {
+    table-layout: fixed;
+}
+
+/* ===== クリック可能な行 ===== */
+tr.clickable-row {
+    cursor: pointer;
+}
+tr.clickable-row:hover td {
+    background-color: #f3f4f6;
+}
+
+/* 行クリックの視覚ヒント */
+tr.clickable-row { cursor: pointer; }
+tr.clickable-row:hover td { background-color: #f3f4f6; }
+
+/* actionセルを右寄せしたいとき */
+td.actions { text-align: right; }
+
+/* ===== ユーティリティ ===== */
+.text-right { text-align: right; }
+.text-center { text-align: center; }
+
+/* 長文を省略表示したいセル用 */
+.truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* アクションセルの並びを整える */
+.actions {
+
+}

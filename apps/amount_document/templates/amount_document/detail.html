@@ -3,125 +3,111 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('amount_document.static', filename='css/amount_document.css') }}">
-    <title>{{ document_type_label }}書</title>
+    <title>{{ document.client.name }}</title>
 </head>
 <body>
 
-<!-- ここにリンクボタン群 -->
-<div class="btn-group mb-3 print-hide" role="group" aria-label="帳票リンク">
-    {% set estimate_label = AmountDocumentType(AmountDocumentType.ESTIMATE).label %}
-    {% set invoice_label = AmountDocumentType(AmountDocumentType.INVOICE).label %}
-    {% set receipt_label = AmountDocumentType(AmountDocumentType.RECEIPT).label %}
-
-    <button type="button" class="btn-outline-primary" data-doc-label="{{ estimate_label }}">{{ estimate_label }}書
-    </button>
-    <button type="button" class="btn-outline-primary" data-doc-label="{{ invoice_label }}">{{ invoice_label }}書
-    </button>
-    <button type="button" class="btn-outline-primary" data-doc-label="{{ receipt_label }}">{{ receipt_label }}書
-    </button>
-    <button type="button" class="btn-outline-primary" data-doc-label="押印">押印</button>
-    <a href="{{ url_for('amount_document.index') }}">一覧</a>
-</div>
 <div id="wrapper">
+    <div class="btn-toolbar print-hide">
+        <div class="logic-buttons">
+            <button type="button" class="btn" data-doc-label="{{ doc_labels.estimate }}">見積書</button>
+            <button type="button" class="btn" data-doc-label="{{ doc_labels.invoice }}">請求書</button>
+            <button type="button" class="btn" data-doc-label="{{ doc_labels.receipt }}">領収書</button>
+            <button type="button" class="btn" data-doc-label="押印">押　印</button>
+        </div>
+
+        <div class="nav-buttons">
+            <a class="btn nav-btn" href="{{ url_for('amount_document.edit', document_id=document.id) }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+                    <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"></path>
+                </svg>
+            </a>
+            <a class="btn nav-btn" href="{{ url_for('amount_document.index', client_id=document.client.id) }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+                    <path d="M5.75 2.5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM2 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path>
+                </svg>
+            </a>
+        </div>
+    </div>
+
     <div id="main-frame">
         <table class="header-frame">
-            <tr>
-                {% for _ in range(13) %}
-                <td></td>
-                {% endfor %}
-            </tr>
+            <tr>{% for _ in range(13) %}<td></td>{% endfor %}</tr>
             {% import "macros.html" as macros %}
             <tr>
                 <td colspan="10"></td>
                 <td colspan="3" align="right">
-                    <span id="estimate_date"
-                          class="date-label">{{ macros.render_wareki_date(document.estimate_date) }}</span>
-                    <span id="invoice_date" class="date-label" style="display:none;">{{ macros.render_wareki_date(document.invoice_date) }}</span>
-                    <span id="receipt_date" class="date-label" style="display:none;">{{ macros.render_wareki_date(document.receipt_date) }}</span>
+                    <span id="estimate_date" class="date-label">{{ macros.render_wareki_date(document.estimate_date) }}</span>
+                    <span id="invoice_date"  class="date-label" style="display:none;">{{ macros.render_wareki_date(document.invoice_date) }}</span>
+                    <span id="receipt_date"  class="date-label" style="display:none;">{{ macros.render_wareki_date(document.receipt_date) }}</span>
                 </td>
             </tr>
 
             <tr>
-                <td class="document-title" colspan="13" align="center">
-                    {{ document_type_label }}書
-                </td>
+                <td class="document-title" colspan="13" align="center">見積書</td>
             </tr>
 
-            <tr>
-                <td height="60" colspan="13">　</td>
-            </tr>
+            <tr><td height="60" colspan="13">　</td></tr>
 
             <tr>
-                <td id="client-name" class="client-name" colspan="5">
-                    {{ client_name }}
-                </td>
+                <td id="client-name" class="client-name" colspan="5">{{ document.client.name }}</td>
                 <td colspan="1">殿</td>
                 <td colspan="2"></td>
-                <td colspan="5">{{ param['affiliation']}}</td>
+                <td colspan="5">{{ office.affiliation }}</td>
             </tr>
 
             <tr>
                 <td colspan="8" height="40">　</td>
-                <td colspan="5" align="left">〒{{ param['post_code'] }}</td>
+                <td colspan="5" align="left">〒{{ office.post_code }}</td>
             </tr>
 
             <tr>
                 <td colspan="1">物件名</td>
-                <td colspan="7" style="word-break: break-word;">
-                    {{ document.entrusted_book_name }}
-                </td>
-                <td colspan="4" align="left">〒{{ param['address'] | safe}}</td>
+                <td colspan="7" style="word-break: break-word;">{{ document.entrusted_book_name }}</td>
+                <td colspan="5" align="left">{{ office.address | safe }}</td>
             </tr>
 
             <tr>
                 <td colspan="8"></td>
-                <td colspan="5" align="left" style="word-break: break-word;">　　　　　 　{{ param['name'] | safe }}</td>
+                <td colspan="5" align="left" style="word-break: break-word;">　　　　　 　{{ office.name | safe }}</td>
             </tr>
 
             <tr>
-                <td id="amount-label" colspan="1">{{ document_type_label }}額</td>
+                <td id="amount-label" colspan="1">見積額</td>
                 <td id="amount-price" class="amount-price" colspan="4" align="right">
-                    {{ document.format_number(document.calculate_final_amounts()['grand_total']) }}円
+                    {{ document.format_number(totals['grand_total']) }}円
                 </td>
                 <td colspan="3"></td>
-                <td colspan="5" align="left" style="word-break: break-word;">Mail：{{ param['mail'] }}</td>
+                <td colspan="5" align="left" style="word-break: break-word;">Mail：{{ office.mail }}</td>
             </tr>
 
             <tr>
-                <td class="smallString" colspan=7">
-                    （税込）100円以下端数御値引き
-                </td>
+                <td class="smallString" colspan="7">（税込）100円以下端数御値引き</td>
                 <td colspan="1"></td>
-                <td colspan="5" align="left" style="word-break: break-word;">Tell：{{ param['tell'] }}</td>
+                <td colspan="5" align="left" style="word-break: break-word;">Tell：{{ office.tell }}</td>
             </tr>
 
-            <tr>
-                <td colspan="13" height="50"></td>
-            </tr>
+            <tr><td colspan="13" height="50"></td></tr>
         </table>
 
         <table class="frame">
-
             <thead>
             <tr class="border-top-strong">
                 <th class="item-type cell-right-border" colspan="2" align="center">区 分</th>
                 <th class="item-type cell-right-border" colspan="5" align="center">種 別</th>
                 <th class="item-type cell-right-border" colspan="3" align="center">報 酬（円）</th>
-                <th class="item-type cell-right-border" colspan="3" align="center">登録免許税等・印紙税</th>
+                <th class="item-type cell-right-border" colspan="3" align="center">登録免許税等（円）</th>
             </tr>
             </thead>
-            <tr class="offset">
-                {% for _ in range(13) %}
-                <td></td>
-                {% endfor %}
-            </tr>
-            {# itemsテーブルを読み込み（ただしフォームフィールドではなく、値を表示） #}
+
+            <tr class="offset">{% for _ in range(13) %}<td></td>{% endfor %}</tr>
+
             {% for i in range(20) %}
-            <tr {% if i== 0 or i== 15 %}class="border-top-strong" {% endif %}>
+            <tr {% if i==0 or i==15 %}class="border-top-strong"{% endif %}>
                 {% if i == 0 %}
-                <td class="item-type cell-right-border" colspan="2" rowspan="15" align="center">手続の代理<br>・<br>書類作成等
-                </td>
+                <td class="item-type cell-right-border" colspan="2" rowspan="15" align="center">手続の代理<br>・<br>書類作成等</td>
                 {% elif i == 15 %}
                 <td class="item-type cell-right-border" colspan="2" rowspan="5" align="center">その他<br>費 用</td>
                 {% endif %}
@@ -129,63 +115,48 @@
                     {{ document.item_types[i] if document.item_types and i < document.item_types|length else "" }}
                 </td>
                 <td class="cell-right-border text-end" colspan="3">
-                    {% if document.reward_amounts and i < document.reward_amounts|length and document.reward_amounts[i]
-                    != 0 %}
+                    {% if document.reward_amounts and i < document.reward_amounts|length and document.reward_amounts[i] != 0 %}
                     {{ document.format_number(document.reward_amounts[i]) }}
-                    {% else %}
-                    &nbsp;
-                    {% endif %}
+                    {% else %}&nbsp;{% endif %}
                 </td>
                 <td class="cell-right-border text-end" colspan="3">
-                    {% if document.expense_amounts and i < document.expense_amounts|length and
-                    document.expense_amounts[i] != 0 %}
+                    {% if document.expense_amounts and i < document.expense_amounts|length and document.expense_amounts[i] != 0 %}
                     {{ document.format_number(document.expense_amounts[i]) }}
-                    {% else %}
-                    &nbsp;
-                    {% endif %}
+                    {% else %}&nbsp;{% endif %}
                 </td>
             </tr>
             {% endfor %}
-            <!-- amount_document/templates/amount_document/detail.html -->
-            {% if document %}
-            {% set amounts = display_totals if display_totals is defined else document.calculate_final_amounts() %}
 
+            {% if document %}
             <tr class="border-top-strong">
                 <td colspan="7" class="item-type cell-right-border text-center">小　計</td>
                 <td colspan="1" class="text-end">①</td>
-                <td colspan="2" class="cell-right-border text-end">{{ document.format_number(amounts.reward) }}</td>
+                <td colspan="2" class="cell-right-border text-end">{{ document.format_number(totals['reward']) }}</td>
                 <td colspan="1" class="text-end">②</td>
-                <td colspan="2" class="cell-right-border text-end">{{ document.format_number(amounts.expense) }}</td>
+                <td colspan="2" class="cell-right-border text-end">{{ document.format_number(totals['expense']) }}</td>
             </tr>
 
             <tr class="border-top-strong">
                 <td colspan="2" class="item-type border-top-strong cell-right-border">合計</td>
                 <td colspan="5" class="border-top-strong cell-right-border text-end">① ＋ ②</td>
                 <td colspan="1" class="border-top-strong text-end">③</td>
-                <td colspan="2" class="border-top-strong cell-right-border text-end">{{
-                    document.format_number(amounts.subtotal) }}
-                </td>
+                <td colspan="2" class="border-top-strong cell-right-border text-end">{{ document.format_number(totals['subtotal']) }}</td>
                 <td colspan="3" class="border-top-strong text-center"></td>
             </tr>
 
             <tr>
                 <td colspan="2" class="item-type cell-right-border">消費税</td>
-                <td colspan="5" class="cell-right-border text-end">① × {{ (tax_config.consumption_tax * 100) | round(0)
-                    | int }}%
-                </td>
+                <td colspan="5" class="cell-right-border text-end">① × {{ (tax.consumption_tax * 100) | round(0) | int }}%</td>
                 <td colspan="1" class="text-end">④</td>
-                <td colspan="2" class="cell-right-border text-end">{{ document.format_number(amounts.tax) }}</td>
+                <td colspan="2" class="cell-right-border text-end">{{ document.format_number(totals['tax']) }}</td>
                 <td colspan="3" class="text-center"></td>
             </tr>
 
-            <tr class="">
+            <tr>
                 <td colspan="2" class="item-type cell-right-border">源泉徴収</td>
-                <td colspan="5" class="cell-right-border text-end">（① ー {{ tax_config.withholding_exemption }} ）× {{
-                    tax_config.withholding_tax }}
-                </td>
+                <td colspan="5" class="cell-right-border text-end">（① ー {{ tax.withholding_exemption }} ）× {{ tax.withholding_tax }}</td>
                 <td colspan="1" class="text-end">▲ ⑤</td>
-                <td colspan="2" class="cell-right-border text-end">{{ document.format_number(amounts.withholding) }}
-                </td>
+                <td colspan="2" class="cell-right-border text-end">{{ document.format_number(totals['withholding']) }}</td>
                 <td colspan="3"></td>
             </tr>
 
@@ -193,8 +164,7 @@
                 <td colspan="2" class="item-type cell-right-border">差引請求額</td>
                 <td colspan="5" class="cell-right-border text-end">③ ＋ ④ − ⑤</td>
                 <td colspan="1" class="text-end">⑥</td>
-                <td colspan="2" class="cell-right-border text-end">{{ document.format_number(amounts.grand_total) }}
-                </td>
+                <td colspan="2" class="cell-right-border text-end">{{ document.format_number(totals['grand_total']) }}</td>
                 <td colspan="3"></td>
             </tr>
 
@@ -213,22 +183,24 @@
                 <td colspan="5" class="cell-right-border text-end">⑥ − ⑦</td>
                 <td colspan="1" class="text-center">税込額</td>
                 <td colspan="2" class="cell-right-border text-end fw-bold">
-                    {{ document.format_number((amounts.grand_total or 0) - (document.advance_payment or 0)) }}
+                    {{ document.format_number((totals['grand_total'] or 0) - (document.advance_payment or 0)) }}
                 </td>
                 <td colspan="3"></td>
             </tr>
             {% endif %}
 
             <tr>
-                <td class="border-top-double" colspan="13" style="white-space: pre-wrap;">{{ document_note }}</td>
+                <td class="note-cell border-top-double" colspan="13">{{ document_note }}</td>
             </tr>
         </table>
     </div>
 </div>
 
-</body>
 <script>
+    // JS 側で使うクライアント名と印影画像URL
+    const clientName   = "{{ document.client.name | e }}";
     const stampImageUrl = "{{ url_for('amount_document.static', filename='images/stamp.png') }}";
 </script>
 <script src="{{ url_for('amount_document.static', filename='js/amount_document_ui.js') }}"></script>
+</body>
 </html>

@@ -1,0 +1,41 @@
+/* ------------------------------
+   Tooltip (共通スタイル)
+------------------------------ */
+.tooltip {
+    position: relative;  /* 基準位置を持つ親（ボタンの箱） */
+    display: inline-block; /* インライン要素（aタグなど）でもblockのように扱う */
+}
+
+.tooltip .tooltip-text {
+    /* 初期状態：非表示 */
+    visibility: hidden;    /* DOMにはあるけど画面には見えない */
+    opacity: 0;            /* 透明度 0=透明 / 1=不透明 */
+
+    /* サイズと見た目 */
+    width: max-content;    /* 中のテキストに合わせて幅を調整 */
+    max-width: 200px;      /* 長すぎ防止（改行させないなら保険） */
+    background-color: #333;/* 背景を濃いグレーに */
+    color: #fff;           /* 文字は白 */
+    text-align: center;    /* 中央寄せ */
+    padding: 4px 8px;      /* 内側余白 */
+    border-radius: 4px;    /* 角を丸くする */
+    font-size: 12px;       /* フォントサイズ小さめ */
+    white-space: nowrap;   /* 折り返さない（横に伸びる） */
+
+    /* 位置指定（左側に表示するよう変更） */
+    position: absolute;    /* ボタンを基準に絶対位置 */
+    top: 20%;              /* 親要素の高さから下への距離 */
+    right: 110%;           /* ボタンの左側に配置（125%分だけ離す） */
+    transform: translateY(-50%); /* 縦中央揃えのため上に半分ずらす */
+
+    /* レイヤーとアニメーション */
+    z-index: 1;            /* 他要素より前面に表示 */
+    transition: opacity 0.1s ease-in-out; /* 透明度の変化をアニメーション */
+}
+
+/* hover または focus で表示 */
+.tooltip:hover .tooltip-text,
+.tooltip:focus-within .tooltip-text {
+    visibility: visible;  /* 表示ON */
+    opacity: 1;           /* 透明度を100%に */
+}

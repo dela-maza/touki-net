@@ -1,0 +1,61 @@
+@startuml classes_amount_document
+'!include ./theme-dark.puml
+'set namespaceSeparator none
+class "AmountDocument" as apps.amount_document.models.AmountDocument {
+  advance_payment
+  apply_consumption_tax
+  apply_withholding
+  client
+  client_id
+  created_at
+  entrusted_book_name
+  estimate_date
+  expense_amounts
+  id
+  invoice_date
+  item_types
+  note
+  receipt_date
+  reward_amounts
+  calculate_final_amounts() -> Dict[str, int]
+  format_number(value: int) -> str
+  get_items()
+  set_items(item_types_list, reward_list, expense_list)
+}
+class "AmountDocumentCalculator" as apps.amount_document.calculator.AmountDocumentCalculator {
+  apply_consumption_tax : Final[bool]
+  apply_withholding : Final[bool]
+  consumption_tax_rate : Final[float]
+  expense_amounts : Final[List[int]]
+  reward_amounts : Final[List[int]]
+  withholding_exemption_amount : Final[int]
+  withholding_tax_rate : Final[float]
+  calculate_totals() -> Dict[str, int]
+  consumption_tax_amount() -> int
+  get_display_totals() -> Dict[str, int]
+  get_tax_config() -> Dict[str, Union[int, float]]
+  total_expense_amount() -> int
+  total_reward_amount() -> int
+  withholding_tax_amount() -> int
+}
+class "AmountDocumentForm" as apps.amount_document.forms.AmountDocumentForm {
+  advance_payment : IntegerField
+  apply_consumption_tax : BooleanField
+  apply_withholding : BooleanField
+  client_id : HiddenField
+  created_at : DateField
+  entrusted_book_name : StringField
+  estimate_date : DateField
+  expense_amounts : FieldList
+  invoice_date : DateField
+  item_types : FieldList
+  note : TextAreaField
+  receipt_date : DateField
+  reward_amounts : FieldList
+}
+class "AmountDocumentType" as apps.amount_document.models.AmountDocumentType {
+  label
+  name
+  from_id(_id: int) -> 'AmountDocumentType'
+}
+@enduml

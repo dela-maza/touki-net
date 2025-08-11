@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Entrusted Book #{{ book.id }}</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/detail.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tooltip.css') }}">
+
+    <link rel="stylesheet" href="{{ url_for('entrusted_book.static', filename='detail-layout.css') }}">
+</head>
+<body>
+
+<div class="detail-layout">
+    <!-- 30% -->
+    <div class="detail-book">
+        {% include 'entrusted_book/_detail.html' %}
+    </div>
+
+    <!-- 40% -->
+    <div class="detail-clients">
+        {% include 'client/_detail.html' %}
+    </div>
+
+    <!-- 30% -->
+    <div class="detail-application">
+
+    </div>
+</div>
+
+</body>
+</html>

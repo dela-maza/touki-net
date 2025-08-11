@@ -1,6 +1,7 @@
-### entrusted_book/models.py
+### apps/entrusted_book/models.py
 from datetime import datetime
 from db import db
+
 
 class EntrustedBook(db.Model):
     __tablename__ = 'entrusted_book'
@@ -15,6 +16,6 @@ class EntrustedBook(db.Model):
     clients = db.relationship(
         'Client',
         back_populates='entrusted_book',  # Clientモデル側で対応するリレーション名に合わせる
-        cascade='all, delete-orphan',    # クライアントの孤児削除も管理したい場合に指定
-        lazy='select'                    # 遅延ロード設定（必要に応じて変更）
+        cascade='all, delete-orphan',  # all:子（Client）にも連鎖（cascade）させる delete-orphan:孤児（orphan）になった子を削除する
+        lazy='select'  # 遅延ロード設定（必要に応じて変更）
     )

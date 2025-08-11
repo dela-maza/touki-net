@@ -1,46 +1,43 @@
-// amount_document/stat/js/amount_document_ui.js
-document.querySelectorAll('button[data-doc-label]').forEach(button => {
+document.querySelectorAll('button[data-doc-label]').
+forEach(button => {
     button.addEventListener('click', () => {
         const label = button.getAttribute('data-doc-label');
         const titleTd = document.querySelector('td.document-title');
         const mainFrame = document.getElementById('main-frame');
-        const amountLabelTd = document.getElementById('amount-label');  // 金額ラベル
-        const estimateDate = document.getElementById('estimate_date');  // 日付表示のdivなど
+        const amountLabelTd = document.getElementById('amount-label');
+        const estimateDate = document.getElementById('estimate_date');
         const invoiceDate = document.getElementById('invoice_date');
         const receiptDate = document.getElementById('receipt_date');
 
-        // 一旦全部非表示にする
-        estimateDate.style.display = 'none';
-        invoiceDate.style.display = 'none';
-        receiptDate.style.display = 'none';
+        // --- ボタンの選択状態をリセット ---
+        document.querySelectorAll(
+            'button[data-doc-label]')
+            .forEach(btn => btn.classList.remove('active'));
+        // クリックされた自分だけ active に
+        button.classList.add('active');
 
-        // 押されたボタンに応じて表示切替
-        if (label.includes('見積')) {
-            estimateDate.style.display = '';
-        } else if (label.includes('請求')) {
-            invoiceDate.style.display = '';
-        } else if (label.includes('領収')) {
-            receiptDate.style.display = '';
-        }
-
-        // タイトルと金額ラベルの更新（押印・戻る以外）
         if (label !== "押印" && label !== "戻る") {
-            if (titleTd) {
-                titleTd.textContent = label + '書';
-            }
-            if (amountLabelTd) {
-                amountLabelTd.textContent = label + '額';
+            // --- 日付表示切替 ---
+            estimateDate.style.display = 'none';
+            invoiceDate.style.display = 'none';
+            receiptDate.style.display = 'none';
+
+            if (label.includes('見積')) {
+                estimateDate.style.display = '';
+            } else if (label.includes('請求')) {
+                invoiceDate.style.display = '';
+            } else if (label.includes('領収')) {
+                receiptDate.style.display = '';
             }
 
-            // 日付表示切替
-            if (estimateDate && invoiceDate && receiptDate) {
-                estimateDate.style.display = label.includes('見積') ? 'table-row' : 'none';
-                invoiceDate.style.display = label.includes('請求') ? 'table-row' : 'none';
-                receiptDate.style.display = label.includes('領収') ? 'table-row' : 'none';
-            }
+            if (titleTd) titleTd.textContent = label + '書';
+            if (amountLabelTd) amountLabelTd.textContent = label + '額';
+
+            // --- ブラウザタイトルも更新 ---
+            document.title = `${label}書（${clientName}殿）`;
         }
 
-        // 押印の表示・非表示トグル
+        // --- 押印の表示切替 ---
         if (label === "押印") {
             const existingImg = document.getElementById('stamp-image');
             if (existingImg && mainFrame) {
@@ -48,7 +45,7 @@ document.querySelectorAll('button[data-doc-label]').forEach(button => {
             } else if (mainFrame) {
                 const stampImg = document.createElement('img');
                 stampImg.id = 'stamp-image';
-                stampImg.src = stampImageUrl;  // Jinjaから渡されたURL
+                stampImg.src = stampImageUrl;
                 stampImg.alt = "押印";
                 stampImg.style.position = 'absolute';
                 stampImg.style.left = '840px';
@@ -58,16 +55,15 @@ document.querySelectorAll('button[data-doc-label]').forEach(button => {
                 mainFrame.appendChild(stampImg);
             }
         } else {
-            // 押印以外は画像削除
             const existingImg = document.getElementById('stamp-image');
-            if (existingImg) {
-                existingImg.remove();
-            }
+            if (existingImg) existingImg.remove();
         }
-
-        // 戻るボタンの処理
-        // if (label === "戻る") {
-        //     window.history.back();
-        // }
     });
+});
+
+// 初期ロード時に「見積書」ボタンをアクティブに
+document.addEventListener('DOMContentLoaded', () => {
+    document.title = `見積書（${clientName}殿）`;
+    const estimateBtn = document.querySelector('button[data-doc-label*="見積"]');
+    if (estimateBtn) estimateBtn.classList.add('active');
 });

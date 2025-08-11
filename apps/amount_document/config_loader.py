@@ -2,6 +2,7 @@
 import configparser
 import re
 import os
+from configparser import ConfigParser
 from typing import Union
 from apps.client.models import ClientType
 from apps.amount_document.constants import MIN_ENTRIES
@@ -13,7 +14,7 @@ if TYPE_CHECKING:
 CONFIG_FILE = os.path.join(os.path.dirname(__file__), "config.ini")
 
 
-def get_config_parser() -> configparser.ConfigParser:
+def _get_config_parser() -> configparser.ConfigParser:
     """ConfigParserの初期化と読み込み"""
     parser = configparser.ConfigParser()
     parser.read(CONFIG_FILE, encoding="utf-8")
@@ -22,7 +23,7 @@ def get_config_parser() -> configparser.ConfigParser:
 
 def load_config() -> dict:
     """主要な設定値を辞書形式で返す"""
-    parser = get_config_parser()
+    parser = _get_config_parser()
     return {
         "OFFICE": dict(parser["OFFICE"]),
         "BANK": dict(parser["BANK"]),
@@ -68,16 +69,15 @@ def natural_key(key: str):
 
 
 def get_default_entries_for_client_type(client_type: ClientType) -> dict:
-    """クライアント種別に応じたデフォルトエントリを取得し、MIN_ENTRIES分埋める"""
+    """クライアント種別（権利者・義務者・申請人）に応じたデフォルトエントリを取得し、MIN_ENTRIES分埋める"""
     section_map = {
         ClientType.RIGHT_HOLDER: "DEFAULT_ENTRIES_RIGHT_HOLDER",
         ClientType.OBLIGATION_HOLDER: "DEFAULT_ENTRIES_OBLIGATION_HOLDER",
         ClientType.APPLICANT: "DEFAULT_ENTRIES_APPLICANT",
     }
-
     section_name = section_map.get(client_type)
-    parser = get_config_parser()
 
+    parser: ConfigParser = _get_config_parser()
     if section_name and parser.has_section(section_name):
         # ["entry1", "entry10", "entry2", ...]を
         # ["entry1", "entry2", ... "entry10", ...]のように自然順（数字の大小を考慮）で並べ替える
@@ -101,7 +101,7 @@ def get_default_entries_for_client_type(client_type: ClientType) -> dict:
 
 def get_note_default_by_document_type(doc_type: 'AmountDocumentType') -> str:
     """AmountDocumentType に応じた備考の初期値を取得"""
-    parser = get_config_parser()
+    parser = _get_config_parser()
     try:
         return parser["NOTE_DEFAULTS"][doc_type.name]
     except KeyError:

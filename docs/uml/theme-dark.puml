@@ -1,0 +1,19 @@
+'theme-dark.puml
+
+' 共通テーマ（コントラスト強化）
+skinparam backgroundColor #1f232a
+skinparam defaultTextAlignment center
+
+'タイトル
+skinparam TitleFontColor #ffcc00      ' タイトル文字色（黄色）
+skinparam TitleBackgroundColor #333333 ' タイトル背景色（濃いグレー）
+
+' クラス図に関する見た目設定
+skinparam class {
+  BackgroundColor #222630   ' クラス本体の背景色
+  BorderColor #86a8ff       ' クラス枠線色
+  FontColor #ffffff         ' クラス内文字色
+}
+skinparam ArrowColor #ffb86c
+skinparam ArrowThickness 2
+skinparam Shadowing false

@@ -1,0 +1,30 @@
+@startuml packages_amount_document
+set namespaceSeparator none
+package "apps.amount_document" as apps.amount_document {
+}
+package "apps.amount_document.calculator" as apps.amount_document.calculator {
+}
+package "apps.amount_document.config_loader" as apps.amount_document.config_loader {
+}
+package "apps.amount_document.constants" as apps.amount_document.constants {
+}
+package "apps.amount_document.filters" as apps.amount_document.filters {
+}
+package "apps.amount_document.forms" as apps.amount_document.forms {
+}
+package "apps.amount_document.models" as apps.amount_document.models {
+}
+package "apps.amount_document.views" as apps.amount_document.views {
+}
+apps.amount_document.calculator --> apps.amount_document.config_loader
+apps.amount_document.config_loader --> apps.amount_document.constants
+apps.amount_document.filters --> apps.amount_document.models
+apps.amount_document.forms --> apps.amount_document.constants
+apps.amount_document.forms --> apps.amount_document.models
+apps.amount_document.models --> apps.amount_document.calculator
+apps.amount_document.views --> apps.amount_document.calculator
+apps.amount_document.views --> apps.amount_document.config_loader
+apps.amount_document.views --> apps.amount_document.forms
+apps.amount_document.views --> apps.amount_document.models
+apps.amount_document.config_loader ..> apps.amount_document.models
+@enduml

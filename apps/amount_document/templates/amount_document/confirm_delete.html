@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <title>Delete Amount Document #{{ document.id }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
+</head>
+<body>
+<h3 class="form-title">Delete Amount Document #{{ document.id }}</h3>
+
+<div class="form-box">
+    <p class="help" style="margin-bottom:1rem;">
+        本当に <strong>#{{ document.id }}</strong> を削除しますか？ この操作は元に戻せません。
+    </p>
+
+    <dl class="meta" style="margin-bottom:1rem;">
+        <dt>Client</dt><dd>{{ document.client.name if document.client else '-' }}</dd>
+        <dt>Entrusted Book</dt><dd>{{ document.entrusted_book_name }}</dd>
+        <dt>Created</dt><dd>{{ document.created_at.strftime('%Y-%m-%d %H:%M') }}</dd>
+    </dl>
+
+    <form method="post" action="{{ url_for('amount_document.delete', document_id=document.id) }}">
+        {{ csrf_token() }}
+        <div class="form-actions">
+            <button type="submit" class="btn primary">Delete</button>
+            <a class="btn secondary" href="{{ url_for('amount_document.index') }}">Cancel</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

@@ -1,7 +1,11 @@
-/* amount_document.css */
+/* ======================================
+   amount_document.css  (整理済み)
+   - 画面用スタイル
+   - 印刷(@media print)で上書き
+====================================== */
 
 /* ==========
-  全体設定
+  全体
 ========== */
 body {
     font-family: "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝", "MS PMincho", serif;
@@ -13,16 +17,10 @@ body {
 }
 
 /* ==========
-  共通設定
+  ユーティリティ
 ========== */
-.text-end {
-    text-align: right;
-}
-
-.text-center {
-    text-align: center;
-}
-
+.text-end   { text-align: right; }
+.text-center{ text-align: center; }
 
 /* ==========
   レイアウト
@@ -32,7 +30,7 @@ body {
     width: 1050px;
     height: 1420px;
     margin: 0 auto;
-    padding: 20px 20px 10px 20px; /* 左右 padding を減らす */
+    padding: 20px 20px 10px 20px;  /* 左右 padding を減らす */
     border: 1px solid #d9e8fa;
 }
 
@@ -41,84 +39,41 @@ body {
     margin: 0 60px;
 }
 
-tr.offset {
-    height: 0 !important;
-}
-
+tr.offset { height: 0 !important; }
 tr.offset > td {
     padding: 0 !important;
     border: none !important;
 }
 
-/* ==========
-  ナビ部
-========== */
-
-.btn-group {
-    display: flex;
-    justify-content: center;
-    padding:20px;
-    gap: 0.5rem;
-}
-
-.button {
-    font-size: 13px;
-    background-color: #fff;
-    border: 1px solid #e8e8e8;
-    line-height: 25px;
-    padding: 0 0 0 0;
-    letter-spacing: 0.1em;
-    width: 110px;
-}
 
 /* ==========
   テキスト装飾
 ========== */
 a {
     color: #000;
-    font-weight:normal;
+    font-weight: normal;
     text-decoration: none;
 }
 
-
-.smallString {
-    font-size: 13px;
-}
-
-.document-title {
-    font-size: 20px;
-    font-weight: bold;
-}
-
-.client-name {
-    font-size: 15px;
-    border-bottom: 1px solid #ffa500;
-}
-
-.amount-price {
-    padding-right: 5px;
-    font-size: 26px;
-    font-weight: bold;
-    border-bottom: 1px solid #ffa500;
-}
-
-.issued-date {
+.smallString   { font-size: 10px; text-align: center; }
+.document-title{ font-size: 17px; font-weight: bold; }
+.client-name   { font-size: 14px; border-bottom: 1px solid #ffa500; }
+.amount-price  { font-size: 19px; font-weight: bold; padding-right: 5px; border-bottom: 1px solid #ffa500; }
+.issued-date   {
     font-size: 14px;
-    /*border: none;*/
     font-family: "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝", "MS PMincho", serif;
 }
 
-
 /* ==========
-  テーブル関連
+  テーブル
 ========== */
 table {
     table-layout: fixed;
-    margin: 0 5px;
     border-collapse: collapse;
-    font-size: 15px;
-    font-weight: normal;
     width: 100%;
+    margin: 0 5px;
+    font-size: 13px;
+    font-weight: normal;
 }
 
 td, th {
@@ -132,134 +87,130 @@ td {
     padding-right: 5px;
 }
 
-/* テーブル枠用 */
+/* 外枠フレーム */
 table.frame {
     border: 1.5px solid #ffda97;
 }
-
 table.frame th,
 table.frame td {
-    padding: 0 10px;
     border: 1px solid #fdf1dc;
+    padding: 0 10px;
 }
 
-.item-type {
-    background-color: #ffb23e11;
-}
+/* セクション行 */
+.item-type { background-color: #ffb23e11; }
+
+/* 強調線（画面表示） */
+table.frame tr.border-top-strong    { border-top:    1.5px solid #ffda97; }
+table.frame tr.border-bottom-strong { border-bottom: 1.5px solid #ffda97; }
+table.frame .cell-left-border       { border-left:   1px solid #fbca70; }
+table.frame .cell-right-border      { border-right:  1px solid #fbca70; }
+
+td.bottom-dashed { border-bottom: 1px dashed #ffa500; }
 
 /* ==========
-  入力フィールド
+  入力系
 ========== */
 input[type="text"],
 input[type="number"] {
     font-family: "HiraMinProN-W3", "HG明朝E", "ＭＳ Ｐ明朝", "MS PMincho", "MS 明朝", serif;
     font-weight: normal;
     border: none;
-    font-size: 15px;
+    font-size: 13px;
 }
+input[type="number"] { text-align: right; }
 
-/* 数値入力は右寄せ */
-input[type="number"] {
-    text-align: right;
-}
+.readOnly { border: none; }
 
-/* ==========
-  特殊装飾
-========== */
-.readOnly {
-    border: none;
-}
-
+/* 明細ブロックの上下余白（画面） */
 .frame {
-    font-size: 15px;
+    font-size: 13px;
     padding-top: 70px;
     padding-bottom: 10px;
 }
 
-td.bottom-dashed {
-    border-bottom: 1px dashed #ffa500;
-}
-
-.text-end {
-    text-align: right;
-}
-
-.text-center {
-    text-align: center;
-}
-
-/* ==========
-  強調線
-========== */
-table.frame tr.border-top-strong {
-    border-top: 1.5px solid #ffda97 ;
-}
-
-table.frame tr.border-bottom-strong {
-    border-bottom: 1.5px solid #ffda97 ;
-}
-
-table.frame .cell-left-border {
-    border-left: 1cap solid #fbca70 ;
-}
-
-table.frame .cell-right-border {
-    border-right: 1px solid #fbca70 ;
-}
-
+/* 備考（textarea はフォーム時のみ） */
 textarea {
     display: block;
-    border: 1px solid #fff;
     width: 98%;
-    font-family: "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝",
-    "MS PMincho", serif;
-    font-size: 15px;
-    letter-spacing: 0.1em;
-    padding: 0;
     margin: 10px -1px 10px 10px;
+    padding: 0;
+    border: 1px solid #fff;
+    font-family: "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝", "MS PMincho", serif;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+
+    /* 3行固定（フォーム画面用） */
+    line-height: 1.4em;
+    height: calc(1.4em * 3);
+    resize: none;
+    overflow: hidden;
 }
+
+/* 備考（表示ページでの3行固定） */
+.note-cell {
+    white-space: pre-wrap;
+    padding: 10px !important;
+    line-height: 1.4;
+    height: calc(1.4em * 3); /* 3行分 */
+    overflow: hidden;
+}
+
+/* ======================================
+   印刷設定
+====================================== */
 @media print {
+
+    /* 押印の位置（mm指定で安定） */
+    #stamp-image {
+        position: absolute !important;
+        left: 156mm !important;
+        top: 55mm !important;
+        width: 20mm !important;
+        height: auto !important;
+        z-index: 999 !important;
+    }
 
     @page {
         size: A4 portrait;
-        margin: 10mm; /* プリンタ余白のため */
+        margin: 20mm; /* プリンタ余白 */
     }
 
-    body {
-        transform-origin: top left;
-        /*transform: scale(0.85);*/
+    html, body {
+        width: auto;
+        height: auto;
         margin: 0;
         padding: 0;
-        box-sizing: border-box;
+        overflow: visible;
     }
 
+    /* 余白微調整（紙面内オフセット） */
+    body {
+        transform-origin: top left;
+        box-sizing: border-box;
+        margin-top: 35px !important;
+        margin-left: 6px !important;
+        margin-right: 7px !important;
+    }
+
+    /* 余白・枠を消して紙面フィット */
     #wrapper {
         width: 100%;
         height: auto;
         margin: 0;
         padding: 0;
         border: none;
+        box-sizing: border-box;
     }
 
-    html, body {
-        margin: 0;
-        padding: 0;
-        height: 297mm;
-        width: 210mm;
-        overflow: visible;
-    }
+    /* 自動改ページ抑制（レイアウト崩れ防止） */
+    * { page-break-inside: avoid !important; break-inside: avoid !important; }
+    tr, thead, tbody { page-break-inside: auto; break-inside: auto; }
 
-    * {
-        page-break-inside: avoid !important;
-        break-inside: avoid !important;
-    }
+    /* 画面専用要素を非表示 */
+    .print-hide { display: none !important; }
 
-
-    tr, thead, tbody {
-        page-break-inside: auto;
-        break-inside: auto;
-    }
-
+    /* 文字サイズ・行間（印刷向けに微調整） */
     table {
         width: 100%;
         max-width: 100%;
@@ -267,65 +218,58 @@ textarea {
         page-break-inside: auto;
     }
 
-    .print-hide {
-        display: none !important;
-    }
+    /* フレームの印刷用枠線を明確化 */
+    table.frame, table.frame th, table.frame td { border: 1px solid #000 !important; }
+    table.header-frame, table.header-frame th, table.header-frame td { border: none !important; }
 
-    table.frame, table.frame th, table.frame td {
-        border: 1px solid #000 !important;
-    }
-    table.frame td {
-        border: none !important;
-    }
-    table.header-frame, table.header-frame th, table.header-frame td {
-        border: none !important;
-    }
+    /* ヘッダ行の行間を詰める */
+    table.header-frame td,
+    table.header-frame th { line-height: 18px !important; }
 
-
-    /* tbody td の実線ボーダーを消す */
+    /* 本文セルの余白・フォント縮小（紙面に収める） */
     table.frame tbody td {
         border: none !important;
         padding: 2pt 4pt;
-        font-size: 9pt;
-        line-height: 1.4;
+        font-size: 8pt;
+        line-height: 1.3;
     }
     td, th {
         padding: 2pt 2pt;
-        font-size: 9pt;
-        line-height: 1.4;
+        font-size: 8pt;
+        line-height: 1.3;
     }
-    /* セルは基本的にボーダーなし */
-    table.frame th,
-    table.frame td {
-        border: none !important;
+    table.frame th, table.frame td {
+        border: none !important;      /* デフォは消す */
         padding: 2pt 2pt;
-        font-size: 9pt;
+        font-size: 8pt;
         line-height: 1.4;
     }
     table.frame {
-        border-collapse: collapse; /* これがないとボーダーがダブることも */
-        border: 1.5px solid #000 !important; /* テーブル全体の枠線 */
+        border: 1.5px solid #000 !important; /* 外枠だけ残す */
     }
 
+    /* 強調線（印刷用の色は黒に統一） */
+    table.frame .border-top-strong    { border-top:    1px solid #000 !important; }
+    table.frame .border-bottom-strong { border-bottom: 1px solid #000 !important; }
+    table.frame .cell-left-border     { border-left:   1px solid #000 !important; }
+    table.frame .cell-right-border    { border-right:  1px solid #000 !important; }
 
-
-    table.frame .border-top-strong {
-        border-top: 1px solid #000 !important;
-    }
-    table.frame .border-bottom-strong {
+    /* 氏名・金額の下線は印刷でも残す */
+    #client-name,
+    #amount-price {
         border-bottom: 1px solid #000 !important;
-    }
-    table.frame .cell-left-border {
-        border-left: 1.5px solid #000 !important;
+        padding-bottom: 2px !important;
     }
 
-    table.frame .cell-right-border {
-        border-right: 1.5px solid #000 !important;
-    }
+    /* 見出しの縮小（紙面での視認性を保つ） */
+    .client-name  { font-size: 11px; }
+    .amount-price { font-size: 14px; }
 
-    .client-name,
-    .amount-price {
-        border-bottom: 1px solid #000 !important;
-        padding-bottom: 2px !important; /* 下線とテキストがくっつかないように */
+    /* 備考3行固定（印刷でも強制） */
+    .note-cell {
+        padding: 10px !important;
+        line-height: 1.4 !important;
+        height: calc(1.4em * 3) !important;
+        overflow: hidden !important;
     }
 }
