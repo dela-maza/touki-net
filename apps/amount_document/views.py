@@ -2,8 +2,8 @@
 # from pprint import pprint
 from flask import Blueprint, render_template, flash, redirect, url_for, request
 from db import db
-from apps.entrusted_book.models import EntrustedBook
-from flask import current_app
+# from apps.entrusted_book.models import EntrustedBook
+# from flask import current_app
 from apps.amount_document.calculator import AmountDocumentCalculator
 from apps.amount_document.forms import AmountDocumentForm
 from apps.amount_document.models import AmountDocument
@@ -12,9 +12,8 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.wrappers.response import Response as WerkzeugResponse
 from typing import Dict, Union, Optional
-from apps.amount_document.config_loader import load_config
+# from apps.amount_document.config_loader import load_config
 
-# param = load_config()["OFFICE"]
 
 amount_document_bp = Blueprint(
     "amount_document", __name__, url_prefix="/amount-document", template_folder="templates", static_folder="static"
