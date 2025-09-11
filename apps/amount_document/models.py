@@ -3,7 +3,7 @@ from datetime import datetime
 from db import db
 from sqlalchemy.dialects.postgresql import JSONB
 from typing import Dict
-from apps.amount_document.calculator import AmountDocumentCalculator
+# from apps.amount_document.calculator import AmountDocumentCalculator
 
 
 class AmountDocument(db.Model):

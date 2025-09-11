@@ -12,13 +12,29 @@ entrusted_book_bp = Blueprint(
     static_folder='static'
 )
 
-# --------- / ---------
+# --------------------------
+# Index（一覧）
+# --------------------------
 @entrusted_book_bp.route('/')
 def index():
     books = EntrustedBook.query.order_by(EntrustedBook.name).all()
     return render_template('entrusted_book/index.html', books=books)
 
-# --------- /create ---------
+# --------------------------
+# Detail（詳細）
+# --------------------------
+@entrusted_book_bp.route('/<int:book_id>')
+def detail(book_id):
+    book = EntrustedBook.query.get_or_404(book_id)
+    return render_template(
+        'entrusted_book/detail_layout.html',
+        book=book,
+        clients=book.clients
+    )
+
+# --------------------------
+# Create（新規）
+# --------------------------
 @entrusted_book_bp.route("/create", methods=["GET", "POST"])
 def create():
     form = EntrustedBookForm()
@@ -35,7 +51,9 @@ def create():
                            form=form,
                            title="Create Entrusted Book",)
 
-# --------- /edit ---------
+# --------------------------
+# Edit（更新）
+# --------------------------
 @entrusted_book_bp.route("/<int:book_id>/edit", methods=["GET", "POST"])
 def edit(book_id):
     book = EntrustedBook.query.get_or_404(book_id)
@@ -53,24 +71,20 @@ def edit(book_id):
         title="Edit Entrusted Book",
     )
 
-# --------- /detail ---------
-@entrusted_book_bp.route('/<int:book_id>')
-def detail(book_id):
-    book = EntrustedBook.query.get_or_404(book_id)
-    return render_template(
-        'entrusted_book/detail_layout.html',
-        book=book,
-        clients=book.clients
-    )
 
-# --------- /confirm_delete ---------
+
+# --------------------------
+# Confirm Delete（確認）
+# --------------------------
 @entrusted_book_bp.route('/<int:book_id>/confirm_delete')
 def confirm_delete(book_id):
     form = EntrustedBookForm()
     book = EntrustedBook.query.get_or_404(book_id)
     return render_template('entrusted_book/confirm_delete.html', book=book,form=form)
 
-# --------- /delete ---------
+# --------------------------
+# Delete（削除）
+# --------------------------
 @entrusted_book_bp.route('/<int:book_id>/delete', methods=['POST'])
 def delete(book_id):
     book = EntrustedBook.query.get_or_404(book_id)

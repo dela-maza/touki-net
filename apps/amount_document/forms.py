@@ -31,3 +31,4 @@ class AmountDocumentForm(FlaskForm):
     estimate_date = DateField('見積日', validators=[Optional()])
     invoice_date = DateField('請求日', validators=[Optional()])
     receipt_date = DateField('領収日', validators=[Optional()])
+    client_id = HiddenField()# client_idの受渡用隠しフィールド

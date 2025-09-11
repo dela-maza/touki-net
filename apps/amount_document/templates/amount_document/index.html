@@ -8,68 +8,85 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/table.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/index-table.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/header-title.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/btn.css') }}">
     <link rel="stylesheet" href="{{ url_for('amount_document.static', filename='style.css') }}">
 </head>
 <body>
-
-<h3>Amount Documents</h3>
-
-<div class="button-list">
-    <a class="btn"
-       href="{{ url_for('amount_document.create', client_id=client_id) }}">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
-            <path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z"></path>
-        </svg>
-        New Amount Document
-    </a>
-    <a class="btn" href="{{ url_for('entrusted_book.index',client_id=client_id ) }}">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
-            <path d="M5.75 2.5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM2 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path>
-        </svg>
-        Entrusted Books
-    </a>
+<div class="header-title">
+    <h1>
+        <img src="{{ url_for('static', filename='icon/24/document.svg') }}" alt="book icon" width="20" height="20">
+        <span>Amount Documents</span>
+    </h1>
+    <nav class="breadcrumb">
+        {% if entrusted_book %}
+        <img src="{{ url_for('static', filename='icon/24/book.svg') }}" alt="book icon" width="20" height="20">
+        <a href="{{ url_for('amount_document.index', entrusted_book_id=entrusted_book.id) }}">
+            {{ entrusted_book.name }}
+        </a>
+        {% endif %}
+        {% if client %}
+        <span class="separator"> &gt; </span>
+        <img src="{{ url_for('static', filename='icon/24/person.svg') }}" alt="book icon" width="20" height="20">
+        <a href="{{ url_for('entrusted_book.detail', book_id=entrusted_book.id) }}">
+            {{ client.name }}
+        </a>
+        {% endif %}
+    </nav>
 </div>
-
-{% if documents %}
-<table class="table table--fixed">
-    <thead>
-    <tr>
-        <th style="width: 5%;">id</th>
-        <th style="width: 15%;">client</th>
-        <th style="width: 55%;">entrusted_book_name</th>
-        <th style="width: 13%;">created_at</th>
-        <th style="width: 12%;">action</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for doc in documents %}
-    <tr class="clickable-row"
-        data-href="{{ url_for('amount_document.detail', document_id=doc.id) }}">
-        <td>{{ doc.id }}</td>
-        <td class="truncate">{{ doc.client.name }}</td>
-        <td class="truncate">{{ doc.entrusted_book_name }}</td>
-        <td>{{ doc.created_at.strftime('%Y-%m-%d') if doc.created_at else '' }}</td>
-        <td class="actions">
-            <a class="btn"
-               href="{{ url_for('amount_document.edit', document_id=doc.id) }}"
-               aria-label="edit">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
-                    <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"></path>
-                </svg>
-            </a>
-            <a class="btn"
-               href="{{ url_for('amount_document.confirm_delete', document_id=doc.id) }}"
-               aria-label="delete">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
-                    <path d="M11 1.75V3h2.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75ZM4.496 6.675l.66 6.6a.25.25 0 0 0 .249.225h5.19a.25.25 0 0 0 .249-.225l.66-6.6a.75.75 0 0 1 1.492.149l-.66 6.6A1.748 1.748 0 0 1 10.595 15h-5.19a1.75 1.75 0 0 1-1.741-1.575l-.66-6.6a.75.75 0 1 1 1.492-.15ZM6.5 1.75V3h3V1.75a.25.25 0 0 0-.25-.25h-2.5a.25.25 0 0 0-.25.25Z"></path>
-                </svg>
-            </a>
-        </td>
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
+<div class="table-container">
+    <div class="btn-group">
+        <a class="btn"
+           href="{{ url_for('amount_document.create', client_id=client.id) }}">
+            <img src="{{ url_for('static', filename='icon/16/new.svg') }}" alt="book icon">
+            New Amount Document
+        </a>
+        <a class="btn" href="{{ url_for('entrusted_book.index',client_id=client_id ) }}">
+            <img src="{{ url_for('static', filename='icon/16/list.svg') }}" alt="book icon">
+            Entrusted Books
+        </a>
+    </div>
+    {% if documents %}
+    <table class="table table--fixed">
+        <thead>
+        <tr>
+            <th style="width: 5%;">id</th>
+            <th style="width: 15%;">client</th>
+            <th style="width: 55%;">entrusted_book_name</th>
+            <th style="width: 13%;">created_at</th>
+            <th style="width: 12%;">action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for doc in documents %}
+        <tr class="clickable-row"
+            data-href="{{ url_for('amount_document.detail', document_id=doc.id) }}">
+            <td>{{ doc.id }}</td>
+            <td class="truncate">{{ doc.client.name }}</td>
+            <td class="truncate">{{ doc.entrusted_book_name }}</td>
+            <td>{{ doc.created_at.strftime('%Y-%m-%d') if doc.created_at else '' }}</td>
+            <td class="actions">
+                <a class="btn"
+                   href="{{ url_for('amount_document.edit', document_id=doc.id) }}"
+                   aria-label="edit">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+                        <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"></path>
+                    </svg>
+                </a>
+                <a class="btn"
+                   href="{{ url_for('amount_document.confirm_delete', document_id=doc.id) }}"
+                   aria-label="delete">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16">
+                        <path d="M11 1.75V3h2.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75ZM4.496 6.675l.66 6.6a.25.25 0 0 0 .249.225h5.19a.25.25 0 0 0 .249-.225l.66-6.6a.75.75 0 0 1 1.492.149l-.66 6.6A1.748 1.748 0 0 1 10.595 15h-5.19a1.75 1.75 0 0 1-1.741-1.575l-.66-6.6a.75.75 0 1 1 1.492-.15ZM6.5 1.75V3h3V1.75a.25.25 0 0 0-.25-.25h-2.5a.25.25 0 0 0-.25.25Z"></path>
+                    </svg>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
 {% else %}
 <div style="width:1000px;margin:1.5rem auto;color:#57606a;">No documents yet.</div>
 {% endif %}

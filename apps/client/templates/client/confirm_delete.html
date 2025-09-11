@@ -6,6 +6,7 @@
     <title>Delete Client #{{ client.id }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/btn.css') }}">
 </head>
 <body>
 <h3 class="form-title">Delete Client #{{ client.id }}</h3>
@@ -24,8 +25,14 @@
     <form method="post" action="{{ url_for('client.delete', client_id=client.id, next=cancel_url) }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
         <div class="form-actions">
-            <button type="submit" class="btn primary">Delete</button>
-            <a class="btn secondary" href="{{ cancel_url }}">Cancel</a>
+            <button type="submit" class="btn primary">
+                <img src="{{ url_for('static', filename='icon/16/trash.svg') }}" alt="book icon">
+                Delete
+            </button>
+            <a class="btn secondary" href="{{ cancel_url }}">
+                <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="book icon">
+                Cancel
+            </a>
         </div>
     </form>
 </div>

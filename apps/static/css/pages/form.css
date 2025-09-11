@@ -1,19 +1,23 @@
 /* apps/static/css/form.css */
+
 .form-box {
     max-width: 800px;
     margin: 2rem auto;
     padding: 1.5rem;
     border: 1px solid #d0d7de;
-    border-radius: 8px;
+    border-radius: 6px;                        /* 角丸を6pxにしてよりGitHub寄り */
     background: #fff;
+    box-shadow: 0 1px 2px rgba(27,31,36,0.04); /* GitHub感を出す薄影 */
 }
 
 .form-group {
-
     margin: 0.5rem 1rem 1.5rem 0;
 }
 
 .form-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;          /* アイコンと文字の間隔 */
     width: 1000px;
     margin: 2.5rem auto;
     padding: 10px 0;
@@ -45,7 +49,7 @@
 
 .form-textarea {
     width: 100%;
-    min-height: 500px; /* ここを200から400に変更 */
+    min-height: 300px;
     padding: 0.5rem;
     border: 1px solid #d0d7de;
     border-radius: 6px;
@@ -64,52 +68,4 @@
     margin-top: 1.5rem;
     display: flex;
     gap: 0.5rem;
-}
-
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px; /* アイコンと文字の間隔 */
-    padding: 0.4rem 0.9rem;
-    font-size: 14px;
-    font-weight: 500;
-    border: 1px solid transparent;
-    border-radius: 6px;
-    text-decoration: none;
-    cursor: pointer;
-    user-select: none;
-    line-height: 1.5;
-}
-
-/* デフォルト色（使わなければ消してOK） */
-.btn {
-    background: #f6f8fa;
-    border-color: #d0d7de;
-    color: #24292f;
-}
-
-.btn:hover {
-    background: #f3f4f6;
-}
-
-/* 緑のボタン（スクショと同じ） */
-.btn.primary {
-    background: #2da44e;
-    border-color: rgba(27, 31, 36, 0.15);
-    color: #fff;
-}
-
-.btn.primary:hover {
-    background: #2c974b;
-}
-
-.btn.secondary {
-    background: #f6f8fa;
-    border-color: #d0d7de;
-    color: #24292f;
-}
-
-.btn.secondary:hover {
-    background: #f3f4f6;
 }

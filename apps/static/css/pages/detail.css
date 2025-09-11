@@ -14,21 +14,24 @@
 
 .card-header,
 .card-footer {
-    padding: 12px 16px;
+    font-size: 13px;
+    padding: 8px 16px;
     background: #f6f8fa;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
-    flex-wrap: wrap;
+    flex-wrap: wrap; /* アイテムが収まりきらなければ自動で次の行に折り返す */
+
+}
+.card-header{
+    border-bottom: 1px solid #ddd;
 }
 .card-footer {
     display: flex;
     justify-content: space-between;  /* 左右に配置 */
     align-items: center;             /* 垂直方向中央揃え */
     color: #57606a;
-    font-size: 13px;
     padding: 0.5rem 1rem;
     background-color: #f8f9fa;
     border-top: 1px solid #ddd;

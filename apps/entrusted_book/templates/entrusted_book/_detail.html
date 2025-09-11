@@ -1,24 +1,25 @@
 <div class="detail-section">
-    <h3>Entrusted Book</h3>
+    <h3 class="title">
+        <img src="{{ url_for('static', filename='icon/24/book.svg') }}" alt="book icon" width="20" height="20">
+        <span>Entrusted Book</span>
+    </h3>
+    <a class="btn"  href="{{ url_for('entrusted_book.index') }}">
+        <img src="{{ url_for('static', filename='icon/16/list.svg') }}" alt="book icon">
+        book list
+    </a>
     <div class="card">
         <div class="card-header">
-            <div class="mono">#{{ book.id }}</div>
+            <div class="mono">{{ book.name }}</div>
             <div class="button-group" style="display:flex; gap:8px;">
                 <!-- Edit -->
                 <a class="btn" href="{{ url_for('entrusted_book.edit', book_id=book.id) }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"></path></svg>
+                    <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="book icon">
                 </a>
 
                 <!-- Delete -->
                 <a class="btn" href="{{ url_for('entrusted_book.confirm_delete', book_id=book.id) }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M11 1.75V3h2.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75ZM4.496 6.675l.66 6.6a.25.25 0 0 0 .249.225h5.19a.25.25 0 0 0 .249-.225l.66-6.6a.75.75 0 0 1 1.492.149l-.66 6.6A1.748 1.748 0 0 1 10.595 15h-5.19a1.75 1.75 0 0 1-1.741-1.575l-.66-6.6a.75.75 0 1 1 1.492-.15ZM6.5 1.75V3h3V1.75a.25.25 0 0 0-.25-.25h-2.5a.25.25 0 0 0-.25.25Z"></path></svg>
+                    <img src="{{ url_for('static', filename='icon/16/trash.svg') }}" alt="book icon">
                 </a>
-
-                <!-- index -->
-                <div class="button-group" style="display:flex; gap:8px;">
-                    <a class="btn" href="{{ url_for('entrusted_book.index') }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M5.75 2.5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5Zm0 5h8.5a.75.75 0 0 1 0 1.5h-8.5a.75.75 0 0 1 0-1.5ZM2 14a1 1 0 1 1 0-2 1 1 0 0 1 0 2Zm1-6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM2 4a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg></a>
-                </div>
             </div>
         </div>
 
@@ -28,13 +29,12 @@
                 <dt>Name</dt><dd>{{ book.name }}</dd>
                 <dt>Note</dt><dd>{{ book.note or "-" }}</dd>
                 <dt>Created at</dt><dd>{{ book.created_at.strftime('%Y-%m-%d %H:%M') if book.created_at else '' }}</dd>
-                <dt>Updated at</dt><dd>{{ book.updated_at.strftime('%Y-%m-%d %H:%M') if book.updated_at else '' }}</dd>
             </dl>
         </div>
 
         <div class="card-footer">
             <div style="color:#57606a; font-size:13px;">
-                Showing details for <span class="mono">#{{ book.id }}</span>
+                Updated : <span class="mono">{{ book.updated_at.strftime('%Y-%m-%d %H:%M') if book.updated_at else '' }}</span>
             </div>
         </div>
     </div>

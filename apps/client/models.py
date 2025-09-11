@@ -9,6 +9,7 @@ MAX_LEN_POSTAL = 20
 MAX_LEN_PHONE = 50
 MAX_LEN_EMAIL = 255
 
+
 class ClientType(Enum):
     """クライアント種別"""
     RIGHT_HOLDER = 1
@@ -50,12 +51,28 @@ class Client(db.Model):
     note = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
+
     # EntrustBook(1)-Client(他）とのリレーション
-    entrusted_book_id = db.Column(db.Integer, db.ForeignKey('entrusted_book.id'), nullable=False)
-    entrusted_book = db.relationship('EntrustedBook', back_populates='clients')
+    entrusted_book_id = db.Column(
+        db.Integer,
+        db.ForeignKey('entrusted_book.id'),
+        nullable=False)
+    entrusted_book = db.relationship(
+        'EntrustedBook',
+        back_populates='clients')
 
     # AmountDocument(多)-Client(1) リレーション
-    amount_documents = db.relationship('AmountDocument', back_populates='client', cascade="all, delete-orphan")
+    amount_documents = db.relationship(
+        'AmountDocument',
+        back_populates='client',
+        cascade="all, delete-orphan")
+
+    # RequiredDocument(多)-Client(1) リレーション
+    required_documents = db.relationship(
+        "RequiredDocument",
+        back_populates="client",
+        cascade="all, delete-orphan"
+    )
 
     @property
     def client_type(self) -> ClientType:

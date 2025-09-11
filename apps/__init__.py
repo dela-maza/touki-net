@@ -9,6 +9,7 @@ from flask_wtf import CSRFProtect
 from apps.entrusted_book.views import entrusted_book_bp
 from apps.client.views import client_bp
 from apps.amount_document.views import amount_document_bp
+from apps.required_document.views import required_document_bp
 from apps.property_description.views import property_bp
 from apps.template_filters import register_template_filters
 
@@ -78,6 +79,8 @@ def create_app():
     app.register_blueprint(entrusted_book_bp)
     app.register_blueprint(client_bp)
     app.register_blueprint(amount_document_bp)
-    app.register_blueprint(property_bp)
+    app.register_blueprint(required_document_bp)
+
+# app.register_blueprint(property_bp)
 
     return app

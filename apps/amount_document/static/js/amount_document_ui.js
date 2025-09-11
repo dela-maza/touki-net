@@ -1,5 +1,4 @@
-document.querySelectorAll('button[data-doc-label]').
-forEach(button => {
+document.querySelectorAll('button[data-doc-label]').forEach(button => {
     button.addEventListener('click', () => {
         const label = button.getAttribute('data-doc-label');
         const titleTd = document.querySelector('td.document-title');

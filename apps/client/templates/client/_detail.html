@@ -2,29 +2,40 @@
     <!--apps/client/templates/client/_detail.html-->
 
     {% if book.clients %}
-    <h3>Client</h3>
+    <h3 class="title">
+        <img src="{{ url_for('static', filename='icon/24/person.svg') }}" alt="book icon" width="20" height="20">
+        <span>Client</span>
+    </h3>
+    <a class="btn" href="{{ url_for('client.create', entrusted_book_id=book.id) }}">
+        <img src="{{ url_for('static', filename='icon/16/new.svg') }}" alt="book icon">
+        new client
+    </a>
+    <a class="btn"  href="{{ url_for('client.index') }}">
+        <img src="{{ url_for('static', filename='icon/16/list.svg') }}" alt="book icon">
+        all client list
+    </a>
     <div class="stack">
         {% for client in book.clients %}
         <article class="card card--sub">
             <header class="card-header">
                 <div style="display:flex;align-items:center;gap:8px;">
-                    <span class="mono">#{{ client.id }}</span>
-                    <strong>{{ client.name }}</strong>
+                    {{ client.name }}
                 </div>
                 <div class="button-group">
                     <a class="btn" href="{{ url_for('client.edit', client_id=client.id) }}">
                         <!-- pencil -->
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"></path></svg>
+                        <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="book icon">
                     </a>
                     <a class="btn" href="{{ url_for('client.confirm_delete', client_id=client.id) }}">
                         <!-- trash -->
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path d="M11 1.75V3h2.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75ZM4.496 6.675l.66 6.6a.25.25 0 0 0 .249.225h5.19a.25.25 0 0 0 .249-.225l.66-6.6a.75.75 0 0 1 1.492.149l-.66 6.6A1.748 1.748 0 0 1 10.595 15h-5.19a1.75 1.75 0 0 1-1.741-1.575l-.66-6.6a.75.75 0 1 1 1.492-.15ZM6.5 1.75V3h3V1.75a.25.25 0 0 0-.25-.25h-2.5a.25.25 0 0 0-.25.25Z"></path></svg>
+                        <img src="{{ url_for('static', filename='icon/16/trash.svg') }}" alt="book icon">
                     </a>
                 </div>
             </header>
 
             <div class="card-body">
                 <dl class="meta">
+                    <dt>ID</dt><dd>{{ client.id }}</dd>
                     <dt>Type</dt><dd>{{ client.client_type.label }}</dd>
                     <dt>name</dt><dd>{{ client.name or '-' }}</dd>
                     <dt>name_kana</dt><dd>{{ client.date or '-' }}</dd>
@@ -43,7 +54,7 @@
                 <div class="footer-right">
                     <!-- 金額関連書類 -->
                     <div class="tooltip">
-                        <a class="btn" href="{{ url_for('amount_document.index', entrusted_book_id=book.id,client_id=client.id) }}">AD</a>
+                        <a class="btn" href="{{ url_for('amount_document.index',client_id=client.id) }}">AD</a>
                         <span class="tooltip-text">Amount Document (金額関連書類)</span>
                     </div>
                     <!-- 委任状 -->
@@ -77,10 +88,5 @@
     {% else %}
     <div class="help">No clients yet.</div>
     {% endif %}
-    <a class="btn" href="{{ url_for('client.create', entrusted_book_id=book.id) }}">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">
-            <path d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z"></path>
-        </svg>
-        new client
-    </a>
+
 </div>

@@ -7,6 +7,9 @@ from apps.client.models import Client, ClientType
 from apps.entrusted_book.models import EntrustedBook
 from apps.client.forms import ClientForm
 
+# --------------------------
+# ブループリント
+# --------------------------
 client_bp = Blueprint(
     "client",
     __name__,
@@ -16,7 +19,9 @@ client_bp = Blueprint(
 )
 
 
-# --------- helpers ---------
+# --------------------------
+# 内部ユーティリティ
+# --------------------------
 def _date_to_dt(d):
     """WTForms DateField(date) -> datetime(yyyy-mm-dd 00:00) / None"""
     if d is None:
@@ -37,14 +42,18 @@ def _set_entrusted_book_choices(form: ClientForm):
     form.entrusted_book_id.choices = [(b.id, b.name or f"Book #{b.id}") for b in books]
 
 
-# --------- / ---------
+# --------------------------
+# Index（一覧）
+# --------------------------
 @client_bp.route("/")
 def index():
     clients = Client.query.order_by(Client.updated_at.desc()).all()
     return render_template("client/index.html", clients=clients)
 
 
-# --------- create ---------
+# --------------------------
+# Create（新規）
+# --------------------------
 @client_bp.route("/create", methods=["GET", "POST"])
 def create():
     form = ClientForm()
@@ -80,7 +89,9 @@ def create():
     return render_template("client/form.html", form=form, title="New Client")
 
 
-# --------- edit ---------
+# --------------------------
+# Edit（更新）
+# --------------------------
 @client_bp.route("/<int:client_id>/edit", methods=["GET", "POST"])
 def edit(client_id):
     client = Client.query.get_or_404(client_id)
@@ -110,11 +121,15 @@ def edit(client_id):
         flash("Client was updated.")
         return redirect(url_for("entrusted_book.detail", book_id=client.entrusted_book_id))
 
-    return render_template("client/form.html", form=form, title="Edit Client")
+    return render_template("client/form.html",
+                           form=form,
+                           is_edit=True,
+                           title="Edit Client")
 
 
-# --------- confirm delete ---------
-
+# --------------------------
+# Confirm Delete（確認）
+# --------------------------
 @client_bp.route("/<int:client_id>/confirm_delete")
 def confirm_delete(client_id):
     client = Client.query.get_or_404(client_id)
@@ -130,7 +145,9 @@ def confirm_delete(client_id):
     )
 
 
-# --------- delete ---------
+# --------------------------
+# Delete（削除）
+# --------------------------
 @client_bp.route("/<int:client_id>/delete", methods=["POST"])
 def delete(client_id):
     client = Client.query.get_or_404(client_id)

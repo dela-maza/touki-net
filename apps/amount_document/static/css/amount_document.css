@@ -5,6 +5,18 @@
 ====================================== */
 
 /* ==========
+  ユーティリティ
+========== */
+.text-end {
+    text-align: right;
+}
+
+.text-center {
+    text-align: center;
+}
+
+
+/* ==========
   全体
 ========== */
 body {
@@ -17,32 +29,68 @@ body {
 }
 
 /* ==========
-  ユーティリティ
+  ボタンツールバー
 ========== */
-.text-end   { text-align: right; }
-.text-center{ text-align: center; }
+.btn-toolbar {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    width: 1050px;
+    margin: 0 auto 20px;
+    padding: 15px 20px; /* 左右 padding を減らす */
+    display: grid;
+    grid-template-columns: 1fr auto 1fr; /* 左余白 | 中央 | 右余白 */
+    align-items: center;
+    gap: 0; /* ここはお好みで */
+    /*background-color: #fcfcfd;*/
+    border: 1px solid #ececec;
+    /*border-radius: 5px;*/
+}
+
+/* 中央のボタン群は真ん中に固定 */
+.logic-buttons {
+    grid-column: 2; /* 左端から２番目：中央カラム */
+    justify-self: center; /* ど真ん中 */
+    display: flex;
+    gap: 10px;
+}
+
+.btn-toolbar .btn {
+    /*ボタンフォント*/
+    font-size: 0.7rem;
+}
+
+.btn-toolbar input {
+    font-size: 1.7rem;
+}
+
+
+/* 右のリンク群は右端に寄せる */
+.nav-buttons {
+    grid-column: 3; /* 右カラム */
+    justify-self: end; /* 右寄せ */
+    display: flex;
+    gap: 8px;
+}
+
+.btn-toolbar .logic-buttons .active {
+    border: 1px solid #6089bd;
+}
 
 /* ==========
-  レイアウト
+  ワラッパー
 ========== */
 #wrapper {
     position: relative;
     width: 1050px;
     height: 1420px;
     margin: 0 auto;
-    padding: 20px 20px 10px 20px;  /* 左右 padding を減らす */
+    padding: 20px 20px 10px 20px; /* 左右 padding を減らす */
     border: 1px solid #d9e8fa;
 }
+
 
 #main-frame {
     position: relative;
     margin: 0 60px;
-}
-
-tr.offset { height: 0 !important; }
-tr.offset > td {
-    padding: 0 !important;
-    border: none !important;
 }
 
 
@@ -55,18 +103,46 @@ a {
     text-decoration: none;
 }
 
-.smallString   { font-size: 10px; text-align: center; }
-.document-title{ font-size: 17px; font-weight: bold; }
-.client-name   { font-size: 14px; border-bottom: 1px solid #ffa500; }
-.amount-price  { font-size: 19px; font-weight: bold; padding-right: 5px; border-bottom: 1px solid #ffa500; }
-.issued-date   {
+.smallString {
+    font-size: 10px;
+    text-align: center;
+}
+
+.document-title {
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.client-name {
+    font-size: 14px;
+    border-bottom: 1px solid #ffa500;
+}
+
+.amount-price {
+    font-size: 19px;
+    font-weight: bold;
+    padding-right: 5px;
+    border-bottom: 1px solid #ffa500;
+}
+
+.issued-date {
     font-size: 14px;
     font-family: "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝", "MS PMincho", serif;
 }
 
+
 /* ==========
   テーブル
 ========== */
+tr.offset {
+    height: 0 !important;
+}
+
+tr.offset > td {
+    padding: 0 !important;
+    border: none !important;
+}
+
 table {
     table-layout: fixed;
     border-collapse: collapse;
@@ -91,6 +167,7 @@ td {
 table.frame {
     border: 1.5px solid #ffda97;
 }
+
 table.frame th,
 table.frame td {
     border: 1px solid #fdf1dc;
@@ -98,30 +175,39 @@ table.frame td {
 }
 
 /* セクション行 */
-.item-type { background-color: #ffb23e11; }
+.item-type {
+    background-color: #ffb23e11;
+}
 
 /* 強調線（画面表示） */
-table.frame tr.border-top-strong    { border-top:    1.5px solid #ffda97; }
-table.frame tr.border-bottom-strong { border-bottom: 1.5px solid #ffda97; }
-table.frame .cell-left-border       { border-left:   1px solid #fbca70; }
-table.frame .cell-right-border      { border-right:  1px solid #fbca70; }
+table.frame tr.border-top-strong {
+    border-top: 1.5px solid #ffda97;
+}
 
-td.bottom-dashed { border-bottom: 1px dashed #ffa500; }
+table.frame tr.border-bottom-strong {
+    border-bottom: 1.5px solid #ffda97;
+}
+
+table.frame .cell-left-border {
+    border-left: 1px solid #fbca70;
+}
+
+table.frame .cell-right-border {
+    border-right: 1px solid #fbca70;
+}
+
+td.bottom-dashed {
+    border-bottom: 1px dashed #ffa500;
+}
 
 /* ==========
   入力系
 ========== */
-input[type="text"],
-input[type="number"] {
-    font-family: "HiraMinProN-W3", "HG明朝E", "ＭＳ Ｐ明朝", "MS PMincho", "MS 明朝", serif;
-    font-weight: normal;
-    border: none;
-    font-size: 13px;
+
+input[type="text"]{
+    padding: 4px;
+    border: 1px solid #e1e1e1;
 }
-input[type="number"] { text-align: right; }
-
-.readOnly { border: none; }
-
 /* 明細ブロックの上下余白（画面） */
 .frame {
     font-size: 13px;
@@ -129,8 +215,25 @@ input[type="number"] { text-align: right; }
     padding-bottom: 10px;
 }
 
+table.frame input[type="text"],
+table.frame input[type="number"] {
+    font-family: "HiraMinProN-W3", "HG明朝E", "ＭＳ Ｐ明朝", "MS PMincho", "MS 明朝", serif;
+    font-weight: normal;
+    border: none;
+    font-size: 13px;
+}
+
+table.frame input[type="number"] {
+    text-align: right;
+}
+
+.readOnly {
+    border: none;
+}
+
+
 /* 備考（textarea はフォーム時のみ） */
-textarea {
+table.frame textarea {
     display: block;
     width: 98%;
     margin: 10px -1px 10px 10px;
@@ -148,7 +251,7 @@ textarea {
 }
 
 /* 備考（表示ページでの3行固定） */
-.note-cell {
+table.frame .note-cell {
     white-space: pre-wrap;
     padding: 10px !important;
     line-height: 1.4;
@@ -204,11 +307,20 @@ textarea {
     }
 
     /* 自動改ページ抑制（レイアウト崩れ防止） */
-    * { page-break-inside: avoid !important; break-inside: avoid !important; }
-    tr, thead, tbody { page-break-inside: auto; break-inside: auto; }
+    * {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+    tr, thead, tbody {
+        page-break-inside: auto;
+        break-inside: auto;
+    }
 
     /* 画面専用要素を非表示 */
-    .print-hide { display: none !important; }
+    .print-hide {
+        display: none !important;
+    }
 
     /* 文字サイズ・行間（印刷向けに微調整） */
     table {
@@ -219,12 +331,19 @@ textarea {
     }
 
     /* フレームの印刷用枠線を明確化 */
-    table.frame, table.frame th, table.frame td { border: 1px solid #000 !important; }
-    table.header-frame, table.header-frame th, table.header-frame td { border: none !important; }
+    table.frame, table.frame th, table.frame td {
+        border: 1px solid #000 !important;
+    }
+
+    table.header-frame, table.header-frame th, table.header-frame td {
+        border: none !important;
+    }
 
     /* ヘッダ行の行間を詰める */
     table.header-frame td,
-    table.header-frame th { line-height: 18px !important; }
+    table.header-frame th {
+        line-height: 18px !important;
+    }
 
     /* 本文セルの余白・フォント縮小（紙面に収める） */
     table.frame tbody td {
@@ -233,26 +352,40 @@ textarea {
         font-size: 8pt;
         line-height: 1.3;
     }
+
     td, th {
         padding: 2pt 2pt;
         font-size: 8pt;
         line-height: 1.3;
     }
+
     table.frame th, table.frame td {
-        border: none !important;      /* デフォは消す */
+        border: none !important; /* デフォは消す */
         padding: 2pt 2pt;
         font-size: 8pt;
         line-height: 1.4;
     }
+
     table.frame {
         border: 1.5px solid #000 !important; /* 外枠だけ残す */
     }
 
     /* 強調線（印刷用の色は黒に統一） */
-    table.frame .border-top-strong    { border-top:    1px solid #000 !important; }
-    table.frame .border-bottom-strong { border-bottom: 1px solid #000 !important; }
-    table.frame .cell-left-border     { border-left:   1px solid #000 !important; }
-    table.frame .cell-right-border    { border-right:  1px solid #000 !important; }
+    table.frame .border-top-strong {
+        border-top: 1px solid #000 !important;
+    }
+
+    table.frame .border-bottom-strong {
+        border-bottom: 1px solid #000 !important;
+    }
+
+    table.frame .cell-left-border {
+        border-left: 1px solid #000 !important;
+    }
+
+    table.frame .cell-right-border {
+        border-right: 1px solid #000 !important;
+    }
 
     /* 氏名・金額の下線は印刷でも残す */
     #client-name,
@@ -262,8 +395,13 @@ textarea {
     }
 
     /* 見出しの縮小（紙面での視認性を保つ） */
-    .client-name  { font-size: 11px; }
-    .amount-price { font-size: 14px; }
+    .client-name {
+        font-size: 11px;
+    }
+
+    .amount-price {
+        font-size: 14px;
+    }
 
     /* 備考3行固定（印刷でも強制） */
     .note-cell {
