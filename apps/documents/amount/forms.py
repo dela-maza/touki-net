@@ -1,11 +1,11 @@
-### apps/amount_document/forms.py
+### apps/amount/forms.py
 from flask_wtf import FlaskForm
 from wtforms import (
     StringField, BooleanField, TextAreaField, DateField,
     IntegerField, FieldList, HiddenField
 )
 from wtforms.validators import DataRequired, Optional
-from apps.amount_document.constants import MIN_ENTRIES
+from apps.documents.amount.constants import MIN_ENTRIES
 
 
 class AmountDocumentForm(FlaskForm):

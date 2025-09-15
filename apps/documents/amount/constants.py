@@ -1,4 +1,4 @@
-# apps/amount_document/constants.py
+# apps/amount/constants.py
 
 MIN_ENTRIES = 20
 from enum import Enum

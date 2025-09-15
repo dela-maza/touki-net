@@ -1,4 +1,4 @@
-<!-- amount_document/templates/amount_document/form.html -->
+<!-- amount/templates/amount/form.html -->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -6,14 +6,14 @@
     <title>{{ "Edit Amount Document" if document else "New Amount Document" }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/component/btn.css') }}">
-    <link rel="stylesheet" href="{{ url_for('amount_document.static', filename='css/amount_document.css') }}">
+    <link rel="stylesheet" href="{{ url_for('amount.static', filename='css/amount_document.css') }}">
 </head>
 <body>
 
 {% if is_edit %}
-{% set action_url = url_for('amount_document.edit', document_id=document.id) %}
+{% set action_url = url_for('amount.edit', document_id=document.id) %}
 {% else %}
-{% set action_url = url_for('amount_document.create', client_id=client.id) %}
+{% set action_url = url_for('amount.create', client_id=client.id) %}
 {% endif %}
 <form method="POST" action="{{ action_url }}">
     {{ form.hidden_tag() }}
@@ -34,12 +34,9 @@
                 Cancel
             </a>
         </div>
-
     </div>
 
     <div id="wrapper">
-
-
         <div id="main-frame">
             <table>
                 <tr>
@@ -50,14 +47,16 @@
                     {% endfor %}
                 </tr>
                 <tr>
-                    <td colspan="13">委任者：{{ client.name }}</td>
-                </tr>
-
-                <tr>
                     <td class="document-title" colspan="13" align="center">金額帳票</td>
                 </tr>
                 <tr>
-                    <td colspan="10">　</td>
+                    <td colspan="1">委任者</td>
+                    <td colspan="2">{{ client.name }}</td>
+                    <td colspan="10"></td>
+                </tr>
+
+                <tr>
+                    <td colspan="10"></td>
                     <td colspan="1" class="text-end">{{ form.estimate_date.label }}</td>
                     <td colspan="1" class="text-end">{{ form.estimate_date(class="issued-date", type="date") }}</td>
                 </tr>
@@ -90,7 +89,7 @@
                     {% endfor %}
                 </tr>
 
-                {% include 'amount_document/_table_items.html' %}
+                {% include 'amount/_table_items.html' %}
 
                 <tr>
                     <td class="border-top-double" colspan="13">

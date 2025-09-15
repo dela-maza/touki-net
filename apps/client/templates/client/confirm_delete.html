@@ -5,36 +5,45 @@
     <meta charset="utf-8">
     <title>Delete Client #{{ client.id }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/form.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/component/btn.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/confirm_delete.css') }}">
 </head>
 <body>
-<h3 class="form-title">Delete Client #{{ client.id }}</h3>
+<div class="confirm-container">
+    <h3 class="form-title">Delete Client #{{ client.id }}</h3>
 
-<div class="form-box">
-    <p class="help" style="margin-bottom:1rem;">
-        本当に <strong>{{ client.name }}</strong> を削除しますか？ この操作は元に戻せません。
-    </p>
+    <div class="form-box">
+        <p class="help">
+            本当に <strong>{{ client.name }}</strong> を削除しますか？
+            <span class="danger-text">この操作は元に戻せません。</span>
+        </p>
 
-    <dl class="meta" style="margin-bottom:1rem;">
-        <dt>Client</dt><dd>{{ client.name }}</dd>
-        <dt>Type</dt><dd>{{ client.client_type.label }}</dd>
-        <dt>Entrusted Book</dt><dd>#{{ client.entrusted_book_id }}</dd>
-    </dl>
+        <table class="meta-table">
+            <tr>
+                <th>Client</th><td>{{ client.name }}</td>
+            </tr>
+            <tr>
+                <th>Type</th><td>{{ client.client_type.label }}</td>
+            </tr>
+            <tr>
+                <th>Entrusted Book</th><td>#{{ client.entrusted_book_id }}</td>
+            </tr>
+        </table>
 
-    <form method="post" action="{{ url_for('client.delete', client_id=client.id, next=cancel_url) }}">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-        <div class="form-actions">
-            <button type="submit" class="btn primary">
-                <img src="{{ url_for('static', filename='icon/16/trash.svg') }}" alt="book icon">
-                Delete
-            </button>
-            <a class="btn secondary" href="{{ cancel_url }}">
-                <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="book icon">
-                Cancel
-            </a>
-        </div>
-    </form>
+        <form method="post" action="{{ url_for('client.delete', client_id=client.id, next=cancel_url) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <div class="form-actions">
+                <button type="submit" class="btn danger">
+                    <img src="{{ url_for('static', filename='icon/16/trash(white).svg') }}" alt="delete icon">
+                    Delete
+                </button>
+                <a class="btn secondary" href="{{ cancel_url }}">
+                    <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="cancel icon">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
 </div>
 </body>
 </html>

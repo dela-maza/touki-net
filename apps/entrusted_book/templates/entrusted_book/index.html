@@ -9,21 +9,22 @@
     <!-- CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/header-title.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/page-header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout/toolbar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/row-actions.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/component/btn.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/index-table.css') }}">
-    <link rel="stylesheet" href="{{ url_for('entrusted_book.static', filename='style.css') }}">
 </head>
 <body>
 
-<div class="header-title">
+<div class="page-header">
     <h1>
         <img src="{{ url_for('static', filename='icon/24/book.svg') }}" alt="book icon" width="20" height="20">
         <span>Entrusted Books</span>
     </h1>
 </div>
 <div class="table-container">
-    <div class="btn-group">
+    <div class="">
         <a class="btn"
            href="{{ url_for('entrusted_book.create') }}">
             <img src="{{ url_for('static', filename='icon/16/new.svg') }}" alt="book icon">
@@ -47,21 +48,17 @@
             <td>{{ book.id }}</td>
             <td class="truncate">{{ book.name }}</td>
             <td>{{ book.updated_at.strftime('%Y-%m-%d') if book.updated_at else '' }}</td>
-            <td class="actions">
+            <td class="row-actions">
                 <!-- 行クリックを優先させないため stopPropagation は JS 側で対応 -->
                 <a class="btn" href="{{ url_for('entrusted_book.edit', book_id=book.id) }}"
                    aria-label="edit {{ book.name }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"
-                         fill="currentColor" aria-hidden="true">
-                        <path d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Z"></path>
-                    </svg>
+                    <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="book icon">
+
                 </a>
                 <a class="btn" href="{{ url_for('entrusted_book.confirm_delete', book_id=book.id) }}"
                    aria-label="delete {{ book.name }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"
-                         fill="currentColor" aria-hidden="true">
-                        <path d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.749.749 0 0 1 1.275.326.749.749 0 0 1-.215.734L9.06 8l3.22 3.22a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215L8 9.06l-3.22 3.22a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z"></path>
-                    </svg>
+                    <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="book icon">
+
                 </a>
             </td>
         </tr>

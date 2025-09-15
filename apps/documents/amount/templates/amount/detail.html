@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<!-- amount_document/templates/amount_document/detail.html -->
+<!-- amount/templates/amount/detail.html -->
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/component/btn.css') }}">
-    <link rel="stylesheet" href="{{ url_for('amount_document.static', filename='css/amount_document.css') }}">
+    <link rel="stylesheet" href="{{ url_for('amount.static', filename='css/amount_document.css') }}">
 
     <title>{{ document.client.name }}</title>
 </head>
@@ -19,10 +19,10 @@
     </div>
 
     <div class="nav-buttons">
-        <a class="btn nav-btn" href="{{ url_for('amount_document.edit', document_id=document. id,client_id=document.client.id) }}">
+        <a class="btn nav-btn" href="{{ url_for('amount.edit', document_id=document. id,client_id=document.client.id) }}">
             <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="book icon">
         </a>
-        <a class="btn nav-btn" href="{{ url_for('amount_document.index', client_id=document.client.id) }}">
+        <a class="btn nav-btn" href="{{ url_for('amount.index', client_id=document.client.id) }}">
             <img src="{{ url_for('static', filename='icon/16/list.svg') }}" alt="book icon">
         </a>
     </div>
@@ -195,8 +195,8 @@
 <script>
     // JS 側で使うクライアント名と印影画像URL
     const clientName   = "{{ document.client.name | e }}";
-    const stampImageUrl = "{{ url_for('amount_document.static', filename='images/stamp.png') }}";
+    const stampImageUrl = "{{ url_for('amount.static', filename='images/stamp.png') }}";
 </script>
-<script src="{{ url_for('amount_document.static', filename='js/amount_document_ui.js') }}"></script>
+<script src="{{ url_for('amount.static', filename='js/amount_ui.js') }}"></script>
 </body>
 </html>

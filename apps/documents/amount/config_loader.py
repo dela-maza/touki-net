@@ -1,4 +1,4 @@
-# apps/amount_document/config_loader.py
+# apps/amount/config_loader.py
 import configparser
 import re
 import os
@@ -6,10 +6,10 @@ from functools import lru_cache
 from configparser import ConfigParser
 from typing import Dict, List, Tuple, Union, TYPE_CHECKING
 from apps.client.models import ClientType
-from apps.amount_document.constants import MIN_ENTRIES
+from apps.documents.amount.constants import MIN_ENTRIES
 
 if TYPE_CHECKING:
-    from apps.amount_document.models import AmountDocumentType  # 循環回避
+    from apps.documents.amount.models import AmountDocumentType  # 循環回避
 
 CONFIG_FILE = os.path.join(os.path.dirname(__file__), "config.ini")
 

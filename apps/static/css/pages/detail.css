@@ -46,6 +46,9 @@
     min-width: 0; /* flex内で縮小可能にする */
 }
 
+.help{
+    padding :25px 5px ;
+}
 /* ===== メタ情報（定義リスト） ===== */
 .meta {
     display: grid;

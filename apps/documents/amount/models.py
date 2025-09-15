@@ -1,9 +1,9 @@
-### apps/amount_document/models.py
+### apps/amount/models.py
 from datetime import datetime
 from db import db
 from sqlalchemy.dialects.postgresql import JSONB
 from typing import Dict
-# from apps.amount_document.calculator import AmountDocumentCalculator
+# from apps.amount.calculator import AmountDocumentCalculator
 
 
 class AmountDocument(db.Model):

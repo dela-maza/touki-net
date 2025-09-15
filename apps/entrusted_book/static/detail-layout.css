@@ -1,31 +1,29 @@
-/* 全体レイアウト */
-.detail-layout {
-    display: flex;
-    gap: 1.5rem; /* カラム間の余白 */
-    max-width: 2000px;
-    margin: 0 auto;
+/* entrusted_book/static/detail-layout.css */
+
+.container{
+    margin: 0 20px;
 }
 
-/* entrusted_book（左 30%） */
-.detail-book {
-    flex: 0 0 30%;
-    min-width: 260px; /* 狭すぎ防止 */
+/* 上部の“概要ヘッダー” */
+.book-summary {
+    margin: 0 auto 1rem;
 }
 
-/* clients（中央 40%） */
-.detail-clients {
-    flex: 0 0 40%;
-    min-width: 320px;
-
+/* 下部の3カラム（幅に応じて1→2→3列） */
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; /* 3列 */
+    gap: 1.5rem;
 }
 
-/* application（右 30%） */
-.detail-application {
-    flex: 0 0 30%;
+@media (max-width: 1200px) {
+    .content-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 800px) {
+    .content-grid { grid-template-columns: 1fr; }
+}
+
+/* 子カラムのベース */
+.content-grid .col {
     min-width: 260px;
-}
-
-/* 各カラムの中のセクション */
-.detail-section {
-    margin-bottom: 1.5rem;
 }

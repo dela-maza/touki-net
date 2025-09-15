@@ -1,4 +1,4 @@
-# apps/amount_document/calculator.py
+# apps/amount/calculator.py
 from typing import List, Dict, Final, Union, Iterable
 
 

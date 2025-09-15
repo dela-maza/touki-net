@@ -1,6 +1,6 @@
-### apps/entrusted_form/forms.py
+### apps/entrusted_book/forms.py
 from flask_wtf import FlaskForm
-from wtforms import StringField, TextAreaField
+from wtforms import StringField, DateField,TextAreaField
 from wtforms.validators import DataRequired, Optional, Length
 
 
@@ -11,3 +11,9 @@ class EntrustedBookForm(FlaskForm):
     note = TextAreaField('note',
                          validators=[Optional(),
                                      Length(max=255)])
+    contract_date = DateField('Contract Date',
+                              format="%Y-%m-%d",
+                              validators=[Optional()])
+    execution_date = DateField('Execution Date',
+                               format="%Y-%m-%d",
+                               validators=[Optional()])

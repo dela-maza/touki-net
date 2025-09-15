@@ -1,19 +1,18 @@
 <div class="detail-section">
     <!--apps/client/templates/client/_detail.html-->
-
-    {% if book.clients %}
     <h3 class="title">
         <img src="{{ url_for('static', filename='icon/24/person.svg') }}" alt="book icon" width="20" height="20">
         <span>Client</span>
     </h3>
     <a class="btn" href="{{ url_for('client.create', entrusted_book_id=book.id) }}">
         <img src="{{ url_for('static', filename='icon/16/new.svg') }}" alt="book icon">
-        new client
+        client
     </a>
-    <a class="btn"  href="{{ url_for('client.index') }}">
+    <a class="btn" href="{{ url_for('client.index') }}">
         <img src="{{ url_for('static', filename='icon/16/list.svg') }}" alt="book icon">
-        all client list
+        all clients
     </a>
+    {% if book.clients %}
     <div class="stack">
         {% for client in book.clients %}
         <article class="card card--sub">
@@ -21,12 +20,12 @@
                 <div style="display:flex;align-items:center;gap:8px;">
                     {{ client.name }}
                 </div>
-                <div class="button-group">
-                    <a class="btn" href="{{ url_for('client.edit', client_id=client.id) }}">
+                <div class="row-actions">
+                    <a class="btn icon" href="{{ url_for('client.edit', client_id=client.id) }}">
                         <!-- pencil -->
                         <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="book icon">
                     </a>
-                    <a class="btn" href="{{ url_for('client.confirm_delete', client_id=client.id) }}">
+                    <a class="btn icon" href="{{ url_for('client.confirm_delete', client_id=client.id) }}">
                         <!-- trash -->
                         <img src="{{ url_for('static', filename='icon/16/trash.svg') }}" alt="book icon">
                     </a>
@@ -35,16 +34,34 @@
 
             <div class="card-body">
                 <dl class="meta">
-                    <dt>ID</dt><dd>{{ client.id }}</dd>
-                    <dt>Type</dt><dd>{{ client.client_type.label }}</dd>
-                    <dt>name</dt><dd>{{ client.name or '-' }}</dd>
-                    <dt>name_kana</dt><dd>{{ client.date or '-' }}</dd>
-                    <dt>Birth date</dt><dd>{{ client.birth_date.strftime('%Y-%m-%d') if client.birth_date else '-' }}</dd>
-                    <dt>Postal</dt><dd>{{ client.postal_code or '-' }}</dd>
-                    <dt>Address</dt><dd>{{ client.address or '-' }}</dd>
-                    <dt>Phone</dt><dd>{{ client.phone_number or '-' }}</dd>
-                    <dt>Email</dt><dd>{{ client.email or '-' }}</dd>
-                    <dt>Note</dt><dd>{{ client.note or '-' }}</dd>
+                    <dt>ID</dt>
+                    <dd>{{ client.id }}</dd>
+                    <dt>Type</dt>
+                    <dd>{{ client.client_type.label }}</dd>
+                    <dt>name</dt>
+                    <dd>{{ client.name or '-' }}</dd>
+                    <dt>name_kana</dt>
+                    <dd>{{ client.date or '-' }}</dd>
+                    <dt>Birth date</dt>
+                    <dd>{{ client.birth_date.strftime('%Y-%m-%d') if client.birth_date else '-' }}</dd>
+                    <dt>Postal</dt>
+                    <dd>{{ client.postal_code or '-' }}</dd>
+                    <dt>Address</dt>
+                    <dd>{{ client.address or '-' }}</dd>
+                    <dt>Phone</dt>
+                    <dd>{{ client.phone_number or '-' }}</dd>
+                    <dt>Email</dt>
+                    <dd>{{ client.email or '-' }}</dd>
+                    <dt>Note</dt>
+                    <dd>{{ client.note or '-' }}</dd>
+                    <dt>Equity</dt>
+                    <dd>
+                        {% if client.equity_numerator and client.equity_denominator %}
+                        {{ client.equity_numerator }}/{{ client.equity_denominator }}
+                        {% else %}
+                        -
+                        {% endif %}
+                    </dd>
                 </dl>
             </div>
             <div class="card-footer">
@@ -53,33 +70,9 @@
                 </div>
                 <div class="footer-right">
                     <!-- 金額関連書類 -->
-                    <div class="tooltip">
-                        <a class="btn" href="{{ url_for('amount_document.index',client_id=client.id) }}">AD</a>
-                        <span class="tooltip-text">Amount Document (金額関連書類)</span>
-                    </div>
-                    <!-- 委任状 -->
-                    <div class="tooltip">
-                        <a class="btn" href="">POA</a>
-                        <span class="tooltip-text">Power of Attorney（委任状）</span>
-                    </div>
-
-                    <!-- 送信状 -->
-                    <div class="tooltip">
-                        <a class="btn" href="">Cover</a>
-                        <span class="tooltip-text">Cover Letter / Transmittal（送信状）</span>
-                    </div>
-
-                    <!-- 納品書 -->
-                    <div class="tooltip">
-                        <a class="btn" href="">Invoice</a>
-                        <span class="tooltip-text">Invoice / Delivery Note（納品書）</span>
-                    </div>
-
-                    <!-- 必要書類 -->
-                    <div class="tooltip">
-                        <a class="btn" href="">Docs</a>
-                        <span class="tooltip-text">Required Documents（必要書類）</span>
-                    </div>
+                    <a class="btn icon" href="{{ url_for('documents.index',client_id=client.id) }}">
+                        <img src="{{ url_for('static', filename='icon/16/note.svg') }}" alt="book icon">
+                    </a>
                 </div>
             </div>
         </article>

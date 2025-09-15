@@ -5,13 +5,16 @@ import configparser
 from flask import Flask
 import settings
 from db import db
+from apps.template_filters import register_template_filters
 from flask_wtf import CSRFProtect
 from apps.entrusted_book.views import entrusted_book_bp
 from apps.client.views import client_bp
-from apps.amount_document.views import amount_document_bp
-from apps.required_document.views import required_document_bp
+from apps.documents.views import documents_bp
+from apps.documents.amount.views import amount_bp
+from apps.documents.required.views import required_bp
+from apps.documents.delivery.views import delivery_bp
+from apps.documents.origin.views import origin_bp
 from apps.property_description.views import property_bp
-from apps.template_filters import register_template_filters
 
 
 def _load_ini_dict(path: Path) -> dict:
@@ -61,8 +64,10 @@ def create_app():
     @app.context_processor
     def inject_globals():
         """
+        @app.context_processor
         Jinja2 のレンダリング時に利用できるグローバル変数を注入する。
         テンプレート内では {{ tax.consumption_tax }} のように参照可能。
+        関数名は何でもよい
 
         注意:
         - ここで返した値はテンプレート専用。Python コードからは参照しないこと。
@@ -78,9 +83,10 @@ def create_app():
     # --- Blueprint 登録 ---
     app.register_blueprint(entrusted_book_bp)
     app.register_blueprint(client_bp)
-    app.register_blueprint(amount_document_bp)
-    app.register_blueprint(required_document_bp)
-
-# app.register_blueprint(property_bp)
+    app.register_blueprint(documents_bp)
+    app.register_blueprint(amount_bp)
+    app.register_blueprint(required_bp)
+    app.register_blueprint(delivery_bp)
+    app.register_blueprint(origin_bp)
 
     return app

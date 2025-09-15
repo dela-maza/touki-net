@@ -9,6 +9,9 @@ class EntrustedBook(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=True)  # 受託簿名は必須にするのがおすすめ
     note = db.Column(db.String(255), nullable=True)
+
+    contract_date = db.Column(db.Date, nullable=True) # 契約簿
+    execution_date  = db.Column(db.Date, nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 

@@ -38,6 +38,15 @@ table td {
     color: #57606a;
 }
 
+td.truncate img,
+td.truncate span,
+td.truncate {
+    vertical-align: middle;
+}
+td.truncate img{
+    padding-right: 5px;
+
+}
 /* 行ホバー */
 table tbody tr:hover td {
     background-color: #f3f4f6;
@@ -71,15 +80,6 @@ td.actions {
     text-align: right;
 }
 
-/* ===== ユーティリティ ===== */
-.text-right {
-    text-align: right;
-}
-
-.text-center {
-    text-align: center;
-}
-
 /* 長文を省略表示したいセル用 */
 .truncate {
     white-space: nowrap;
@@ -87,7 +87,9 @@ td.actions {
     text-overflow: ellipsis;
 }
 
-/* アクションセルの並びを整える */
-.actions {
-
+.table-caption {
+    font-size: 1rem;          /* 本文より少し大きめ */
+    font-weight: 500;         /* 少し太め */
+    color: #24292f;           /* ベースの濃いグレー */
+    margin: 1rem auto 0.5rem; /* 上下の余白を控えめに */
 }

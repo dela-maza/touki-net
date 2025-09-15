@@ -1,4 +1,4 @@
-### apps/required_document/models.py
+### apps/documents/required/models.py
 from datetime import datetime
 from db import db
 from sqlalchemy.dialects.postgresql import JSONB

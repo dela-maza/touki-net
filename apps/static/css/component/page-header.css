@@ -1,0 +1,46 @@
+/* apps/static/css/component/page-header .css */
+
+.page-header{
+    display: flex;
+    gap: 6px;          /* アイコンと文字の間隔 */
+    margin: 1.0rem  auto;
+    padding-left:  20px;
+    border-bottom: 1px solid #d0d7de;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+.page-header h1 {
+    display: flex;
+    align-items: center;
+    padding:  0;
+    font-size: 1.3rem;
+
+}
+.page-header h1 img{
+    margin-right: 5px;
+}
+.breadcrumb {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.9rem;
+    margin: 0 30px 25px 40px;
+    color: #555;
+}
+
+.page-header .breadcrumb a {
+    color: #333;
+    text-decoration: none;
+}
+
+.page-header .breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+.page-header .breadcrumb .separator {
+    margin: 0 6px;
+    color: #888;
+}
+
+.page-header .breadcrumb > img{
+    margin-right: 3px;
+}

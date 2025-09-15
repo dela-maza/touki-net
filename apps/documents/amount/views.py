@@ -1,20 +1,20 @@
-### apps/amount_document/views.py
+### apps/amount/views.py
 # from pprint import pprint
 from flask import Blueprint, render_template, flash, redirect, url_for, request
 from db import db
 # from apps.entrusted_book.models import EntrustedBook
 # from flask import current_app
-from apps.amount_document.calculator import AmountDocumentCalculator
-from apps.amount_document.forms import AmountDocumentForm
-from apps.amount_document.models import AmountDocument
+from apps.documents.amount.calculator import AmountDocumentCalculator
+from apps.documents.amount.forms import AmountDocumentForm
+from apps.documents.amount.models import AmountDocument
 # from sqlalchemy.orm import joinedload
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.wrappers.response import Response as WerkzeugResponse
-from typing import Dict, Union, Optional
+from typing import Union
 
-amount_document_bp = Blueprint(
-    "amount_document", __name__,
-    url_prefix="/amount-document",
+amount_bp = Blueprint(
+    "amount", __name__, # Blueprint 名
+    url_prefix="/documents/amount",
     template_folder="templates",
     static_folder="static"
 )
@@ -41,7 +41,7 @@ def _commit_session_with_flash(success_message: str, error_message: str) -> bool
         return False
 
 
-# apps/amount_document/views.py
+# apps/amount/views.py
 from apps.client.models import Client
 from apps.entrusted_book.models import EntrustedBook
 from sqlalchemy.orm import joinedload
@@ -50,7 +50,7 @@ from sqlalchemy.orm import joinedload
 # --------------------------
 # Index（一覧）
 # --------------------------
-@amount_document_bp.route("/")
+@amount_bp.route("/")
 def index() -> str:
     # クエリ取得（任意）
     client_id = request.args.get("client_id", type=int)
@@ -86,7 +86,7 @@ def index() -> str:
                       else (client.entrusted_book if client and client.entrusted_book_id else None))
 
     return render_template(
-        "amount_document/index.html",
+        "amount/index.html",
         documents=documents,
         client=client,
         entrusted_book=entrusted_book,
@@ -97,7 +97,7 @@ def index() -> str:
 # --------------------------
 # Detail（詳細）
 # --------------------------
-@amount_document_bp.route("/<int:document_id>")
+@amount_bp.route("/<int:document_id>")
 def detail(document_id: int) -> str:
     document = _get_document_or_404(document_id)
 
@@ -110,7 +110,7 @@ def detail(document_id: int) -> str:
     totals = calc.calculate_totals(round_unit=100)
 
     return render_template(
-        "amount_document/detail.html",
+        "amount/detail.html",
         doc_labels={"estimate": "見積", "invoice": "請求", "receipt": "領収"},
         document=document,
         totals=totals,  # 詳細画面のみ集計あり
@@ -121,7 +121,7 @@ def detail(document_id: int) -> str:
 # --------------------------
 # Create（新規）
 # --------------------------
-@amount_document_bp.route("/create", methods=["GET", "POST"])
+@amount_bp.route("/create", methods=["GET", "POST"])
 def create():
     form = AmountDocumentForm()
     client_id = request.args.get("client_id", type=int)  # クエリパラメータ client_id 必須
@@ -140,7 +140,7 @@ def create():
             form.entrusted_book_name.data = client.entrusted_book.name
 
         # 備考デフォルトを注入
-        from apps.amount_document.config_loader import (
+        from apps.documents.amount.config_loader import (
             get_default_entries_for_client_type,
             get_note_default_for_client_type,
         )
@@ -178,13 +178,13 @@ def create():
         try:
             db.session.commit()
             flash("金額文書を作成しました。")
-            return redirect(url_for("amount_document.detail", document_id=document.id))
+            return redirect(url_for("amount.detail", document_id=document.id))
         except SQLAlchemyError:
             db.session.rollback()
             flash("金額文書の作成に失敗しました。", "error")
 
     return render_template(
-        "amount_document/form.html",
+        "amount/form.html",
         form=form,
         client=client,
         is_edit=False,
@@ -193,7 +193,7 @@ def create():
 # --------------------------
 # Edit（更新）
 # ---------------------------
-@amount_document_bp.route("/<int:document_id>/edit", methods=["GET", "POST"])
+@amount_bp.route("/<int:document_id>/edit", methods=["GET", "POST"])
 def edit(document_id: int) -> Union[str, WerkzeugResponse]:
     document = _get_document_or_404(document_id)
     form = AmountDocumentForm(obj=document)
@@ -221,14 +221,14 @@ def edit(document_id: int) -> Union[str, WerkzeugResponse]:
         try:
             db.session.commit()
             flash("金額文書を更新しました。")
-            return redirect(url_for("amount_document.detail",
+            return redirect(url_for("amount.detail",
                                     document_id=document.id))
         except SQLAlchemyError:
             db.session.rollback()
             flash("金額文書の更新に失敗しました。", "error")
 
     return render_template(
-        "amount_document/form.html",
+        "amount/form.html",
         form=form,
         document=document,
         client=document.client,  # /createは、documentオブジェクトが存在しないため、document.createを参照できない
@@ -239,16 +239,16 @@ def edit(document_id: int) -> Union[str, WerkzeugResponse]:
 # --------------------------
 # Confirm Delete（確認）
 # --------------------------
-@amount_document_bp.route("/<int:document_id>/confirm_delete")
+@amount_bp.route("/<int:document_id>/confirm_delete")
 def confirm_delete(document_id: int):
     document = _get_document_or_404(document_id)
-    return render_template("amount_document/confirm_delete.html", document=document)
+    return render_template("amount/confirm_delete.html", document=document)
 
 
 # --------------------------
 # Delete（削除）
 # --------------------------
-@amount_document_bp.route("/<int:document_id>/delete", methods=["POST"])
+@amount_bp.route("/<int:document_id>/delete", methods=["POST"])
 def delete(document_id: int) -> WerkzeugResponse:
     document = _get_document_or_404(document_id)
     try:
@@ -258,4 +258,4 @@ def delete(document_id: int) -> WerkzeugResponse:
     except SQLAlchemyError:
         db.session.rollback()
         flash("金額文書の削除に失敗しました。", "error")
-    return redirect(url_for("amount_document.index"))
+    return redirect(url_for("amount.index"))

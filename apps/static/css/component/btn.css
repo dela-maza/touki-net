@@ -1,66 +1,135 @@
 /* apps/static/css/component/btn.css */
 
-/* ボタン */
+/* =========================
+   Tokens (必要最小限だけ定義)
+   ========================= */
+:root {
+    --btn-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --btn-font-size: 14px;
+    --btn-font-weight: 500;
+    --btn-line-height: 1.5;
+
+    --btn-gap: 6px;
+    --btn-pad-y: 0.4rem;
+    --btn-pad-x: 0.5rem;
+    --btn-radius: 6px;
+    --btn-min-width: 100px;
+
+    --btn-border: #d0d7de;
+    --btn-bg: #f6f8fa;
+    --btn-bg-hover: #f3f4f6;
+    --btn-fg: #24292f;
+
+    --btn-focus-ring: rgba(9, 105, 218, .3);
+    --btn-focus-border: #0969DA;
+
+    --btn-primary-bg: #189b3c;
+    --btn-primary-bg-hover: #2c974b;
+    --btn-primary-border: #199b40;
+    --btn-primary-fg: #ffffff;
+}
+
+/* =========================
+   Base
+   ========================= */
 a.btn,
 button.btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    padding: 0.4rem 0.5rem;   /* space-2, space-3 */
-    font-size: 14px;          /* font-size-sm */
-    font-weight: 500;
-    border: 1px solid #d0d7de; /* btn-border */
-    border-radius: 6px;        /* radius-md */
-    text-decoration: none;
-    cursor: pointer;
-    user-select: none;
-    line-height: 1.5;
+    gap: var(--btn-gap);
 
-    background: #f6f8fa;      /* btn-bg */
-    color: #24292f;           /* btn-fg */
+    padding: var(--btn-pad-y) var(--btn-pad-x);
+    border: 1px solid var(--btn-border);
+    border-radius: var(--btn-radius);
+
+    min-width: var(--btn-min-width);
+
+    font-family: var(--btn-font-family);
+    font-size: var(--btn-font-size);
+    font-weight: var(--btn-font-weight);
+    line-height: var(--btn-line-height);
+
+    background: var(--btn-bg);
+    color: var(--btn-fg);
+    text-decoration: none;
+    user-select: none;
+    cursor: pointer;
+
+    transition: background .15s ease, filter .15s ease, border-color .15s ease, box-shadow .15s ease;
 }
 
-/* 状態 */
+a.btn.icon,
+button.btn.icon {
+    padding: 0.35rem;
+    min-width: auto;  /* デフォルト幅なし */
+    width: 2rem;
+    height: 2rem;
+}
+
+/* Hover（共通） */
 a.btn:hover,
 button.btn:hover {
-    background: #f3f4f6;      /* btn-bg-hover */
+    background: var(--btn-bg-hover);
 }
 
-/* アクセシビリティ：キーボードフォーカス */
+/* Active（共通） */
+a.btn:active,
+button.btn:active {
+    filter: brightness(.98);
+}
+
+/* Focus-visible（共通） */
 a.btn:focus-visible,
 button.btn:focus-visible {
     outline: none;
-    border-color: #0969DA;
-    box-shadow: 0 0 0 3px rgba(9,105,218,.3);
+    border-color: var(--btn-focus-border);
+    box-shadow: 0 0 0 3px var(--btn-focus-ring);
 }
 
-/* バリアント(各コンポーネントの装飾) */
+/* =========================
+   Variants
+   ========================= */
+
+/* Primary */
 a.btn.primary,
 button.btn.primary {
-    min-width: 100px;
-    background: #189b3c;                   /* btn-primary-bg */
-    border-color: #199b40;  /* btn-primary-border */
-    color: #fff;
-}
-a.btn.primary:hover,
-button.btn.primary:hover {
-    background: #2c974b;                   /* btn-primary-bg-hover */
+    background: var(--btn-primary-bg);
+    border-color: var(--btn-primary-border);
+    color: var(--btn-primary-fg);
 }
 
+/* Primary hover / active を少し強めに */
+a.btn.primary:hover,
+button.btn.primary:hover {
+    background: var(--btn-primary-bg-hover);
+}
+a.btn.primary:active,
+button.btn.primary:active {
+    filter: brightness(.95);
+}
+
+/* Primary 内のアイコンを白化（SVG/PNG両対応） */
+a.btn.primary > img,
+button.btn.primary > img {
+    filter: brightness(0) invert(1);
+}
+
+/* Secondary（見た目はベースと同等。セレクタを残しておくと上書きが楽） */
 a.btn.secondary,
 button.btn.secondary {
-    min-width: 100px;
-    background: #f6f8fa;
-    border-color: #d0d7de;
-    color: #24292f;
+    background: var(--btn-bg);
+    border-color: var(--btn-border);
+    color: var(--btn-fg);
 }
 a.btn.secondary:hover,
 button.btn.secondary:hover {
-    background: #f3f4f6;
+    background: var(--btn-bg-hover);
 }
 
-/* 無効 */
+/* =========================
+   Disabled
+   ========================= */
 a.btn.is-disabled,
 button.btn.is-disabled {
     opacity: .6;

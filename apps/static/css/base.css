@@ -1,20 +1,40 @@
 /* apps/static/css/base.css */
+:root {
+    /* color */
+    --color-bg: #fff;
+    --color-fg: #24292f;
+    --color-muted: #57606a;
+    --color-border: #d0d7de;
+    --color-primary: #189b3c;
+    --color-primary-hover: #2c974b;
+    --color-danger: #d73a49;
+    --color-danger-hover: #b92534;
 
-body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background: #ffffff;
-    color: #1F2328;
-    margin: 2rem;
+    /* radius / shadow */
+    --radius-md: 6px;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, .04);
+
+    /* Spacing */
+    --space-1: .25rem; /* 4px */
+    --space-2: .5rem;  /* 8px */
+    --space-3: .75rem; /* 12px */
+    --space-4: 1rem;   /* 16px */
+
+    /* layout */
+    --container-w: 1000px;
+    --container-pad: .75rem;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box; /* width: 100% が「content + padding + border の合計」になる */
+}
+
+body, input, textarea, select, button {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.07em;
+    margin: 0;
+    padding: 0;
 }
 
 
-.title{
-    display: flex;
-    align-items: center;
-    gap: 6px;          /* アイコンと文字の間隔 */
-    margin: 1.0rem  auto;
-    padding: 10px 0;
-    border-bottom: 1px solid #d0d7de;
-    font-size: 1.1rem;
-    font-weight: 600;
-}

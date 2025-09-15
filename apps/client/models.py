@@ -1,4 +1,5 @@
-### apps/client/models.py
+# apps/client/models.py
+from apps.client.constants import ClientType
 from datetime import datetime
 from db import db
 from enum import Enum
@@ -10,27 +11,6 @@ MAX_LEN_PHONE = 50
 MAX_LEN_EMAIL = 255
 
 
-class ClientType(Enum):
-    """クライアント種別"""
-    RIGHT_HOLDER = 1
-    OBLIGATION_HOLDER = 2
-    APPLICANT = 3
-
-    @property
-    def label(self):
-        labels = {
-            ClientType.RIGHT_HOLDER: "権利者",
-            ClientType.OBLIGATION_HOLDER: "義務者",
-            ClientType.APPLICANT: "申請人"
-        }
-        return labels.get(self, "不明")
-
-    @classmethod
-    def from_id(cls, _id: int) -> 'ClientType':
-        try:
-            return cls(_id)
-        except ValueError:
-            return cls.RIGHT_HOLDER
 
 
 class Client(db.Model):
@@ -41,6 +21,10 @@ class Client(db.Model):
     client_type_id = db.Column(db.Integer, nullable=False, default=ClientType.RIGHT_HOLDER.value)
     name = db.Column(db.String(MAX_LEN_NAME), nullable=False)
     name_kana = db.Column(db.String(MAX_LEN_NAME), nullable=True)
+    # 持分（NULLなら未設定）
+    equity_numerator   = db.Column(db.Integer, nullable=True)  # 分子 (>=0)
+    equity_denominator = db.Column(db.Integer, nullable=True)  # 分母 (>0)
+
     birth_date = db.Column(db.DateTime, nullable=True)
     postal_code = db.Column(db.String(MAX_LEN_POSTAL), nullable=True)
     address = db.Column(db.String(MAX_LEN_NAME), nullable=True)
@@ -70,6 +54,20 @@ class Client(db.Model):
     # RequiredDocument(多)-Client(1) リレーション
     required_documents = db.relationship(
         "RequiredDocument",
+        back_populates="client",
+        cascade="all, delete-orphan"
+    )
+
+    # DeliveryDocument(多)-Client(1) リレーション
+    delivery_documents = db.relationship(
+        "DeliveryDocument",
+        back_populates="client",
+        cascade="all, delete-orphan"
+    )
+
+    # OriginDocument(多)-Client(1) リレーション ← ★追加
+    origin_documents = db.relationship(
+        "OriginDocument",
         back_populates="client",
         cascade="all, delete-orphan"
     )

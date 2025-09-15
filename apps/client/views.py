@@ -1,9 +1,9 @@
 # apps/client/views.py
 from datetime import datetime, time
 from flask_wtf.csrf import generate_csrf
-from flask import Blueprint, render_template, redirect, url_for, flash, request, abort
+from flask import Blueprint, render_template, redirect, url_for, flash, request
 from db import db
-from apps.client.models import Client, ClientType
+from apps.client.models import Client
 from apps.entrusted_book.models import EntrustedBook
 from apps.client.forms import ClientForm
 
@@ -49,8 +49,6 @@ def _set_entrusted_book_choices(form: ClientForm):
 def index():
     clients = Client.query.order_by(Client.updated_at.desc()).all()
     return render_template("client/index.html", clients=clients)
-
-
 # --------------------------
 # Create（新規）
 # --------------------------
@@ -62,7 +60,6 @@ def create():
     # クエリから簿IDを引き継いで初期化（GET時のみ）
     pre_book_id = request.args.get("entrusted_book_id", type=int)
     if request.method == "GET" and pre_book_id:
-        # 存在確認（存在しなければ無視）
         if EntrustedBook.query.get(pre_book_id):
             form.entrusted_book_id.data = pre_book_id
 
@@ -71,7 +68,7 @@ def create():
             entrusted_book_id=form.entrusted_book_id.data,
             client_type_id=form.client_type_id.data,
             name=form.name.data,
-            name_furigana=form.name_furigana.data,
+            name_kana=form.name_kana.data,
             birth_date=_date_to_dt(form.birth_date.data),
             postal_code=form.postal_code.data,
             address=form.address.data,
@@ -80,6 +77,8 @@ def create():
             email=form.email.data,
             intention_confirmed_at=_date_to_dt(form.intention_confirmed_at.data),
             note=form.note.data,
+            equity_numerator=form.equity_numerator.data,     # None または int
+            equity_denominator=form.equity_denominator.data, # None または int
         )
         db.session.add(client)
         db.session.commit()
@@ -98,7 +97,7 @@ def edit(client_id):
     form = ClientForm(obj=client)
     _set_entrusted_book_choices(form)
 
-    # DateField は date 型なので上書きしてあげる
+    # DateField は date 型なので上書き
     if request.method == "GET":
         form.birth_date.data = _dt_to_date(client.birth_date)
         form.intention_confirmed_at.data = _dt_to_date(client.intention_confirmed_at)
@@ -116,6 +115,8 @@ def edit(client_id):
         client.email = form.email.data
         client.intention_confirmed_at = _date_to_dt(form.intention_confirmed_at.data)
         client.note = form.note.data
+        client.equity_numerator = form.equity_numerator.data    # None または int
+        client.equity_denominator = form.equity_denominator.data
 
         db.session.commit()
         flash("Client was updated.")
@@ -125,7 +126,6 @@ def edit(client_id):
                            form=form,
                            is_edit=True,
                            title="Edit Client")
-
 
 # --------------------------
 # Confirm Delete（確認）
@@ -157,8 +157,4 @@ def delete(client_id):
     next_url = request.args.get("next") or url_for(
         "entrusted_book.detail", book_id=client.entrusted_book_id
     )
-    return redirect(next_url)
-
-    # 戻り先
-    next_url = request.args.get("next") or url_for("entrusted_book.detail", book_id=book_id)
     return redirect(next_url)

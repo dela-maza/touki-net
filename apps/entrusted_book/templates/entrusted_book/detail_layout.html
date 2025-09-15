@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<!--apps/entrusted_book/templates/entrusted_book/detail_layout.html-->
+
 <html lang="ja">
 <head>
     <meta charset="UTF-8"/>
@@ -8,28 +10,30 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/detail.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/row-actions.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/component/btn.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/component/tooltip.css') }}">
     <link rel="stylesheet" href="{{ url_for('entrusted_book.static', filename='detail-layout.css') }}">
 </head>
 <body>
-
-<div class="detail-layout">
-    <!-- 30% -->
-    <div class="detail-book">
+<div class="container">
+    <!-- 1) 上部：受託簿の概要（ヘッダー扱い） -->
+    <section class="book-summary">
         {% include 'entrusted_book/_detail.html' %}
-    </div>
+    </section>
 
-    <!-- 40% -->
-    <div class="detail-clients">
-        {% include 'client/_detail.html' %}
-    </div>
-
-    <!-- 30% -->
-    <div class="detail-application">
-
-    </div>
+    <!-- 2) 下部：内容グリッド -->
+    <section class="content-grid">
+        <div class="col">
+            {% include 'client/_detail.html' %}
+        </div>
+        <div class="col">
+            {# Application（未実装） #}
+        </div>
+        <div class="col">
+            {# Register（未実装） #}
+        </div>
+    </section>
 </div>
-
 </body>
 </html>
