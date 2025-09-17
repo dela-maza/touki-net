@@ -1,0 +1,105 @@
+.container {
+    font-size: 1.05rem;
+    padding: 30px 70px;
+}
+
+.meta-grid {
+    display: grid;
+    grid-template-columns: 80px 1.6fr  1fr; /* ラベル100px / 値 / ラベル100px / 値 */
+    gap: 50px 5px;
+    margin-bottom: 1.5rem;
+    /*font-size: 0.95rem;*/
+    align-items: start;
+}
+
+.meta-grid .label {
+    font-weight: normal;
+}
+
+.meta-grid .value {
+    padding: 2px 4px;
+}
+.meta-grid .recipient{
+    margin-right: 150px;
+    border-bottom: 1px solid #b7b7b7;
+}
+
+.office-info {
+    font-style: normal;   /* デフォルトのイタリック解除 */
+    font-size: 1.0rem;
+    line-height: 1.8;     /* 行間調整 */
+}
+
+.office-info div {
+    margin-bottom: 2px;   /* 行間の余白 */
+}
+
+.text-right {
+    text-align: right;
+}
+
+h1 {
+    font-size: 1.3rem;
+    padding-bottom: 2rem;
+}
+
+h2 {
+    font-size: 0.95rem;
+}
+
+h1, h2 {
+    margin: 0 0 4px
+}
+
+h1.page-title, h2.page-title {
+    text-align: center;
+    margin: 3em 0;
+}
+
+.paragraph {
+    margin: 2rem 0;
+    text-indent: 1em;
+}
+
+/* メタ（宛名・物件名・日付） */
+.meta {
+    margin: 0;
+}
+
+table.list {
+    font-size: 0.95rem;
+    border: 2px solid #7a7a7a;
+}
+table.list th, table.list td {
+    border: 1px solid #cecece;
+}
+table.list .col-name {
+    border-right: 1px solid transparent;
+}
+
+table.list .col-copies {
+    text-align: center;
+}
+
+@media print {
+    .toolbar,
+    .btn,
+    .help,
+    .error {
+        display: none !important;
+    }
+
+    .container {
+        border: 1px solid #fff;
+    }
+
+    /* 表（書類リスト） */
+    table.list {
+        font-size: 0.95rem;
+        border: 2px solid #000;
+    }
+
+    table.list th, table.list td {
+        border: 1px solid #a8a8a8;
+    }
+}

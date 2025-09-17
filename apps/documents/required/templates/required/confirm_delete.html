@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <title>Delete Required Document #{{ document.id }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/btn.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/confirm_delete.css') }}">
+</head>
+<body>
+<div class="confirm-container">
+    <h3 class="form-title">Delete Required Document #{{ document.id }}</h3>
+
+    <div class="form-box">
+        <p class="help">
+            本当に <strong>{{ document.entrusted_book_name }}</strong> の必要書類を削除しますか？
+            <span class="danger-text">この操作は元に戻せません。</span>
+        </p>
+
+        <table class="meta-table">
+            <tr>
+                <th>Client</th><td>{{ document.client.name }}</td>
+            </tr>
+            <tr>
+                <th>Book</th><td>{{ document.entrusted_book_name }}</td>
+            </tr>
+            <tr>
+                <th>Created At</th>
+                <td>{{ document.created_at.strftime('%Y-%m-%d') if document.created_at else '' }}</td>
+            </tr>
+        </table>
+
+        <form method="post" action="{{ url_for('required.delete', doc_id=document.id, next=cancel_url) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <div class="form-actions">
+                <button type="submit" class="btn danger">
+                    <img src="{{ url_for('static', filename='icon/16/trash(white).svg') }}" alt="delete icon">
+                    Delete
+                </button>
+                <a class="btn secondary" href="{{ cancel_url }}">
+                    <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="cancel icon">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

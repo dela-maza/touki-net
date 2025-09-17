@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<!-- documents/delivery/templates/delivery/detail.html -->
+<html lang="ja">
+<head>
+    <meta charset="UTF-8"/>
+    <title>納品書</title>
+
+    <!-- 共通CSS（フォーム/requiredと同じ） -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/btn.css') }}">
+    <link rel="stylesheet" href="{{ url_for('documents.static', filename='css/document.css') }}">
+    <link rel="stylesheet" href="{{ url_for('documents.static', filename='css/document_detail.css') }}">
+</head>
+<body>
+
+<!-- 画面用ツールバー（印刷時は非表示。CSSの @media print で隠す想定） -->
+<div class="toolbar">
+    <div class="toolbar-inner">
+        <div class="left">
+            <a href="{{ url_for('documents.index', client_id=document.client_id) }}" class="btn secondary">
+                <img src="{{ url_for('static', filename='icon/16/reply.svg') }}" alt="">
+                back
+            </a>
+        </div>
+        <div class="right">
+            <a href="{{ url_for('delivery.edit', doc_id=document.id) }}" class="btn">
+                <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="">
+                Edit
+            </a>
+            <button type="button" class="btn secondary" onclick="window.print()">
+                <img src="{{ url_for('static', filename='icon/16/printer.svg') }}" alt="">
+                Print
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <header class="section">
+        <h1 class="page-title">納品書</h1>
+
+        <!-- required と同じ meta-grid を流用 -->
+        <div class="meta-grid">
+            <div class="label">宛　名</div>
+            <div class="value recipient">{{ document.client.name }} 様</div>
+            <div class="value text-right">
+                {% import "macros.html" as macros %}
+                発信日：{{ macros.render_wareki_date(document.sent_date) if document.sent_date else '' }}
+            </div>
+
+            <div class="label">物件名</div>
+            <div class="value">{{ document.entrusted_book_name }}</div>
+
+            <div class="value">
+                <address class="office-info">
+                    <div>〒{{ office.post_code }}</div>
+                    <div>{{ office.address|safe }}</div>
+                    <div>{{ office.affiliation }}</div>
+                    <div class="office-name">{{ office.name }}</div>
+                    <div>TEL：{{ office.tell }}</div>
+                    <div>携帯：{{ office.mobile }}</div>
+                    <div>Mail：{{ office.mail }}</div>
+                </address>
+            </div>
+        </div>
+    </header>
+
+    <!-- 挨拶（上段） -->
+    <section class="section">
+        <div class="paragraph" style="border:none; padding:0;">
+            {{ (document.greeting_paragraph or '') | replace('\n', '<br>') | safe }}
+        </div>
+    </section>
+
+    <!-- 納品した書類（delivery は note 列なし／2列構成） -->
+    <section class="section">
+        <h2 class="table-caption text-center">納品書類</h2>
+        <table class="list">
+            <tbody>
+            {% for row in (document.documents or []) %}
+            {% set name = row.get('doc_name') or row.get('name') or '' %}
+            {% set copies = row.get('copies','') %}
+            {% if name or copies %}
+            <tr>
+                <td class="col-name">・ {{ name }}</td>
+                <td class="col-copies">{{ copies }}</td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 結び（下段） -->
+    <section class="section">
+        <div class="paragraph" style="border:none; padding:0;">
+            {{ (document.closing_paragraph or '') | replace('\n', '<br>') | safe }}
+        </div>
+    </section>
+</div>
+
+</body>
+</html>

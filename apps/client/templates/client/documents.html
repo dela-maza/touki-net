@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8"/>
+    <title>{{ client.name }} - Documents</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/index-documents.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/btn.css') }}">
+</head>
+<body>
+<div class="page-header">
+    <h1>
+        <img src="{{ url_for('static', filename='icon/24/person.svg') }}" alt="">
+        <span>{{ client.name }}</span>
+    </h1>
+    <nav class="breadcrumb">
+        <a href="{{ url_for('entrusted_book.detail', book_id=client.entrusted_book.id) }}">
+            {{ client.entrusted_book.name }}
+        </a>
+        <span class="separator"> &gt; </span>
+        <span>Documents</span>
+    </nav>
+</div>
+
+<div class="table-container">
+    {% include 'documents/_documents_table.html' %}
+</div>
+</body>
+</html>

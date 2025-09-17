@@ -1,95 +1,70 @@
-/* apps/static/css/index-table.css */
+/* apps/static/css/pages/index-table.css */
 
-/*コンテナ*/
+/* 固定コンテナ */
 .table-container {
-    width: 1000px;
-    margin: 1.5rem auto;
+    width: var(--container-w);
+    margin: var(--space-6) auto;
 }
 
-/*ボタングループ*/
-.table-container > .btn-group {
-text-align: right;
-}
-
+/* テーブル本体 */
 table {
-    width: 1000px;
-    margin: 1.0rem auto;
+    width: var(--container-w);
+    margin: var(--space-4) auto;
     border-collapse: separate;
     border-spacing: 0;
-    font-size: 14px;
-    border: 1px solid #a9b2bb;
-    border-radius: 3px;
-    overflow: hidden; /* 角丸を活かすため */
+    font-size: var(--font-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden; /* 角丸を活かす */
 }
 
-table thead {
-    background-color: #f6f8fa;
-}
+table thead { background-color: var(--color-header-bg); }
 
 table th,
 table td {
-    padding: 10px;
+    padding: var(--space-3);
     text-align: left;
-    border-bottom: 1px solid #d0d7de;
+    border-bottom: 1px solid var(--color-border);
 }
 
 .table th {
     font-weight: 600;
-    color: #57606a;
+    color: var(--color-muted);
 }
 
-td.truncate img,
-td.truncate span,
-td.truncate {
-    vertical-align: middle;
-}
-td.truncate img{
-    padding-right: 5px;
+/* 幅プリセット（このページ専用） */
+.table.entrusted-books-table th.col-id         { width: 5%; }
+.table.entrusted-books-table th.col-name       { width: 45%; }
+.table.entrusted-books-table th.col-date       { width: 20%; }
+.table.entrusted-books-table th.table__actions { width: 15%; }
 
-}
+/* 固定レイアウト（%幅を効かせる） */
+.table--fixed { table-layout: fixed; }
+
 /* 行ホバー */
-table tbody tr:hover td {
-    background-color: #f3f4f6;
-}
+table tbody tr:hover td { background-color: var(--color-header-bg); }
 
-/* 固定レイアウト（%幅を効かせたいときに併用） */
-.table--fixed {
-    table-layout: fixed;
-}
+/* クリック可能な行 */
+tr.clickable-row { cursor: pointer; }
+tr.clickable-row:hover td { background-color: var(--color-header-bg); }
 
-/* ===== クリック可能な行 ===== */
-tr.clickable-row {
-    cursor: pointer;
-}
+/* アクション列 */
+td.table__actions { text-align: center; }
 
-tr.clickable-row:hover td {
-    background-color: #f3f4f6;
-}
-
-/* 行クリックの視覚ヒント */
-tr.clickable-row {
-    cursor: pointer;
-}
-
-tr.clickable-row:hover td {
-    background-color: #f3f4f6;
-}
-
-/* actionセルを右寄せしたいとき */
-td.actions {
-    text-align: right;
-}
-
-/* 長文を省略表示したいセル用 */
+/* 長文の省略表示 */
 .truncate {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.table-caption {
-    font-size: 1rem;          /* 本文より少し大きめ */
-    font-weight: 500;         /* 少し太め */
-    color: #24292f;           /* ベースの濃いグレー */
-    margin: 1rem auto 0.5rem; /* 上下の余白を控えめに */
+/* 任意のキャプション（使う場合） */
+.table__caption {
+    font-size: var(--font-md);
+    font-weight: 500;
+    color: var(--color-fg);
+    margin: var(--space-4) auto var(--space-2);
 }
+
+/* ユーティリティの例（必要なら） */
+.text-center { text-align: center; }

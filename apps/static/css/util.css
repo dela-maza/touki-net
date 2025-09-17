@@ -1,0 +1,40 @@
+/* apps/static/css/util.css */
+
+/* text-text-decoration系 */
+.underline {
+    text-decoration: underline;
+}
+
+/* text-align系 */
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* flex系 */
+.flex {
+    display: flex;
+}
+
+.flex-align-center {
+    display: flex;
+    align-items: center;
+}
+
+.flex-justify-between {
+    display: flex;
+    justify-content: space-between;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

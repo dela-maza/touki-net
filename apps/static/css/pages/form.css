@@ -4,20 +4,23 @@ body{
     background-color: #f5f5f5;
 }
 
-
 .container {
-    background-color: #fff;
-    width: 1050px;
+    max-width: 1050px;              /* 以前の固定幅を復元 */
     margin: 0 auto;
-    padding: 30px; /* 左右 padding を減らす */
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
 }
-
-
 .form-group {
     margin: 0.5rem 1rem 1.5rem 0;
 }
+
+.form-box {
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    padding: 30px;
+    max-width: 1050px;              /* 狭い幅に固定 */
+    margin: 0 auto;                 /* 中央寄せ */
+}
+
 
 .form-title {
     display: flex;
@@ -61,10 +64,4 @@ body{
     padding-left: 1.25rem;
     color: #d1242f;
     font-size: 13px;
-}
-
-.form-actions {
-    margin-top: 1.5rem;
-    display: flex;
-    gap: 0.5rem;
 }

@@ -1,0 +1,16 @@
+/* apps/static/css/layout/container.css */
+
+.app {
+    background: var(--color-bg);
+    color: var(--color-fg);
+}
+
+.container {
+    max-width: var(--container-w);
+    margin-inline: auto;
+    padding-inline: var(--container-pad);x
+}
+
+.section {
+    margin-block: var(--space-5);
+}

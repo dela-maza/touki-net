@@ -1,33 +1,36 @@
+<!--apps/client/templates/client/_detail.html-->
 <div class="detail-section">
-    <!--apps/client/templates/client/_detail.html-->
-    <h3 class="title">
-        <img src="{{ url_for('static', filename='icon/24/person.svg') }}" alt="book icon" width="20" height="20">
-        <span>Client</span>
-    </h3>
-    <a class="btn" href="{{ url_for('client.create', entrusted_book_id=book.id) }}">
-        <img src="{{ url_for('static', filename='icon/16/new.svg') }}" alt="book icon">
-        client
-    </a>
-    <a class="btn" href="{{ url_for('client.index') }}">
-        <img src="{{ url_for('static', filename='icon/16/list.svg') }}" alt="book icon">
-        all clients
-    </a>
+    <div class="section-header">
+        <h3 class="detail-title">
+            <img src="{{ url_for('static', filename='icon/24/person.svg') }}" alt="" width="20" height="20">
+            <span>Client</span>
+        </h3>
+        <div class="btn-group">
+            <a class="btn" href="{{ url_for('client.create', entrusted_book_id=book.id) }}">
+                <img src="{{ url_for('static', filename='icon/16/new.svg') }}" alt="">
+                New
+            </a>
+            <a class="btn" href="{{ url_for('client.index') }}">
+                <img src="{{ url_for('static', filename='icon/16/list.svg') }}" alt="">
+                Clients
+            </a>
+        </div>
+    </div>
+
     {% if book.clients %}
     <div class="stack">
         {% for client in book.clients %}
         <article class="card card--sub">
             <header class="card-header">
-                <div style="display:flex;align-items:center;gap:8px;">
+                <div class="flex-align-center gap-2">
                     {{ client.name }}
                 </div>
                 <div class="row-actions">
                     <a class="btn icon" href="{{ url_for('client.edit', client_id=client.id) }}">
-                        <!-- pencil -->
-                        <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="book icon">
+                        <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="edit">
                     </a>
                     <a class="btn icon" href="{{ url_for('client.confirm_delete', client_id=client.id) }}">
-                        <!-- trash -->
-                        <img src="{{ url_for('static', filename='icon/16/trash.svg') }}" alt="book icon">
+                        <img src="{{ url_for('static', filename='icon/16/trash.svg') }}" alt="delete">
                     </a>
                 </div>
             </header>
@@ -41,7 +44,7 @@
                     <dt>name</dt>
                     <dd>{{ client.name or '-' }}</dd>
                     <dt>name_kana</dt>
-                    <dd>{{ client.date or '-' }}</dd>
+                    <dd>{{ client.name_kana or '-' }}</dd>  <!-- ← 修正 -->
                     <dt>Birth date</dt>
                     <dd>{{ client.birth_date.strftime('%Y-%m-%d') if client.birth_date else '-' }}</dd>
                     <dt>Postal</dt>
@@ -58,20 +61,18 @@
                     <dd>
                         {% if client.equity_numerator and client.equity_denominator %}
                         {{ client.equity_numerator }}/{{ client.equity_denominator }}
-                        {% else %}
-                        -
-                        {% endif %}
+                        {% else %}-{% endif %}
                     </dd>
                 </dl>
             </div>
+
             <div class="card-footer">
                 <div class="footer-left">
                     updated: {{ client.updated_at.strftime('%Y-%m-%d %H:%M') if client.updated_at else '' }}
                 </div>
                 <div class="footer-right">
-                    <!-- 金額関連書類 -->
-                    <a class="btn icon" href="{{ url_for('documents.index',client_id=client.id) }}">
-                        <img src="{{ url_for('static', filename='icon/16/note.svg') }}" alt="book icon">
+                    <a class="btn icon" href="{{ url_for('documents.index', client_id=client.id) }}">
+                        <img src="{{ url_for('static', filename='icon/16/note.svg') }}" alt="documents">
                     </a>
                 </div>
             </div>
@@ -81,5 +82,4 @@
     {% else %}
     <div class="help">No clients yet.</div>
     {% endif %}
-
 </div>

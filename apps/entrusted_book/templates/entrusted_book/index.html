@@ -1,74 +1,90 @@
 <!DOCTYPE html>
-<!--apps/entrusted_book/templates/entrusted_book/index.html-->
+<!-- apps/entrusted_book/templates/entrusted_book/index.html -->
 <html lang="ja">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>EntrustedBooks</title>
+    <title>Entrusted Books</title>
 
     <!-- CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/page-header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/spacing.css') }}">  <!-- 4pxグリッド utilities -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout/page-header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/tooltip.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/layout/toolbar.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/row-actions.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/util.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/btn-group.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/component/btn.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/index-table.css') }}">
 </head>
 <body>
 
-<div class="page-header">
-    <h1>
-        <img src="{{ url_for('static', filename='icon/24/book.svg') }}" alt="book icon" width="20" height="20">
-        <span>Entrusted Books</span>
-    </h1>
-</div>
+<header class="page-header">
+    <div class="container">
+        <div class="page-header__inner">
+            <h1 class="page-header__title">
+                <img src="{{ url_for('static', filename='icon/24/book.svg') }}" alt="book icon" width="20" height="20">
+                <span>Entrusted Books</span>
+            </h1>
+        </div>
+    </div>
+</header>
+
 <div class="table-container">
-    <div class="">
-        <a class="btn"
-           href="{{ url_for('entrusted_book.create') }}">
-            <img src="{{ url_for('static', filename='icon/16/new.svg') }}" alt="book icon">
+    <div class="actions">
+        <a class="btn" href="{{ url_for('entrusted_book.create') }}">
+            <img src="{{ url_for('static', filename='icon/16/new.svg') }}" alt="">
             New Book
         </a>
     </div>
+
     {% if books %}
-    <table class="table table--fixed">
+    <table class="table table--fixed entrusted-books-table">
         <thead>
         <tr>
-            <th style="width: 5%;">id</th>
-            <th style="width: 50%;">name</th>
-            <th style="width: 25%;">update at</th>
-            <th style="width: 20%;">action</th>
+            <th class="col-id text-center">id</th>
+            <th class="col-name">name</th>
+            <th class="col-date text-center">execution date</th>
+            <th class="col-date text-center">updated at</th>  <!-- typo修正 -->
+            <th class="table__actions text-center">action</th>
         </tr>
         </thead>
         <tbody>
         {% for book in books %}
-        <tr class="clickable-row"
-            data-href="{{ url_for('entrusted_book.detail', book_id=book.id) }}">
-            <td>{{ book.id }}</td>
+        <tr class="clickable-row" data-href="{{ url_for('entrusted_book.detail', book_id=book.id) }}">
+            <td class="text-center">{{ book.id }}</td>
             <td class="truncate">{{ book.name }}</td>
-            <td>{{ book.updated_at.strftime('%Y-%m-%d') if book.updated_at else '' }}</td>
-            <td class="row-actions">
-                <!-- 行クリックを優先させないため stopPropagation は JS 側で対応 -->
-                <a class="btn" href="{{ url_for('entrusted_book.edit', book_id=book.id) }}"
-                   aria-label="edit {{ book.name }}">
-                    <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="book icon">
-
+            <td class="text-center">{{ book.execution_date or '-' }}</td>
+            <td class="text-center">{{ book.updated_at.strftime('%Y-%m-%d') if book.updated_at else '' }}</td>
+            <td class="table__actions text-center">
+                <a class="btn icon tooltip tooltip-top"
+                   href="{{ url_for('entrusted_book.detail', book_id=book.id) }}"
+                   aria-label="view {{ book.name }}" title="View">
+                    <img src="{{ url_for('static', filename='icon/16/eye.svg') }}" alt="">
+                    <span class="tooltip-text">Detail</span>
                 </a>
-                <a class="btn" href="{{ url_for('entrusted_book.confirm_delete', book_id=book.id) }}"
-                   aria-label="delete {{ book.name }}">
-                    <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="book icon">
-
+                <a class="btn icon tooltip tooltip-top"
+                   href="{{ url_for('entrusted_book.edit', book_id=book.id) }}"
+                   aria-label="edit {{ book.name }}" title="Edit">
+                    <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="">
+                    <span class="tooltip-text">Edit</span>
+                </a>
+                <a class="btn icon tooltip tooltip-top"
+                   href="{{ url_for('entrusted_book.confirm_delete', book_id=book.id) }}"
+                   aria-label="delete {{ book.name }}" title="Delete">
+                    <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="">
+                    <span class="tooltip-text">Delete</span>
                 </a>
             </td>
         </tr>
         {% endfor %}
         </tbody>
     </table>
+    {% else %}
+    <div class="empty-hint">No entrusted books yet.</div>
+    {% endif %}
 </div>
-{% else %}
-<div style="width:1000px;margin:1.5rem auto;color:#57606a;">No entrusted books yet.</div>
-{% endif %}
 
 <!-- JS -->
 <script src="{{ url_for('static', filename='js/table.js') }}" defer></script>

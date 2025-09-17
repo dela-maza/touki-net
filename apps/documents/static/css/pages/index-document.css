@@ -1,0 +1,22 @@
+.table-container {
+    max-width: var(--container-w, 1000px);
+    margin: 0 auto;
+}
+
+.btn-group {
+    display: flex;
+    gap: 8px;
+    margin: 0 0 12px;
+}
+
+.empty-hint {
+    max-width: var(--container-w, 1000px);
+    margin: 1.5rem auto;
+    color: var(--color-muted, #57606a);
+}
+
+.icon-left {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}

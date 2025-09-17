@@ -1,41 +1,68 @@
 /* ------------------------------
    Tooltip (共通スタイル)
+   ・親要素に .tooltip を付ける
+   ・中に .tooltip-text を入れる
 ------------------------------ */
 .tooltip {
-    position: relative;  /* 基準位置を持つ親（ボタンの箱） */
-    display: inline-block; /* インライン要素（aタグなど）でもblockのように扱う */
+    position: relative;   /* 子の .tooltip-text を絶対配置する基準に */
+    display: inline-block;/* aタグやボタンでも box 的に扱う */
 }
 
 .tooltip .tooltip-text {
     /* 初期状態：非表示 */
-    visibility: hidden;    /* DOMにはあるけど画面には見えない */
-    opacity: 0;            /* 透明度 0=透明 / 1=不透明 */
+    visibility: hidden;   /* DOMにはあるが画面に出ない */
+    opacity: 0;           /* 完全透明 */
 
-    /* サイズと見た目 */
-    width: max-content;    /* 中のテキストに合わせて幅を調整 */
-    max-width: 200px;      /* 長すぎ防止（改行させないなら保険） */
-    background-color: #333;/* 背景を濃いグレーに */
-    color: #fff;           /* 文字は白 */
-    text-align: center;    /* 中央寄せ */
-    padding: 4px 8px;      /* 内側余白 */
-    border-radius: 4px;    /* 角を丸くする */
-    font-size: 12px;       /* フォントサイズ小さめ */
-    white-space: nowrap;   /* 折り返さない（横に伸びる） */
+    /* 見た目 */
+    background: #333;     /* 背景は黒に近いグレー */
+    color: #fff;          /* 文字は白 */
+    padding: 4px 8px;     /* 内側の余白 */
+    border-radius: 4px;   /* 角丸 */
+    font-size: 12px;      /* 小さめ文字 */
+    white-space: nowrap;  /* 折り返さず1行 */
 
-    /* 位置指定（左側に表示するよう変更） */
-    position: absolute;    /* ボタンを基準に絶対位置 */
-    top: 20%;              /* 親要素の高さから下への距離 */
-    right: 110%;           /* ボタンの左側に配置（125%分だけ離す） */
-    transform: translateY(-50%); /* 縦中央揃えのため上に半分ずらす */
-
-    /* レイヤーとアニメーション */
-    z-index: 1;            /* 他要素より前面に表示 */
-    transition: opacity 0.1s ease-in-out; /* 透明度の変化をアニメーション */
+    /* レイヤー＆アニメーション */
+    position: absolute;   /* 親を基準に絶対配置 */
+    z-index: 1;           /* 前面に表示 */
+    transition: opacity 0.15s ease-in-out; /* 透明度をアニメーション */
 }
 
 /* hover または focus で表示 */
 .tooltip:hover .tooltip-text,
 .tooltip:focus-within .tooltip-text {
-    visibility: visible;  /* 表示ON */
-    opacity: 1;           /* 透明度を100%に */
+    visibility: visible; /* 表示ON */
+    opacity: 1;          /* 透明度100% */
+}
+
+/* ------------------------------
+   位置バリエーション
+   デフォルト: .tooltip-left
+------------------------------ */
+
+/* 上に表示 */
+.tooltip-top .tooltip-text {
+    bottom: 125%;               /* 親の上に配置 */
+    left: 50%;                  /* 中央寄せ */
+    transform: translateX(-50%);/* 中央補正 */
+}
+
+/* 下に表示 */
+.tooltip-bottom .tooltip-text {
+    top: 125%;                  /* 親の下に配置 */
+    left: 50%;                  /* 中央寄せ */
+    transform: translateX(-50%);
+}
+
+/* 左に表示 */
+.tooltip-left .tooltip-text {
+    top: 50%;                   /* 縦中央 */
+    right: 110%;                /* 親の左に配置 */
+    transform: translateY(-50%);
+}
+
+/* 右に表示 */
+.tooltip-right .tooltip-text {
+    top: 50%;                   /* 縦中央 */
+    left: 110%;                 /* 親の右に配置 */
+    transform: translateY(-50%);
 }

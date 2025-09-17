@@ -1,5 +1,6 @@
 # apps/entrusted_book/views.py
 from __future__ import annotations
+from sqlalchemy.orm import selectinload
 from flask import Blueprint, render_template, redirect, url_for, flash
 from sqlalchemy.exc import SQLAlchemyError
 from apps.entrusted_book.forms import EntrustedBookForm
@@ -44,7 +45,9 @@ def index():
 # --------------------------
 @entrusted_book_bp.route("/<int:book_id>")
 def detail(book_id: int):
-    book = EntrustedBook.query.get_or_404(book_id)
+    book = (EntrustedBook.query
+            .options(selectinload(EntrustedBook.clients))
+            .get_or_404(book_id))
     return render_template("entrusted_book/detail_layout.html", book=book, clients=book.clients)
 
 # --------------------------

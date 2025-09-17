@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<!-- documents/origin/templates/origin/form.html -->
+<html lang="ja">
+<head>
+    <meta charset="UTF-8"/>
+    <title>{{ "登記原因証明情報を編集" if is_edit else "登記原因証明情報を作成" }}</title>
+
+    <!-- 共通CSS（delivery / required と同じ系） -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/btn.css') }}">
+    <link rel="stylesheet" href="{{ url_for('documents.static', filename='css/document.css') }}">
+    <link rel="stylesheet" href="{{ url_for('documents.static', filename='css/document_form.css') }}">
+</head>
+<body>
+
+{# ルーティング先 #}
+{% if is_edit %}
+{% set action_url = url_for('origin.edit', doc_id=document.id) %}
+{% else %}
+{% set action_url = url_for('origin.create', client_id=client.id) %}
+{% endif %}
+
+<form id="origin-form" method="POST" action="{{ action_url }}">
+    {{ form.hidden_tag() }}
+    {{ form.client_id() }}
+
+    <!-- 画面用ツールバー（印刷時は @media print で非表示） -->
+    <div class="toolbar">
+        <div class="toolbar-inner">
+            <div class="left">
+                <a href="{{ back_url or url_for('documents.index', client_id=client.id) }}" class="btn secondary">
+                    <img src="{{ url_for('static', filename='icon/16/reply.svg') }}" alt="back"> back
+                </a>
+            </div>
+            <div class="right">
+                <button type="submit" form="origin-form" class="btn primary">
+                    <img src="{{ url_for('static', filename='icon/16/check(white).svg') }}" alt="check"> Update
+                </button>
+                <a href="{{ back_url or url_for('documents.index', client_id=client.id) }}" class="btn secondary">
+                    <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="cancel"> Cancel
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <header class="section">
+            <h1 class="page-title">登記原因証明情報</h1>
+
+            <div class="meta">
+                <dl>
+                    <dt>宛名</dt>
+                    <dd>{{ client.name }} 様</dd>
+
+                    <dt>登記原因</dt>
+                    <dd>
+                        <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+                            {{ form.cause_type(class="form-input") }}
+                            {{ form.cause_suffix(class="form-input", placeholder="必要に応じて追記") }}
+                        </div>
+                        {% if form.cause_type.errors %}
+                        <div class="error" style="margin-top:6px;">{{ form.cause_type.errors[0] }}</div>
+                        {% endif %}
+                    </dd>
+
+                    <dt>契約日</dt>
+                    <dd>{{ form.contract_date(id="contract_date") }}</dd>
+
+                    <dt>決済日</dt>
+                    <dd>{{ form.payment_date(id="payment_date") }}</dd>
+                </dl>
+            </div>
+        </header>
+
+        <!-- 当事者：権利者（甲） テキストエリアのみ -->
+        <section class="section">
+            <h2>当事者（権利者：甲）</h2>
+            {{ form.right_holders(
+            class="paragraph-input",
+            rows="6",
+            placeholder="例）\n（1/2）東京都〇〇区…〇丁目…番…　山田太郎\n（1/2）東京都〇〇区…〇丁目…番…　山田花子"
+            ) }}
+            {% if form.right_holders.errors %}
+            <div class="error">{{ form.right_holders.errors[0] }}</div>
+            {% endif %}
+        </section>
+
+        <!-- 当事者：義務者（乙） テキストエリアのみ -->
+        <section class="section">
+            <h2>当事者（義務者：乙）</h2>
+            {{ form.obligation_holders(
+            class="paragraph-input",
+            rows="6",
+            placeholder="例）\n（1/1）東京都〇〇区…〇丁目…番…　佐藤次郎"
+            ) }}
+            {% if form.obligation_holders.errors %}
+            <div class="error">{{ form.obligation_holders.errors[0] }}</div>
+            {% endif %}
+        </section>
+        <!-- 不動産の表示 -->
+        <section class="section">
+            <h2>不動産の表示</h2>
+            <label class="sr-only" for="real_estate_description">不動産の表示</label>
+            {{ form.real_estate_description(
+            id="real_estate_description",
+            class="paragraph-input" + (" is-invalid" if form.real_estate_description.errors else ""),
+            placeholder="（所在・地番・家屋番号・地目・地積／床面積 等）"
+            ) }}
+            {% if form.real_estate_description.errors %}
+            <div class="error">{{ form.real_estate_description.errors[0] }}</div>
+            {% endif %}
+        </section>
+        <!-- 不動産の表示の下あたりに新設 -->
+        <section class="section">
+            <h2>登記原因の事実または法律行為</h2>
+            {{ form.cause_text(
+            class="paragraph-input",
+            rows="6",
+            placeholder="config.ini から自動生成。必要に応じて編集してください。"
+            ) }}
+            {% if form.cause_text.errors %}
+            <div class="error">{{ form.cause_text.errors[0] }}</div>
+            {% endif %}
+        </section>
+    </div>
+</form>
+
+<!-- フラッシュ -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<ul class="flash">
+    {% for category, message in messages %}
+    <li class="flash-{{ category }}">{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+</body>
+</html>

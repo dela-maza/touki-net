@@ -7,8 +7,8 @@ class EntrustedBook(db.Model):
     __tablename__ = 'entrusted_book'
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(255), nullable=True)  # 受託簿名は必須にするのがおすすめ
-    note = db.Column(db.String(255), nullable=True)
+    name = db.Column(db.String(255), nullable=False)
+    note = db.Column(db.Text, nullable=True)
 
     contract_date = db.Column(db.Date, nullable=True) # 契約簿
     execution_date  = db.Column(db.Date, nullable=True)
@@ -20,5 +20,5 @@ class EntrustedBook(db.Model):
         'Client',
         back_populates='entrusted_book',  # Clientモデル側で対応するリレーション名に合わせる
         cascade='all, delete-orphan',  # all:子（Client）にも連鎖（cascade）させる delete-orphan:孤児（orphan）になった子を削除する
-        lazy='select'  # 遅延ロード設定（必要に応じて変更）
+        lazy='selectin'  #  N+1 を防ぎつつ必要なときにだけロードできるので、EntrustedBook ↔ Client の関係には相性がいい
     )

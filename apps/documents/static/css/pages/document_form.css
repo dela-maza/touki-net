@@ -1,0 +1,91 @@
+
+
+h1 {
+    font-size: 1.2rem;
+}
+
+h2 {
+    font-size: 0.85rem;
+}
+
+h1, h2 {
+    margin: 0 0 2px
+}
+
+h1.page-title, h2.page-title {
+    text-align: center;
+    margin: 1em 0;
+}
+
+.section {
+
+}
+
+/* メタ（宛名・物件名・日付） */
+.meta {
+    margin: 0;
+}
+
+.meta dl {
+    margin: 0;
+}
+
+.meta dt {
+    float: left;
+    width: 106px;
+    font-weight: 600;
+}
+
+.meta dd {
+    margin: 0 0 8px 113px;
+}
+
+.meta input[type="text"], .meta input[type="date"] {
+    font: inherit;
+    width: 100%;
+    border: 1px solid #d0d7de;
+    border-radius: 4px;
+    padding: 4px 6px;
+    /*background: #fffdf7;*/
+}
+
+/* 段落エリア（帳票内にテキストエリアを置く） */
+.paragraph-input {
+    width: 100%;
+    min-height: 5em;
+    resize: vertical;
+    line-height: 1.6;
+    font: inherit;
+    border: 1px solid #d0d7de;
+    border-radius: 4px;
+    /*background: #fffdf7;*/
+    padding: 10px;
+    margin: 16px 0;
+}
+
+.paragraph-input.is-invalid {
+    border-color: #b42318;
+    background: #fff5f5;
+}
+
+.cell-input {
+    width: 100%;
+    font: inherit;
+    border: 1px solid #e0e2e5;
+    border-radius: 4px;
+    padding: 5px;
+    background: #fff;
+}
+
+/* 視覚的ラベルは不要だがアクセシビリティは担保 */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}

@@ -1,0 +1,75 @@
+{# _table.html: ドキュメント一覧テーブル #}
+{% if documents %}
+<table class="table table--fixed">
+    <thead>
+    <tr>
+        <th style="width: 5%;">id</th>
+        <th style="width: 12%;">type</th>
+        <th style="width: 47%;">title</th>
+        <th style="width: 10%;">created_at</th>
+        <th style="width: 8%;">action</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for row in documents %}
+    <tr class="clickable-row"
+        data-href="{% if row.document_type == 'amount' %}{{ url_for('amount.detail', document_id=row.id) }}
+                 {% elif row.document_type == 'required' %}{{ url_for('required.detail', doc_id=row.id) }}
+                 {% elif row.document_type == 'delivery' %}{{ url_for('delivery.detail', doc_id=row.id) }}
+                 {% elif row.document_type == 'origin' %}{{ url_for('origin.detail', doc_id=row.id) }}
+                 {% else %}#{% endif %}">
+        <td>{{ row.id }}</td>
+        <td class="truncate">
+            <img src="{{ url_for('static', filename='icon/16/note.svg') }}" alt="doc type">
+            {% if row.document_type == 'amount' %}
+            Amount
+            {% elif row.document_type == 'required' %}
+            Required
+            {% elif row.document_type == 'delivery' %}
+            Delivery
+            {% elif row.document_type == 'origin' %}
+            Origin
+            {% else %}
+            {{ row.document_type }}
+            {% endif %}
+        </td>
+        <td class="truncate">{{ row.title }}</td>
+        <td>{{ row.created_at.strftime('%Y-%m-%d') if row.created_at else '' }}</td>
+        <td class="actions">
+            {% if row.document_type == 'amount' %}
+            <a class="btn icon" href="{{ url_for('amount.edit', document_id=row.id) }}" aria-label="edit">
+                <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="edit">
+            </a>
+            <a class="btn icon" href="{{ url_for('amount.confirm_delete', document_id=row.id) }}" aria-label="delete">
+                <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="delete">
+            </a>
+            {% elif row.document_type == 'required' %}
+            <a class="btn icon" href="{{ url_for('required.edit', doc_id=row.id) }}" aria-label="edit">
+                <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="edit">
+            </a>
+            <a class="btn icon" href="{{ url_for('required.confirm_delete', doc_id=row.id) }}" aria-label="delete">
+                <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="delete">
+            </a>
+            {% elif row.document_type == 'delivery' %}
+            <a class="btn icon" href="{{ url_for('delivery.edit', doc_id=row.id) }}" aria-label="edit">
+                <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="edit">
+            </a>
+            <a class="btn icon" href="{{ url_for('delivery.confirm_delete', doc_id=row.id) }}" aria-label="delete">
+                <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="delete">
+            </a>
+            {% elif row.document_type == 'origin' %}
+            <a class="btn icon" href="{{ url_for('origin.edit', doc_id=row.id) }}" aria-label="edit">
+                <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="edit">
+            </a>
+            <a class="btn icon" href="{{ url_for('origin.confirm_delete', doc_id=row.id) }}" aria-label="delete">
+                <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="delete">
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="empty-hint">No documents yet.</div>
+{% endif %}

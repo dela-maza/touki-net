@@ -1,0 +1,105 @@
+
+body {
+    font-family: "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝", "MS PMincho", serif;
+}
+
+/* 列幅をパーセンテージで指定 */
+table.list .col-name {
+    width: 50%;
+}
+
+table.list .col-note {
+    width: 40%;
+}
+
+table.list .col-copies {
+    width: 10%;
+}
+
+/*.toolbar {*/
+/*    background: #fff;*/
+/*    border-bottom: 1px solid #e0e2e5;*/
+/*    padding-bottom: 8px;*/
+/*    margin-bottom: 24px;*/
+/*}*/
+
+/*.toolbar-inner {*/
+/*    width: 1050px;*/
+/*    margin: 0 auto;*/
+/*    padding: 15px;*/
+/*    display: flex;*/
+/*    justify-content: space-between;*/
+/*    align-items: center;*/
+/*    gap: 12px;*/
+/*}*/
+
+/*.container {*/
+/*    background-color: #fff;*/
+/*    width: 1050px;*/
+/*    margin: 0 auto;*/
+/*    padding: 30px; !* 左右 padding を減らす *!*/
+/*    border: 1px solid #e0e0e0;*/
+/*}*/
+
+/*.btn {*/
+/*    display: inline-flex;*/
+/*    min-width: 100px;*/
+/*    align-items: center;*/
+/*    gap: 6px;*/
+/*    padding: 8px 12px;*/
+/*    border: 1px solid #d0d7de;*/
+/*    border-radius: 6px;*/
+/*    background: #fff;*/
+/*    text-decoration: none;*/
+/*    color: #111;*/
+/*}*/
+
+/*.btn.primary {*/
+/*    background: #0969da;*/
+/*    border-color: #0969da;*/
+/*    color: #fff;*/
+/*}*/
+
+/*.btn.secondary {*/
+/*    background: #f6f8fa;*/
+/*}*/
+
+/*.btn:disabled {*/
+/*    opacity: .6;*/
+/*    cursor: not-allowed;*/
+/*}*/
+
+
+
+/*.help {*/
+/*    color: #6b7280;*/
+/*    font-size: 0.9em;*/
+/*    margin-top: 4px;*/
+/*}*/
+
+/*.error {*/
+/*    color: #b42318;*/
+/*    font-size: 0.9em;*/
+/*    margin-top: 4px;*/
+/*}*/
+
+/*!* 表（書類リスト） *!*/
+/*table.list {*/
+/*    width: 100%;*/
+/*    border-collapse: collapse;*/
+/*    border: 1.5px solid #c6d9fc;*/
+/*    margin-top: 4px;*/
+/*}*/
+
+/*table.list th, table.list td {*/
+/*    border: 1px solid #c6d9fc;*/
+/*    padding: 6px;*/
+/*    vertical-align: top;*/
+/*}*/
+
+/*table.list th {*/
+/*    background-color: #edf5fd;*/
+/*    border-bottom: 1px solid #c6d9fc;*/
+/*    font-weight: 600;*/
+/*}*/
+

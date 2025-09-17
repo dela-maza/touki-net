@@ -11,8 +11,6 @@ MAX_LEN_PHONE = 50
 MAX_LEN_EMAIL = 255
 
 
-
-
 class Client(db.Model):
     """クライアント情報モデル"""
     __tablename__ = 'client'
@@ -22,10 +20,10 @@ class Client(db.Model):
     name = db.Column(db.String(MAX_LEN_NAME), nullable=False)
     name_kana = db.Column(db.String(MAX_LEN_NAME), nullable=True)
     # 持分（NULLなら未設定）
-    equity_numerator   = db.Column(db.Integer, nullable=True)  # 分子 (>=0)
+    equity_numerator = db.Column(db.Integer, nullable=True)  # 分子 (>=0)
     equity_denominator = db.Column(db.Integer, nullable=True)  # 分母 (>0)
 
-    birth_date = db.Column(db.DateTime, nullable=True)
+    birth_date = db.Column(db.Date, nullable=True)
     postal_code = db.Column(db.String(MAX_LEN_POSTAL), nullable=True)
     address = db.Column(db.String(MAX_LEN_NAME), nullable=True)
     phone_number = db.Column(db.String(MAX_LEN_PHONE), nullable=True)
