@@ -1,0 +1,46 @@
+/* 外枠（背景や色は各ヘッダー側で上書き可） */
+.page-header,
+.form-header {
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: var(--space-10);
+    padding: var(--space-3) var(--space-6);
+}
+
+/* インナー：左右に分割 */
+.page-header__inner,
+.form-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin-inline: auto;
+    /* max-width: var(--header-container-w, var(--container-w)); */
+}
+
+/* タイトル：アイコン＋テキストを横並びにするだけ */
+.header-title,
+.page-header__title,
+.form-header__title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0;
+    font-size: var(--font-lg);
+    font-weight: 600;
+}
+
+/* 右側のボタン群 */
+.page-header__actions,
+.form-header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+/* （必要なら）左側の補助ブロック */
+.page-header__left,
+.form-header__left {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}

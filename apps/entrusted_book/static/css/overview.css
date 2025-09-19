@@ -1,0 +1,25 @@
+/* entrusted_book/static/css/overview.css */
+
+/* EntrustedBook overview 専用ラッパー */
+.overview__container {
+    margin: 0 50px;
+}
+
+/* 下部の3カラム（幅に応じて1→2→3列） */
+.overview .content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; /* 3列 */
+    gap: 1.5rem;
+}
+
+@media (max-width: 1200px) {
+    .overview .content-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 800px) {
+    .overview .content-grid { grid-template-columns: 1fr; }
+}
+
+/* 子カラムのベース */
+.overview .content-grid .col {
+    min-width: 260px;
+}

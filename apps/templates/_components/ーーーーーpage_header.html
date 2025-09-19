@@ -1,0 +1,23 @@
+<!--apps/templates/_components/ーーーーーpage_header.html-->
+<header class="page-header">
+    <div class="container">
+        <div class="page-header__inner">
+            <h1 class="page-header__title header-title">
+                {% if icon %}
+                <img src="{{ url_for('static', filename=icon) }}" alt="icon" width="20" height="20">
+                {% endif %}
+                <span>{{ heading or "List" }}</span>
+            </h1>
+            <div class="page-header__actions">
+                {{ header_actions|safe }}
+            </div>
+        </div>
+    </div>
+    {% if book %}
+    <nav class="breadcrumb">
+        <span>{{ book.name or '(no name)' }}</span>
+        <span class="pill"><b>Contract</b> {{ book.contract_date or '–' }}</span>
+        <span class="pill"><b>Execution</b> {{ book.execution_date or '–' }}</span>
+    </nav>
+    {% endif %}
+</header>

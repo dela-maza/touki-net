@@ -1,0 +1,49 @@
+<!-- apps/templates/_layout/detail_base.html -->
+{# templates/_layout/detail_base.html #}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{% block title %}Detail{% endblock %}</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/spacing.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/util.css') }}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout/page-header.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/btn.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/btn-group.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/tooltip.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout/detail.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/breadcrumb.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/title.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<header class="page-header">
+    {% block header %}
+    <div class="container">
+        <div class="page-header__inner">
+            <h1 class="page-header__title header-title">
+                {% if icon %}<img src="{{ url_for('static', filename=icon) }}" alt="icon" width="20" height="20">{% endif %}
+                <span>{{ heading or "Detail" }}</span>
+            </h1>
+            <div class="page-header__actions">
+                {% block header_actions %}{% endblock %}
+            </div>
+        </div>
+        {% block breadcrumb %}{% endblock %}
+    </div>
+    {% endblock %}
+</header>
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+{% block extra_js %}{% endblock %}
+</body>
+</html>
