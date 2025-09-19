@@ -23,5 +23,5 @@ class DeliveryDocument(db.Model):
     client = db.relationship("Client", back_populates="delivery_documents")
 
 
-def __repr__(self):
-    return f"<DeliveryDocument id={self.id} client_id={self.client_id} created_at={self.created_at}>"
+    def __repr__(self):
+        return f"<DeliveryDocument id={self.id} client_id={self.client_id} created_at={self.created_at}>"

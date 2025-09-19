@@ -1,30 +1,9 @@
-/* apps/static/css/component/page-header.css */
-
 /* Block */
 .page-header {
     background: var(--color-header-bg);
-    border-bottom: 1px solid var(--color-header-border);
-    color: var(--color-header-fg);
 }
 
-/* Element */
-.page-header__inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-3);
-    padding: var(--space-3) 0;
-}
-
-.page-header__title {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    margin: 0;
-    font-size: var(--font-md);
-    font-weight: 600;
-}
-
+/* タイトル横のピル（ページヘッダー固有） */
 .page-header__title .pill {
     font-size: 12px;
     padding: 2px 8px;
@@ -35,20 +14,13 @@
     display: inline-flex;
     align-items: center;
 }
-
 .page-header__title .pill b {
     margin-right: 4px;
     color: var(--color-fg);
     font-weight: 600;
 }
 
-.page-header__actions {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-}
-
-/* Link style */
+/* リンク色（ページヘッダー固有） */
 .page-header a {
     color: var(--color-header-link);
     text-decoration: none;

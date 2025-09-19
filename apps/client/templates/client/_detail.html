@@ -1,85 +1,98 @@
-<!--apps/client/templates/client/_detail.html-->
+<!-- apps/client/templates/client/_detail.html -->
 <div class="detail-section">
+    <!-- 見出しをカードのヘッダーとして一体化 -->
     <div class="section-header">
-        <h3 class="detail-title">
-            <img src="{{ url_for('static', filename='icon/24/person.svg') }}" alt="" width="20" height="20">
+        <h2 class="section-header__title header-title">
+            <img src="{{ url_for('static', filename='icon/24/person.svg') }}" alt="">
             <span>Client</span>
-        </h3>
-        <div class="btn-group">
-            <a class="btn" href="{{ url_for('client.create', entrusted_book_id=book.id) }}">
+        </h2>
+        <div class="btn-group btn-group--sm">
+            <a class="btn icon" href="{{ url_for('client.create', entrusted_book_id=book.id) }}" title="New">
                 <img src="{{ url_for('static', filename='icon/16/new.svg') }}" alt="">
-                New
             </a>
-            <a class="btn" href="{{ url_for('client.index') }}">
+            <a class="btn icon" href="{{ url_for('client.index') }}" title="Clients">
                 <img src="{{ url_for('static', filename='icon/16/list.svg') }}" alt="">
-                Clients
             </a>
         </div>
     </div>
 
-    {% if book.clients %}
-    <div class="stack">
+    <!-- 一体化カード本体 -->
+    <article class="card card--attach">
+
+        {% if book.clients %}
         {% for client in book.clients %}
-        <article class="card card--sub">
-            <header class="card-header">
-                <div class="flex-align-center gap-2">
-                    {{ client.name }}
-                </div>
+        <!-- 行（クライアント1件） -->
+        <section class="card-section">
+            <header class="card-section__header">
+                <div class="card-section__title">{{ client.name }}</div>
                 <div class="row-actions">
-                    <a class="btn icon" href="{{ url_for('client.edit', client_id=client.id) }}">
-                        <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="edit">
+                    <a class="btn icon" href="{{ url_for('client.edit', client_id=client.id) }}" title="Edit">
+                        <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="">
                     </a>
-                    <a class="btn icon" href="{{ url_for('client.confirm_delete', client_id=client.id) }}">
-                        <img src="{{ url_for('static', filename='icon/16/trash.svg') }}" alt="delete">
+                    <a class="btn icon" href="{{ url_for('client.confirm_delete', client_id=client.id) }}" title="Delete">
+                        <img src="{{ url_for('static', filename='icon/16/trash.svg') }}" alt="">
+                    </a>
+                    <a class="btn icon" href="{{ url_for('client.documents_index', client_id=client.id) }}" title="Documents">
+                        <img src="{{ url_for('static', filename='icon/16/note.svg') }}" alt="">
                     </a>
                 </div>
             </header>
 
-            <div class="card-body">
-                <dl class="meta">
-                    <dt>ID</dt>
-                    <dd>{{ client.id }}</dd>
-                    <dt>Type</dt>
-                    <dd>{{ client.client_type.label }}</dd>
-                    <dt>name</dt>
-                    <dd>{{ client.name or '-' }}</dd>
-                    <dt>name_kana</dt>
-                    <dd>{{ client.name_kana or '-' }}</dd>  <!-- ← 修正 -->
-                    <dt>Birth date</dt>
-                    <dd>{{ client.birth_date.strftime('%Y-%m-%d') if client.birth_date else '-' }}</dd>
-                    <dt>Postal</dt>
-                    <dd>{{ client.postal_code or '-' }}</dd>
-                    <dt>Address</dt>
-                    <dd>{{ client.address or '-' }}</dd>
-                    <dt>Phone</dt>
-                    <dd>{{ client.phone_number or '-' }}</dd>
-                    <dt>Email</dt>
-                    <dd>{{ client.email or '-' }}</dd>
-                    <dt>Note</dt>
-                    <dd>{{ client.note or '-' }}</dd>
-                    <dt>Equity</dt>
-                    <dd>
-                        {% if client.equity_numerator and client.equity_denominator %}
-                        {{ client.equity_numerator }}/{{ client.equity_denominator }}
-                        {% else %}-{% endif %}
-                    </dd>
-                </dl>
+            <div class="card-section__body">
+                <table class="meta-table meta-table--plain">
+                    <tbody>
+                    <tr>
+                        <th>ID</th><td>{{ client.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Type</th><td>{{ client.client_type.label }}</td>
+                    </tr>
+                    <tr>
+                        <th>name</th><td>{{ client.name or '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>name_kana</th><td>{{ client.name_kana or '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Birth date</th>
+                        <td>{{ client.birth_date.strftime('%Y-%m-%d') if client.birth_date else '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Postal</th><td>{{ client.postal_code or '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Address</th><td>{{ client.address or '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Phone</th><td>{{ client.phone_number or '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Email</th><td>{{ client.email or '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Note</th><td>{{ client.note or '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Equity</th>
+                        <td>
+                            {% if client.equity_numerator and client.equity_denominator %}
+                            {{ client.equity_numerator }}/{{ client.equity_denominator }}
+                            {% else %}-{% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Updated</th>
+                        <td>{{ client.updated_at.strftime('%Y-%m-%d %H:%M') if client.updated_at else '' }}</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
 
-            <div class="card-footer">
-                <div class="footer-left">
-                    updated: {{ client.updated_at.strftime('%Y-%m-%d %H:%M') if client.updated_at else '' }}
-                </div>
-                <div class="footer-right">
-                    <a class="btn icon" href="{{ url_for('documents.index', client_id=client.id) }}">
-                        <img src="{{ url_for('static', filename='icon/16/note.svg') }}" alt="documents">
-                    </a>
-                </div>
-            </div>
-        </article>
+        </section>
         {% endfor %}
-    </div>
-    {% else %}
-    <div class="help">No clients yet.</div>
-    {% endif %}
+        {% else %}
+        <div class="help">No clients yet.</div>
+        {% endif %}
+
+    </article>
 </div>

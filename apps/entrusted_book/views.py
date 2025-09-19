@@ -3,6 +3,7 @@ from __future__ import annotations
 from sqlalchemy.orm import selectinload
 from flask import Blueprint, render_template, redirect, url_for, flash
 from sqlalchemy.exc import SQLAlchemyError
+from apps.common.forms import CSRFOnlyForm
 from apps.entrusted_book.forms import EntrustedBookForm
 from apps.entrusted_book.models import EntrustedBook
 from db import db
@@ -48,7 +49,8 @@ def detail(book_id: int):
     book = (EntrustedBook.query
             .options(selectinload(EntrustedBook.clients))
             .get_or_404(book_id))
-    return render_template("entrusted_book/detail_layout.html", book=book, clients=book.clients)
+    return render_template("entrusted_book/overview.html", book=book, clients=book.clients)
+
 
 # --------------------------
 # Create（新規）
@@ -106,15 +108,17 @@ def edit(book_id: int):
         title="Edit Entrusted Book",
         is_edit=True,
     )
+
+
 # --------------------------
 # Confirm Delete（確認）
 # --------------------------
 @entrusted_book_bp.route("/<int:book_id>/confirm_delete")
 def confirm_delete(book_id: int):
-    # CSRF 用に空フォームを渡す（テンプレートで {{ form.hidden_tag() }} を描画）
-    form = EntrustedBookForm()
+    form = CSRFOnlyForm()  # ← これで hidden_tag() が使える
     book = EntrustedBook.query.get_or_404(book_id)
-    return render_template("entrusted_book/confirm_delete.html", book=book, form=form)
+    return render_template("entrusted_book/confirm_delete.html",
+                           book=book, form=form)
 
 
 # --------------------------
@@ -122,9 +126,9 @@ def confirm_delete(book_id: int):
 # --------------------------
 @entrusted_book_bp.route("/<int:book_id>/delete", methods=["POST"])
 def delete(book_id: int):
-    # CSRF 検証（hidden_tag のみでOK）
-    form = EntrustedBookForm()
-    if not form.validate_on_submit():
+    from apps.common.forms import CSRFOnlyForm
+    form = CSRFOnlyForm()  # confirm_delete()からおくられてきたformを再定義
+    if not form.validate_on_submit():  # CSRF NG 時はここで弾ける
         flash("不正なリクエストです。（CSRF）", "danger")
         return redirect(url_for("entrusted_book.detail", book_id=book_id))
 

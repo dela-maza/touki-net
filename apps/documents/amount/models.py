@@ -1,6 +1,7 @@
 ### apps/amount/models.py
 from datetime import datetime
 from db import db
+from sqlalchemy import text
 from sqlalchemy.dialects.postgresql import JSONB
 from typing import Dict
 # from apps.amount.calculator import AmountDocumentCalculator
@@ -11,12 +12,17 @@ class AmountDocument(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     entrusted_book_name = db.Column(db.String(255), nullable=False)
-    apply_consumption_tax = db.Column(db.Boolean, default=True)
-    apply_withholding = db.Column(db.Boolean, default=False)
+    apply_consumption_tax = db.Column(db.Boolean, nullable=False,
+                                      default=True, server_default=text("true"))
+    apply_withholding     = db.Column(db.Boolean, nullable=False,
+                                      default=False, server_default=text("false"))
     advance_payment = db.Column(db.Integer, nullable=True)
-    item_types = db.Column(JSONB, nullable=False, server_default='[]')
-    reward_amounts = db.Column(JSONB, nullable=False, server_default='[]')
-    expense_amounts = db.Column(JSONB, nullable=False, server_default='[]')
+    item_types      = db.Column(JSONB, nullable=False,
+                                default=list, server_default=text("'[]'::jsonb"))
+    reward_amounts  = db.Column(JSONB, nullable=False,
+                                default=list, server_default=text("'[]'::jsonb"))
+    expense_amounts = db.Column(JSONB, nullable=False,
+                                default=list, server_default=text("'[]'::jsonb"))
     note = db.Column(db.Text, nullable=True)
     estimate_date = db.Column(db.Date, nullable=True)
     invoice_date = db.Column(db.Date, nullable=True)

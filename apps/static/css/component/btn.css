@@ -111,7 +111,8 @@ button.btn.primary:active {
 
 /* Primary 内のアイコンを白化（SVG/PNG両対応） */
 a.btn.primary > img,
-button.btn.primary > img {
+button.btn.primary > img ,
+button.btn.danger > img {
     filter: brightness(0) invert(1);
 }
 

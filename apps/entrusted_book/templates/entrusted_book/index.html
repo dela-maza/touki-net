@@ -1,44 +1,29 @@
-<!DOCTYPE html>
-<!-- apps/entrusted_book/templates/entrusted_book/index.html -->
-<html lang="ja">
-<head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Entrusted Books</title>
+{# apps/entrusted_book/templates/entrusted_book/index.html #}
+{% extends "_layout/page_base.html" %}
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/spacing.css') }}">  <!-- 4pxグリッド utilities -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout/page-header.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/tooltip.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout/toolbar.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/util.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/btn-group.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/btn.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/index-table.css') }}">
-</head>
-<body>
+{% block title %}Entrusted Books{% endblock %}
 
-<header class="page-header">
-    <div class="container">
-        <div class="page-header__inner">
-            <h1 class="page-header__title">
-                <img src="{{ url_for('static', filename='icon/24/book.svg') }}" alt="book icon" width="20" height="20">
-                <span>Entrusted Books</span>
-            </h1>
-        </div>
-    </div>
-</header>
+{# ヘッダー左：アイコン #}
+{% block heading_icon %}
+<img src="{{ url_for('static', filename='icon/24/book.svg') }}" alt="icon" width="20" height="20">
+{% endblock %}
 
+{# ヘッダー中央：タイトル #}
+{% block heading %}Entrusted Books{% endblock %}
+
+{# ヘッダー右：アクション #}
+{% block header_actions %}
+<a class="btn icon" href="{{ url_for('entrusted_book.create') }}" title="New Book">
+    <img src="{{ url_for('static', filename='icon/16/new.svg') }}" alt="">
+</a>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/component/data-table.css') }}">
+{% endblock %}
+
+{% block content %}
 <div class="table-container">
-    <div class="actions">
-        <a class="btn" href="{{ url_for('entrusted_book.create') }}">
-            <img src="{{ url_for('static', filename='icon/16/new.svg') }}" alt="">
-            New Book
-        </a>
-    </div>
-
     {% if books %}
     <table class="table table--fixed entrusted-books-table">
         <thead>
@@ -46,7 +31,7 @@
             <th class="col-id text-center">id</th>
             <th class="col-name">name</th>
             <th class="col-date text-center">execution date</th>
-            <th class="col-date text-center">updated at</th>  <!-- typo修正 -->
+            <th class="col-date text-center">updated at</th>
             <th class="table__actions text-center">action</th>
         </tr>
         </thead>
@@ -59,20 +44,17 @@
             <td class="text-center">{{ book.updated_at.strftime('%Y-%m-%d') if book.updated_at else '' }}</td>
             <td class="table__actions text-center">
                 <a class="btn icon tooltip tooltip-top"
-                   href="{{ url_for('entrusted_book.detail', book_id=book.id) }}"
-                   aria-label="view {{ book.name }}" title="View">
+                   href="{{ url_for('entrusted_book.detail', book_id=book.id) }}" title="View">
                     <img src="{{ url_for('static', filename='icon/16/eye.svg') }}" alt="">
                     <span class="tooltip-text">Detail</span>
                 </a>
                 <a class="btn icon tooltip tooltip-top"
-                   href="{{ url_for('entrusted_book.edit', book_id=book.id) }}"
-                   aria-label="edit {{ book.name }}" title="Edit">
+                   href="{{ url_for('entrusted_book.edit', book_id=book.id) }}" title="Edit">
                     <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="">
                     <span class="tooltip-text">Edit</span>
                 </a>
                 <a class="btn icon tooltip tooltip-top"
-                   href="{{ url_for('entrusted_book.confirm_delete', book_id=book.id) }}"
-                   aria-label="delete {{ book.name }}" title="Delete">
+                   href="{{ url_for('entrusted_book.confirm_delete', book_id=book.id) }}" title="Delete">
                     <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="">
                     <span class="tooltip-text">Delete</span>
                 </a>
@@ -85,8 +67,8 @@
     <div class="empty-hint">No entrusted books yet.</div>
     {% endif %}
 </div>
+{% endblock %}
 
-<!-- JS -->
+{% block extra_js %}
 <script src="{{ url_for('static', filename='js/table.js') }}" defer></script>
-</body>
-</html>
+{% endblock %}

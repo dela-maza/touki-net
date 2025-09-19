@@ -1,8 +1,14 @@
 # apps/client/views.py
 from datetime import datetime, time
-from flask_wtf.csrf import generate_csrf
+from apps.common.forms import CSRFOnlyForm
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from db import db
+from sqlalchemy import select, literal, union_all, and_
+from apps.documents.amount.models import AmountDocument
+from apps.documents.required.models import RequiredDocument
+from apps.documents.delivery.models import DeliveryDocument
+from apps.documents.origin.models import OriginDocument
+from apps.documents.constants import DocumentType
 from apps.client.models import Client
 from apps.entrusted_book.models import EntrustedBook
 from apps.client.forms import ClientForm
@@ -49,6 +55,76 @@ def _set_entrusted_book_choices(form: ClientForm):
 def index():
     clients = Client.query.order_by(Client.updated_at.desc()).all()
     return render_template("client/index.html", clients=clients)
+
+
+# --------------------------
+# documents list
+# --------------------------
+@client_bp.route("/<int:client_id>/documents")
+def documents_index(client_id: int):
+    client = Client.query.get_or_404(client_id)
+
+    a = (
+        select(
+            AmountDocument.id.label("id"),
+            AmountDocument.entrusted_book_name.label("title"),
+            AmountDocument.created_at.label("created_at"),
+            literal(DocumentType.AMOUNT.value).label("document_type"),
+        )
+        .where(and_(AmountDocument.client_id == client_id))
+    )
+
+    r = (
+        select(
+            RequiredDocument.id.label("id"),
+            RequiredDocument.entrusted_book_name.label("title"),
+            RequiredDocument.created_at.label("created_at"),
+            literal(DocumentType.REQUIRED.value).label("document_type"),
+        )
+        .where(and_(RequiredDocument.client_id == client_id))
+    )
+
+    d = (
+        select(
+            DeliveryDocument.id.label("id"),
+            DeliveryDocument.entrusted_book_name.label("title"),
+            DeliveryDocument.created_at.label("created_at"),
+            literal(DocumentType.DELIVERY.value).label("document_type"),
+        )
+        .where(and_(DeliveryDocument.client_id == client_id))
+    )
+
+    o = (
+        select(
+            OriginDocument.id.label("id"),
+            OriginDocument.real_estate_description.label("title"),
+            OriginDocument.created_at.label("created_at"),
+            literal(DocumentType.ORIGIN.value).label("document_type"),
+        )
+        .where(and_(OriginDocument.client_id == client_id))
+    )
+
+    union_q = union_all(a, r, d, o).subquery()
+
+    q = (
+        db.session.query(
+            union_q.c.id,
+            union_q.c.title,
+            union_q.c.created_at,
+            union_q.c.document_type,
+        )
+        .order_by(union_q.c.created_at.desc(), union_q.c.id.desc())
+    )
+
+    documents = q.all()
+
+    return render_template(
+        "client/documents_index.html",
+        documents=documents,
+        client=client,  # ← 見出しで名前出す等に使える
+        entrusted_book=client.entrusted_book,  # ← 必要なら
+    )
+
 # --------------------------
 # Create（新規）
 # --------------------------
@@ -77,8 +153,8 @@ def create():
             email=form.email.data,
             intention_confirmed_at=_date_to_dt(form.intention_confirmed_at.data),
             note=form.note.data,
-            equity_numerator=form.equity_numerator.data,     # None または int
-            equity_denominator=form.equity_denominator.data, # None または int
+            equity_numerator=form.equity_numerator.data,  # None または int
+            equity_denominator=form.equity_denominator.data,  # None または int
         )
         db.session.add(client)
         db.session.commit()
@@ -99,7 +175,7 @@ def edit(client_id):
 
     # DateField は date 型なので上書き
     if request.method == "GET":
-        form.birth_date.data = _dt_to_date(client.birth_date)
+        form.birth_date.data = client.birth_date
         form.intention_confirmed_at.data = _dt_to_date(client.intention_confirmed_at)
 
     if form.validate_on_submit():
@@ -115,7 +191,7 @@ def edit(client_id):
         client.email = form.email.data
         client.intention_confirmed_at = _date_to_dt(form.intention_confirmed_at.data)
         client.note = form.note.data
-        client.equity_numerator = form.equity_numerator.data    # None または int
+        client.equity_numerator = form.equity_numerator.data  # None または int
         client.equity_denominator = form.equity_denominator.data
 
         db.session.commit()
@@ -127,6 +203,7 @@ def edit(client_id):
                            is_edit=True,
                            title="Edit Client")
 
+
 # --------------------------
 # Confirm Delete（確認）
 # --------------------------
@@ -136,12 +213,12 @@ def confirm_delete(client_id):
     cancel_url = request.args.get("next") or url_for(
         "entrusted_book.detail", book_id=client.entrusted_book_id
     )
-    csrf_token = generate_csrf()  # ← csrf用の汎用トークン
+    form = CSRFOnlyForm()  # ← ここを追加（generate_csrf は不要）
     return render_template(
         "client/confirm_delete.html",
         client=client,
         cancel_url=cancel_url,
-        csrf_token=csrf_token,
+        form=form,  # ← これを渡す
     )
 
 
@@ -150,11 +227,16 @@ def confirm_delete(client_id):
 # --------------------------
 @client_bp.route("/<int:client_id>/delete", methods=["POST"])
 def delete(client_id):
+    form = CSRFOnlyForm()
+    cancel_url = request.args.get("next") or url_for(
+        "entrusted_book.detail", book_id=client_id
+    )
+    if not form.validate_on_submit():  # CSRF NGならここで弾ける
+        flash("不正なリクエストです。（CSRF）", "danger")
+        return redirect(cancel_url)
+
     client = Client.query.get_or_404(client_id)
     db.session.delete(client)
     db.session.commit()
     flash(f"Client #{client_id} deleted.", "success")
-    next_url = request.args.get("next") or url_for(
-        "entrusted_book.detail", book_id=client.entrusted_book_id
-    )
-    return redirect(next_url)
+    return redirect(url_for("entrusted_book.detail", book_id=client.entrusted_book_id))

@@ -1,4 +1,4 @@
-/* apps/static/css/pages/index-table.css */
+/* apps/static/css/pages/data-table.css */
 
 /* 固定コンテナ */
 .table-container {
@@ -32,6 +32,15 @@ table td {
     color: var(--color-muted);
 }
 
+/* 任意のキャプション（使う場合） */
+.table__caption {
+    font-size: var(--font-md);
+    font-weight: 500;
+    color: var(--color-fg);
+    margin: var(--space-4) auto var(--space-2);
+}
+
+
 /* 幅プリセット（このページ専用） */
 .table.entrusted-books-table th.col-id         { width: 5%; }
 .table.entrusted-books-table th.col-name       { width: 45%; }
@@ -51,20 +60,22 @@ tr.clickable-row:hover td { background-color: var(--color-header-bg); }
 /* アクション列 */
 td.table__actions { text-align: center; }
 
-/* 長文の省略表示 */
+/* 省略表示 */
 .truncate {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* 任意のキャプション（使う場合） */
-.table__caption {
-    font-size: var(--font-md);
-    font-weight: 500;
-    color: var(--color-fg);
-    margin: var(--space-4) auto var(--space-2);
+/* アイコン + テキストを縦中央＆間隔 */
+.cell-flex-align-center {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
 }
 
-/* ユーティリティの例（必要なら） */
-.text-center { text-align: center; }
+/* テキスト側も縮められるように */
+.cell-flex-align-center .text {
+    min-width: 0;
+}

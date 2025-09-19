@@ -1,0 +1,49 @@
+<!--apps/entrusted_book/templates/entrusted_book/overview.html-->
+{% extends "_layout/page_base.html" %}
+
+{% set icon = 'icon/24/book.svg' %}
+{% block title %}Entrusted Book #{{ book.id }}{% endblock %}
+{% block heading %}Entrusted Book{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/component/detail-card.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/component/breadcrumb.css') }}">
+<link rel="stylesheet" href="{{ url_for('entrusted_book.static', filename='css/overview.css') }}">
+{% endblock %}
+
+{% block header_meta %}
+<span class="pill"><b>Contract</b> {{ book.contract_date or '–' }}</span>
+<span class="pill"><b>Execution</b> {{ book.execution_date or '–' }}</span>
+{% endblock %}
+
+{% block header_actions %}
+<a class="btn icon" href="{{ url_for('entrusted_book.index') }}"><img src="{{ url_for('static', filename='icon/16/list.svg') }}" alt=""></a>
+{% endblock %}
+
+
+
+{% block breadcrumb %}
+<nav class="breadcrumb">
+    <span>{{ book.name or '(no name)' }}</span>
+</nav>
+{% endblock %}
+
+
+
+{% block content %}
+<div class="overview">
+    <div class="overview__container">
+        <section class="content-grid">
+            <div class="col">
+                {% include 'client/_detail.html' %}
+            </div>
+            <div class="col">
+                {# Application（未実装） #}
+            </div>
+            <div class="col">
+                {# Register（未実装） #}
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

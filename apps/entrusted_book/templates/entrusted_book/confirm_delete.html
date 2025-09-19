@@ -9,53 +9,39 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/confirm_delete.css') }}">
 </head>
 <body>
-<div class="confirm-container">
-    <h3 class="form-title">Delete Entrusted Book #{{ book.id }}</h3>
+<div class="confirm-container" role="alertdialog"
+     aria-labelledby="confirm-title" aria-describedby="confirm-desc">
+    <h3 id="confirm-title" class="form-title">Delete Entrusted Book #{{ book.id }}</h3>
 
-    <div class="form-box">
-        <p class="help">
-            本当に <strong>{{ book.name or "(no name)" }}</strong> を削除しますか？
-            <span class="danger-text">この操作は元に戻せません。</span>
-        </p>
-
-        <table class="meta-table">
-            <tr>
-                <th>ID</th><td class="mono">{{ book.id }}</td>
-            </tr>
-            <tr>
-                <th>Name</th><td>{{ book.name or "-" }}</td>
-            </tr>
-            <tr>
-                <th>Note</th><td>{{ book.note or "-" }}</td>
-            </tr>
-            <tr>
-                <th>Contract Date</th>
-                <td>{{ book.contract_date.strftime('%Y-%m-%d') if book.contract_date else '-' }}</td>
-            </tr>
-            <tr>
-                <th>Execution Date</th>
-                <td>{{ book.execution_date.strftime('%Y-%m-%d') if book.execution_date else '-' }}</td>
-            </tr>
-            <tr>
-                <th>Created At</th>
-                <td>{{ book.created_at.strftime('%Y-%m-%d %H:%M') if book.created_at else '-' }}</td>
-            </tr>
-        </table>
-
-        <form method="post" action="{{ url_for('entrusted_book.delete', book_id=book.id) }}">
-            {{ form.hidden_tag() }}
-            <div class="form-actions">
-                <button type="submit" class="btn danger">
-                    <img src="{{ url_for('static', filename='icon/16/trash(white).svg') }}" alt="delete icon">
-                    Delete
-                </button>
-                <a class="btn secondary" href="{{ url_for('entrusted_book.index') }}">
-                    <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="cancel icon">
-                    Cancel
-                </a>
-            </div>
-        </form>
+    <div id="confirm-desc" class="help">
+        本当に <strong>{{ book.name or "(no name)" }}</strong> を削除しますか？
+        <span class="danger-text">この操作は元に戻せません。</span>
     </div>
+
+    <div class="table-wrap">
+        <table class="meta-table">
+            <tr><th>ID</th><td class="mono">{{ book.id }}</td></tr>
+            <tr><th>Name</th><td>{{ book.name or "-" }}</td></tr>
+            <tr><th>Note</th><td>{{ book.note or "-" }}</td></tr>
+            <tr><th>Contract Date</th><td>{{ book.contract_date.strftime('%Y-%m-%d') if book.contract_date else '-' }}</td></tr>
+            <tr><th>Execution Date</th><td>{{ book.execution_date.strftime('%Y-%m-%d') if book.execution_date else '-' }}</td></tr>
+            <tr><th>Created At</th><td>{{ book.created_at.strftime('%Y-%m-%d %H:%M') if book.created_at else '-' }}</td></tr>
+        </table>
+    </div>
+
+    <form method="post" action="{{ url_for('entrusted_book.delete', book_id=book.id) }}">
+        {{ form.hidden_tag() }}
+        <div class="form-actions">
+         　<button type="submit" class="btn danger">
+            <img src="{{ url_for('static', filename='icon/16/trash.svg') }}" alt="" aria-hidden="true">
+            Delete
+        </button>
+            <a class="btn secondary" href="{{ url_for('entrusted_book.index') }}" autofocus>
+                <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="" aria-hidden="true">
+                Cancel
+            </a>
+        </div>
+    </form>
 </div>
 </body>
 </html>

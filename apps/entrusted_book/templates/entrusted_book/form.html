@@ -1,78 +1,64 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title or "Entrusted Book" }}</title>
+{# apps/entrusted_book/templates/entrusted_book/form.html #}
+{% extends "_layout/form_base.html" %}
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/form.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/btn.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout/form-header.css') }}">
-</head>
-<body>
+<!--submitがフォーム外なのでフォームIDを決めておく-->
+{% set form_id = "entrusted-book-form" %}
 
-<form method="POST">
-    {{ form.hidden_tag() }}
+{# ヘッダー右側のボタンだけを差し込む #}
+{% block header_actions %}
+<button type="submit" class="btn primary" form="{{ form_id }}">
+    {% if is_edit %}
+    <img src="{{ url_for('static', filename='icon/16/check.svg') }}" alt="">
+    Update
+    {% else %}
+    <img src="{{ url_for('static', filename='icon/16/new.svg') }}" alt="">
+    Create
+    {% endif %}
+</button>
+<a href="{{ back_url }}" class="btn secondary">
+    <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="">
+    Cancel
+</a>
+{% endblock %}
 
-    <div class="form-header">
-        <div class="container">
-            <div class="form-header__inner">
-                <div class="form-header__left">
-                    <h3 class="form-header__title">
-                        <img src="{{ url_for('static', filename='icon/24/book.svg') }}" alt="book icon">
-                        <span>{{ title or "New Entrusted Book" }}</span>
-                    </h3>
-                </div>
-                <div class="form-header__actions">
-                    <button type="submit" class="btn primary">
-                        {% if is_edit %}
-                        <img src="{{ url_for('static', filename='icon/16/check.svg') }}" alt="">
-                        Update
-                        {% else %}
-                        <img src="{{ url_for('static', filename='icon/16/new.svg') }}" alt="">
-                        Create
-                        {% endif %}
-                    </button>
-                    <a href="{{ back_url }}" class="btn secondary">
-                        <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="">
-                        Cancel
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
+{% block body %}
+<form method="POST" id="{{ form_id }}">
+    {{ form.hidden_tag() }}  {# ← CSRF 含む #}
 
-    <!-- 本文は .container 内に .form-box を置いて枠を出す -->
     <div class="container">
         <div class="form-box">
             <div class="form-group">
                 {{ form.name.label(class="form-label") }}
                 {{ form.name(class="form-input", placeholder="受託簿名を入力") }}
-                {% if form.name.errors %}<ul class="form-errors">{% for e in form.name.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+                {% if form.name.errors %}
+                <ul class="form-errors">{% for e in form.name.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
             </div>
 
             <div class="form-group">
                 {{ form.contract_date.label(class="form-label") }}
                 {{ form.contract_date(class="form-input", type="date") }}
-                {% if form.contract_date.errors %}<ul class="form-errors">{% for e in form.contract_date.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+                {% if form.contract_date.errors %}
+                <ul class="form-errors">{% for e in form.contract_date.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
             </div>
 
             <div class="form-group">
                 {{ form.execution_date.label(class="form-label") }}
                 {{ form.execution_date(class="form-input", type="date") }}
-                {% if form.execution_date.errors %}<ul class="form-errors">{% for e in form.execution_date.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+                {% if form.execution_date.errors %}
+                <ul class="form-errors">{% for e in form.execution_date.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
             </div>
 
             <div class="form-group">
                 {{ form.note.label(class="form-label") }}
                 {{ form.note(class="form-textarea", rows="10", placeholder="備考（任意）") }}
-                {% if form.note.errors %}<ul class="form-errors">{% for e in form.note.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+                {% if form.note.errors %}
+                <ul class="form-errors">{% for e in form.note.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
             </div>
         </div>
     </div>
 </form>
-
-</body>
-</html>
+{% endblock %}

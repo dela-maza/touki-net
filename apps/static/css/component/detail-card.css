@@ -1,0 +1,89 @@
+/* apps/static/css/layout/detail-card.css */
+
+.section-header{
+    /*border: 1px solid var(--color-header-border);*/
+    margin: var(--space-1) var(--space-1);
+    padding: var(--space-1) 0;
+    border-radius: var(--space-2);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: var(--space-2);
+}
+
+/* --- 修正: “カード化”のときは共通枠を消してカードと一体化 --- */
+.section-header.section-header--card{
+    /* 共通の枠を打ち消す */
+    margin: 0;                    /* ← 外側余白なし */
+    border: 1px solid var(--color-border);
+    padding: var(--space-3) var(--space-4);
+    background:#fff;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    box-shadow: none;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: var(--space-2);
+}
+
+/* 基本は attach なので上枠なし */
+.card.card--attach {
+    border: 1px solid var(--color-border);
+    border-top: none;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    overflow: hidden;
+    margin-top: 0;
+}
+
+/* 最初のカードだけは上部の枠と角丸を復活 */
+.card.card--attach:first-of-type {
+    border-top: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+/* 行ごとの区切りは2行目以降だけ */
+.card-section + .card-section{
+    border-top:1px solid var(--color-border);
+}
+
+.card-section__header,
+.card-section__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding: 10px 16px;
+    background: #f3f4f6;          /* ← 少し濃くした背景 */
+    color: var(--color-fg);       /* 文字色はベースの本文色 */
+    font-weight: 500;             /* ← 見やすさを上げる */
+    border-bottom: 1px solid #d1d5da; /* ← borderもワントーン濃く */
+}
+
+.card-section__header {
+    border-bottom: 1px solid #c9d1d9; /* ← headerだけさらに少し強調 */
+}
+
+.card-section__body {
+    padding: 14px 16px;
+}
+
+/* table */
+.meta-table--plain {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.meta-table--plain th {
+    text-align: left;
+    font-weight: normal;
+    /*color: var(--color-fg-muted, #555);*/
+    padding: var(--space-1) 0;
+    white-space: nowrap; /* キーを折り返さない */
+    vertical-align: top;
+}
+
+.meta-table--plain td {
+    padding:0;
+    color: var(--color-fg, #24292f);
+}

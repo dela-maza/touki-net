@@ -1,224 +1,152 @@
-<!-- apps/client/templates/client/form.html -->
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title or "Client" }}</title>
-    <!-- CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/pages/form.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/btn.css') }}">
-</head>
-<body>
-<form method="POST">
-    {{ form.hidden_tag() }}
+{# apps/client/templates/client/form.html #}
+{% extends "_layout/form_base.html" %}
 
-    {# ------- 操作用ツールバー ------- #}
-    <!-- Actions -->
-    {% set back_book_id = form.entrusted_book_id.data or request.args.get('entrusted_book_id', type=int) %}
-    {% set back_url = url_for('entrusted_book.detail', book_id=back_book_id)
-    if back_book_id else url_for('client.index') %}
+{# フォームがヘッダー外にあるので、ヘッダーボタンは form="" で紐づける #}
+{% set form_id = "client-form" %}
 
-    <div class="toolbar">
-        <div class="toolbar-inner">
-            <div class="left">
-                <h3 class="form-title">
-                    <img src="{{ url_for('static', filename='icon/24/person.svg') }}" alt="book icon"">
-                    <span>{{ title or "New Client" }}</span>
-                </h3>
-            </div>
-            <div class="right">
-                <button type="submit" class="btn primary">
-                    {% if is_edit %}
-                    <img src="{{ url_for('static', filename='icon/16/check.svg') }}" alt="book icon">
-                    Update
-                    {% else %}
-                    <img src="{{ url_for('static', filename='icon/16/new.svg') }}" alt="book icon">
-                    Create
-                    {% endif %}
-                </button>
-                <a href="{{ back_url }}" class="btn secondary">
-                    <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="book icon">
-                    Cancel
-                </a>
-            </div>
-        </div>
-    </div>
+{# 戻り先（受託簿 or クライアント一覧） #}
+{% set back_book_id = form.entrusted_book_id.data or request.args.get('entrusted_book_id', type=int) %}
+{% set back_url = url_for('entrusted_book.detail', book_id=back_book_id) if back_book_id else url_for('client.index') %}
+
+{# ヘッダー右側のアクション #}
+{% block header_actions %}
+<button type="submit" class="btn primary" form="{{ form_id }}">
+    {% if is_edit %}
+    <img src="{{ url_for('static', filename='icon/16/check.svg') }}" alt="">
+    Update
+    {% else %}
+    <img src="{{ url_for('static', filename='icon/16/new.svg') }}" alt="">
+    Create
+    {% endif %}
+</button>
+<a href="{{ back_url }}" class="btn secondary">
+    <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="">
+    Cancel
+</a>
+{% endblock %}
+
+{% block body %}
+<form method="POST" id="{{ form_id }}">
+    {{ form.hidden_tag() }} {# CSRF 含む #}
+
     <div class="container">
-        <!-- 受託簿 & クライアント種別 -->
-        <div class="form-group">
-            {{ form.entrusted_book_id.label(class="form-label") }}
-            {{ form.entrusted_book_id(class="form-input") }}
-            {% if form.entrusted_book_id.errors %}
-            <ul class="form-errors">
-                {% for error in form.entrusted_book_id.errors %}
-                <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        </div>
-
-        <div class="form-group">
-            {{ form.client_type_id.label(class="form-label") }}
-            {{ form.client_type_id(class="form-input") }}
-            {% if form.client_type_id.errors %}
-            <ul class="form-errors">
-                {% for error in form.client_type_id.errors %}
-                <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        </div>
-
-        <!-- 基本情報 -->
-        <div class="form-group">
-            {{ form.name.label(class="form-label") }}
-            {{ form.name(class="form-input", placeholder="氏名（必須）") }}
-            {% if form.name.errors %}
-            <ul class="form-errors">
-                {% for error in form.name.errors %}
-                <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        </div>
-
-        <div class="form-group">
-            {{ form.name_kana.label(class="form-label") }}
-            {{ form.name_kana(class="form-input", placeholder="ふりがな（任意）") }}
-            {% if form.name_kana.errors %}
-            <ul class="form-errors">
-                {% for error in form.name_kana.errors %}
-                <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        </div>
-
-        <div class="form-group">
-            {{ form.birth_date.label(class="form-label") }}
-            {{ form.birth_date(class="form-input", type="date", placeholder="YYYY-MM-DD") }}
-            {% if form.birth_date.errors %}
-            <ul class="form-errors">
-                {% for error in form.birth_date.errors %}
-                <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        </div>
-
-        <!-- 住所・連絡先 -->
-        <div class="form-group">
-            {{ form.postal_code.label(class="form-label") }}
-            {{ form.postal_code(class="form-input", placeholder="123-4567") }}
-            {% if form.postal_code.errors %}
-            <ul class="form-errors">
-                {% for error in form.postal_code.errors %}
-                <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        </div>
-
-        <div class="form-group">
-            {{ form.address.label(class="form-label") }}
-            {{ form.address(class="form-input", placeholder="住所") }}
-            {% if form.address.errors %}
-            <ul class="form-errors">
-                {% for error in form.address.errors %}
-                <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        </div>
-
-        <div class="form-group">
-            {{ form.phone_number.label(class="form-label") }}
-            {{ form.phone_number(class="form-input", placeholder="電話番号") }}
-            {% if form.phone_number.errors %}
-            <ul class="form-errors">
-                {% for error in form.phone_number.errors %}
-                <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        </div>
-
-        <div class="form-group">
-            {{ form.fax.label(class="form-label") }}
-            {{ form.fax(class="form-input", placeholder="FAX（任意）") }}
-            {% if form.fax.errors %}
-            <ul class="form-errors">
-                {% for error in form.fax.errors %}
-                <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        </div>
-
-        <div class="form-group">
-            {{ form.email.label(class="form-label") }}
-            {{ form.email(class="form-input", type="email", placeholder="example@example.com") }}
-            {% if form.email.errors %}
-            <ul class="form-errors">
-                {% for error in form.email.errors %}
-                <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        </div>
-
-        <!-- その他 -->
-        <div class="form-group">
-            {{ form.intention_confirmed_at.label(class="form-label") }}
-            {{ form.intention_confirmed_at(class="form-input", type="date", placeholder="YYYY-MM-DD") }}
-            {% if form.intention_confirmed_at.errors %}
-            <ul class="form-errors">
-                {% for error in form.intention_confirmed_at.errors %}
-                <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        </div>
-
-        <div class="form-group">
-            {{ form.note.label(class="form-label") }}
-            {{ form.note(class="form-textarea", rows="10", placeholder="備考（任意）") }}
-            {% if form.note.errors %}
-            <ul class="form-errors">
-                {% for error in form.note.errors %}
-                <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-        </div>
-
-        <!-- 持分（equity） -->
-        <div class="form-group">
-            <label class="form-label">Equity</label>
-            <div class="input-row" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                {{ form.equity_numerator(class="form-input", placeholder="分子", style="max-width:120px;
-                text-align:right;") }}
-                <span>/</span>
-                {{ form.equity_denominator(class="form-input", placeholder="分母", style="max-width:120px;
-                text-align:right;") }}
+        <div class="form-box">
+            <!-- 受託簿 / 種別 -->
+            <div class="form-group">
+                {{ form.entrusted_book_id.label(class="form-label") }}
+                {{ form.entrusted_book_id(class="form-input") }}
+                {% if form.entrusted_book_id.errors %}
+                <ul class="form-errors">{% for e in form.entrusted_book_id.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
             </div>
 
-            {% if form.equity_numerator.errors or form.equity_denominator.errors %}
-            <ul class="form-errors" style="margin-top:6px;">
-                {% for error in form.equity_numerator.errors %}
-                <li>{{ error }}</li>
-                {% endfor %}
-                {% for error in form.equity_denominator.errors %}
-                <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
+            <div class="form-group">
+                {{ form.client_type_id.label(class="form-label") }}
+                {{ form.client_type_id(class="form-input") }}
+                {% if form.client_type_id.errors %}
+                <ul class="form-errors">{% for e in form.client_type_id.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <!-- 基本情報 -->
+            <div class="form-group">
+                {{ form.name.label(class="form-label") }}
+                {{ form.name(class="form-input", placeholder="氏名（必須）") }}
+                {% if form.name.errors %}
+                <ul class="form-errors">{% for e in form.name.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.name_kana.label(class="form-label") }}
+                {{ form.name_kana(class="form-input", placeholder="ふりがな（任意）") }}
+                {% if form.name_kana.errors %}
+                <ul class="form-errors">{% for e in form.name_kana.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.birth_date.label(class="form-label") }}
+                {{ form.birth_date(class="form-input", type="date", placeholder="YYYY-MM-DD") }}
+                {% if form.birth_date.errors %}
+                <ul class="form-errors">{% for e in form.birth_date.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <!-- 住所・連絡先 -->
+            <div class="form-group">
+                {{ form.postal_code.label(class="form-label") }}
+                {{ form.postal_code(class="form-input", placeholder="123-4567") }}
+                {% if form.postal_code.errors %}
+                <ul class="form-errors">{% for e in form.postal_code.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.address.label(class="form-label") }}
+                {{ form.address(class="form-input", placeholder="住所") }}
+                {% if form.address.errors %}
+                <ul class="form-errors">{% for e in form.address.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.phone_number.label(class="form-label") }}
+                {{ form.phone_number(class="form-input", placeholder="電話番号") }}
+                {% if form.phone_number.errors %}
+                <ul class="form-errors">{% for e in form.phone_number.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.fax.label(class="form-label") }}
+                {{ form.fax(class="form-input", placeholder="FAX（任意）") }}
+                {% if form.fax.errors %}
+                <ul class="form-errors">{% for e in form.fax.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.email.label(class="form-label") }}
+                {{ form.email(class="form-input", type="email", placeholder="example@example.com") }}
+                {% if form.email.errors %}
+                <ul class="form-errors">{% for e in form.email.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <!-- その他 -->
+            <div class="form-group">
+                {{ form.intention_confirmed_at.label(class="form-label") }}
+                {{ form.intention_confirmed_at(class="form-input", type="date", placeholder="YYYY-MM-DD") }}
+                {% if form.intention_confirmed_at.errors %}
+                <ul class="form-errors">{% for e in form.intention_confirmed_at.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.note.label(class="form-label") }}
+                {{ form.note(class="form-textarea", rows="10", placeholder="備考（任意）") }}
+                {% if form.note.errors %}
+                <ul class="form-errors">{% for e in form.note.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <!-- 持分（equity） -->
+            <div class="form-group">
+                <label class="form-label">Equity</label>
+                <div class="input-row" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                    {{ form.equity_numerator(class="form-input", placeholder="分子", style="max-width:120px; text-align:right;") }}
+                    <span>/</span>
+                    {{ form.equity_denominator(class="form-input", placeholder="分母", style="max-width:120px; text-align:right;") }}
+                </div>
+                {% if form.equity_numerator.errors or form.equity_denominator.errors %}
+                <ul class="form-errors" style="margin-top:6px;">
+                    {% for e in form.equity_numerator.errors %}<li>{{ e }}</li>{% endfor %}
+                    {% for e in form.equity_denominator.errors %}<li>{{ e }}</li>{% endfor %}
+                </ul>
+                {% endif %}
+            </div>
         </div>
     </div>
 </form>
-
-</body>
-</html>
+{% endblock %}
