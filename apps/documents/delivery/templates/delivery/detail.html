@@ -1,52 +1,53 @@
-<!DOCTYPE html>
-<!-- documents/delivery/templates/delivery/detail.html -->
-<html lang="ja">
-<head>
-    <meta charset="UTF-8"/>
-    <title>納品書</title>
+<!-- apps/documents/delivery/templates/delivery/detail.html -->
+{% extends "_layout/page_base.html" %}
 
-    <!-- 共通CSS（フォーム/requiredと同じ） -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/btn.css') }}">
-    <link rel="stylesheet" href="{{ url_for('documents.static', filename='css/document.css') }}">
-    <link rel="stylesheet" href="{{ url_for('documents.static', filename='css/document_detail.css') }}">
-</head>
-<body>
+<!-- タイトル -->
+{% block title %}納品書{% endblock %}
 
-<!-- 画面用ツールバー（印刷時は非表示。CSSの @media print で隠す想定） -->
-<div class="toolbar">
-    <div class="toolbar-inner">
-        <div class="left">
-            <a href="{{ url_for('documents.index', client_id=document.client_id) }}" class="btn secondary">
-                <img src="{{ url_for('static', filename='icon/16/reply.svg') }}" alt="">
-                back
-            </a>
-        </div>
-        <div class="right">
-            <a href="{{ url_for('delivery.edit', doc_id=document.id) }}" class="btn">
-                <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="">
-                Edit
-            </a>
-            <button type="button" class="btn secondary" onclick="window.print()">
-                <img src="{{ url_for('static', filename='icon/16/printer.svg') }}" alt="">
-                Print
-            </button>
-        </div>
-    </div>
-</div>
+<!-- 専用スタイルシート -->
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/documents/document.css') }}">
+{% endblock %}
 
-<div class="container">
+<!-- ヘッダーアイコン -->
+{% block heading_icon %}
+<img src="{{ url_for('static', filename='icon/24/package-dependents.svg') }}" alt="icon" width="20" height="20">
+{% endblock %}
+
+<!-- ヘッダータイトル -->
+{% block heading %}
+Delivery
+{% endblock %}
+
+<!-- ヘッダー右側：アクション -->
+{% block header_actions %}
+<a href="{{ url_for('client.documents_index', client_id=document.client.id) }}" class="btn icon">
+    <img src="{{ url_for('static', filename='icon/16/file-directory.svg') }}" alt="">
+</a>
+<a href="{{ url_for('delivery.edit', document_id=document.id) }}" class="btn icon">
+    <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="">
+</a>
+<button type="button" class="btn icon" onclick="window.print()">
+    <img src="{{ url_for('static', filename='icon/16/printer.svg') }}" alt="">
+</button>
+{% endblock %}
+
+<!-- コンテンツ -->
+{% block content %}
+
+
+<div class="container document__container">
     <header class="section">
         <h1 class="page-title">納品書</h1>
-
+        <div class="value sent-date">
+            {% import "macros.html" as macros %}
+            発信日：{{ macros.render_wareki_date(document.sent_date) if document.sent_date else '' }}
+        </div>
         <!-- required と同じ meta-grid を流用 -->
         <div class="meta-grid">
             <div class="label">宛　名</div>
             <div class="value recipient">{{ document.client.name }} 様</div>
-            <div class="value text-right">
-                {% import "macros.html" as macros %}
-                発信日：{{ macros.render_wareki_date(document.sent_date) if document.sent_date else '' }}
-            </div>
+            <div class="value"></div>
 
             <div class="label">物件名</div>
             <div class="value">{{ document.entrusted_book_name }}</div>
@@ -55,8 +56,14 @@
                 <address class="office-info">
                     <div>〒{{ office.post_code }}</div>
                     <div>{{ office.address|safe }}</div>
-                    <div>{{ office.affiliation }}</div>
-                    <div class="office-name">{{ office.name }}</div>
+                    <div class="office-signet">
+                        <img src="{{ url_for('static', filename='image/judicial-signet.jpg') }}"
+                             alt="司法書士徽章" class="signet-icon">
+                        <div class="signet-text">
+                            <div>{{ office.affiliation }}</div>
+                            <div class="office-name">{{ office.name }}</div>
+                        </div>
+                    </div>
                     <div>TEL：{{ office.tell }}</div>
                     <div>携帯：{{ office.mobile }}</div>
                     <div>Mail：{{ office.mail }}</div>
@@ -98,6 +105,4 @@
         </div>
     </section>
 </div>
-
-</body>
-</html>
+{% endblock %}

@@ -2,7 +2,7 @@
 .page-header,
 .form-header {
     border-bottom: 1px solid var(--color-border);
-    margin-bottom: var(--space-10);
+    margin-bottom: var(--space-7);
     padding: var(--space-3) var(--space-6);
 }
 

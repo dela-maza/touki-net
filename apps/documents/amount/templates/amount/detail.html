@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <!-- amount/templates/amount/detail.html -->
-<html lang="ja">
+<html lang="ja" xmlns="http://www.w3.org/1999/html">
+
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
@@ -10,7 +11,8 @@
     <title>{{ document.client.name }}</title>
 </head>
 <body>
-<div class="btn-toolbar print-hide">
+<div class="page-header print-hide">
+<div class="btn-toolbar">
     <div class="logic-buttons">
         <button type="button" class="btn" data-doc-label="{{ doc_labels.estimate }}">見積書</button>
         <button type="button" class="btn" data-doc-label="{{ doc_labels.invoice }}">請求書</button>
@@ -19,17 +21,16 @@
     </div>
 
     <div class="nav-buttons">
-        <a class="btn nav-btn" href="{{ url_for('amount.edit', document_id=document. id,client_id=document.client.id) }}">
+        <a class="btn icon" href="{{ url_for('amount.edit', document_id=document. id,client_id=document.client.id) }}">
             <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="book icon">
         </a>
-        <a class="btn nav-btn" href="{{ url_for('amount.index', client_id=document.client.id) }}">
+        <a class="btn icon" href="{{ url_for('amount.index', client_id=document.client.id) }}">
             <img src="{{ url_for('static', filename='icon/16/list.svg') }}" alt="book icon">
         </a>
     </div>
 </div>
-<div id="wrapper">
-
-
+</div>
+<div id="content">
     <div id="main-frame">
         <table class="header-frame">
             <tr>{% for _ in range(13) %}<td></td>{% endfor %}</tr>
@@ -51,23 +52,34 @@
                 <td id="client-name" class="client-name" colspan="5">{{ document.client.name }}</td>
                 <td colspan="1">殿</td>
                 <td colspan="2"></td>
-                <td colspan="5">{{ office.affiliation }}</td>
+                <td colspan="5">〒{{ office.post_code }}</td>
             </tr>
 
             <tr>
                 <td colspan="8" height="40">　</td>
-                <td colspan="5" align="left">〒{{ office.post_code }}</td>
+                <td colspan="5">{{ office.address | safe }}</td>
             </tr>
 
             <tr>
                 <td colspan="1">物件名</td>
-                <td colspan="7" style="word-break: break-word;">{{ document.entrusted_book_name }}</td>
-                <td colspan="5" align="left">{{ office.address | safe }}</td>
+                <td colspan="7" style="word-break:break-word;">{{ document.entrusted_book_name }}</td>
+
+                <!-- 徽章セル：2行ぶち抜き -->
+                <td class="signet-td" rowspan="2">
+                    <img src="{{ url_for('static', filename='image/judicial-signet.jpg') }}"
+                         alt="司法書士徽章">
+                </td>
+
+                <!-- 右側1行目：会名 -->
+                <td colspan="4">{{ office.affiliation }}</td>
             </tr>
 
             <tr>
                 <td colspan="8"></td>
-                <td colspan="5" align="left" style="word-break: break-word;">　　　　　 　{{ office.name | safe }}</td>
+                <!-- 右側2行目：氏名 -->
+                <td colspan="4" class="office-name" style="word-break:break-word;">
+                    {{ office.name }}
+                </td>
             </tr>
 
             <tr>
@@ -76,13 +88,13 @@
                     {{ document.format_number(totals['grand_total']) }}円
                 </td>
                 <td colspan="3"></td>
-                <td colspan="5" align="left" style="word-break: break-word;">Mail：{{ office.mail }}</td>
+                <td colspan="5"  style="word-break: break-word;">Mail：{{ office.mail }}</td>
             </tr>
 
             <tr>
                 <td class="smallString" colspan="7">（税込）100円以下端数御値引き</td>
                 <td colspan="1"></td>
-                <td colspan="5" align="left" style="word-break: break-word;">Tell：{{ office.tell }}</td>
+                <td colspan="5"  style="word-break: break-word;">Tell：{{ office.tell }}</td>
             </tr>
 
             <tr><td colspan="13" height="50"></td></tr>

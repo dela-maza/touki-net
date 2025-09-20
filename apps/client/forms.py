@@ -6,7 +6,7 @@ from wtforms import (
 from wtforms.validators import (
     DataRequired, Optional, Email, Length, NumberRange, ValidationError
 )
-from apps.client.models import ClientType
+from apps.client.models import EntityType,ClientType
 
 # 共通バリデータ
 MAX_LEN_255 = Length(max=255)
@@ -23,7 +23,13 @@ class ClientForm(FlaskForm):
         coerce=int,
         validators=[DataRequired()]
     )
-
+    entity_type_id = SelectField(
+        "区分",
+        choices=[(EntityType.INDIVIDUAL.value, "個人"),
+                 (EntityType.CORPORATION.value, "法人")],
+        coerce=int,
+        default=EntityType.INDIVIDUAL.value,
+    )
     client_type_id = SelectField(
         "Client Type",
         choices=get_client_type_choices(),
@@ -62,6 +68,12 @@ class ClientForm(FlaskForm):
         "Equity Note",
         validators=[Optional(), MAX_LEN_255]
     )
+
+    # 法人用
+    representative_title = StringField("代表者肩書", validators=[Optional(), Length(max=50)])
+    representative_name  = StringField("代表者名",   validators=[Optional(), Length(max=255)])
+    company_number       = StringField("法人番号（13桁）",
+                                       validators=[Optional(), Length(min=13, max=13)])
 
     # クロスフィールド・バリデーション
     def validate(self, extra_validators=None):

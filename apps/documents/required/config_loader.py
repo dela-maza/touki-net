@@ -5,7 +5,7 @@ import re
 import configparser
 from functools import lru_cache
 from typing import Dict, List, Tuple
-from apps.client.models import ClientType
+from apps.client.constants import ClientType
 
 CONFIG_FILE = os.path.join(os.path.dirname(__file__), "config.ini")
 MIN_ROWS = 10   # すべてのデフォルトエントリをこの行数に揃える

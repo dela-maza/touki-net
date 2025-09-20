@@ -2,12 +2,15 @@
 .form-header {
     background: var(--color-bg);
     color: var(--color-fg);
-    /* フォームだけ横幅を変えたい場合はここで上書き */
     --header-container-w: var(--form-container-w, var(--container-w));
+    padding: var(--space-4) 0 var(--space-6) ;
 }
 
-/* もし上下余白やマージンをフォームだけ増やしたければここで */
 .form-header__inner {
-    /* 例：フォームでは少し縦の余白を広げる */
      padding: 0 var(--space-2);
+}
+
+.form-header__heading {
+    font-size: var( --font-md);
+    padding: 0 var(--space-3);
 }

@@ -8,6 +8,7 @@ from apps.documents.amount.calculator import AmountDocumentCalculator
 from apps.documents.amount.forms import AmountDocumentForm
 from apps.documents.amount.models import AmountDocument
 # from sqlalchemy.orm import joinedload
+from apps.common.forms import CSRFOnlyForm
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.wrappers.response import Response as WerkzeugResponse
 from typing import Union
@@ -242,7 +243,14 @@ def edit(document_id: int) -> Union[str, WerkzeugResponse]:
 @amount_bp.route("/<int:document_id>/confirm_delete")
 def confirm_delete(document_id: int):
     document = _get_document_or_404(document_id)
-    return render_template("amount/confirm_delete.html", document=document)
+    cancel_url = request.args.get("next") or url_for(
+        "amount.detail", document_id=document.id
+    )
+    form = CSRFOnlyForm()
+    return render_template("amount/confirm_delete.html",
+                           document=document,
+                           cancel_url=cancel_url,
+                           form=form)
 
 
 # --------------------------
@@ -250,12 +258,19 @@ def confirm_delete(document_id: int):
 # --------------------------
 @amount_bp.route("/<int:document_id>/delete", methods=["POST"])
 def delete(document_id: int) -> WerkzeugResponse:
+    form = CSRFOnlyForm()
+    cancel_url = request.args.get("next") or url_for("amount.detail", document_id=document_id)
+    if not form.validate_on_submit():
+        flash("不正なリクエストです。（CSRF）", "danger")
+        return redirect(cancel_url)
+
     document = _get_document_or_404(document_id)
     try:
         db.session.delete(document)
         db.session.commit()
-        flash("金額文書を削除しました。")
+        flash("金額文書を削除しました。", "success")
+        return redirect(url_for("amount.index"))
     except SQLAlchemyError:
         db.session.rollback()
         flash("金額文書の削除に失敗しました。", "error")
-    return redirect(url_for("amount.index"))
+        return redirect(cancel_url)

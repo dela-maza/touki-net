@@ -34,12 +34,12 @@ def _date_to_dt(d):
         return None
     return datetime.combine(d, time.min)
 
-
+# --- 安全側: dtがdateだった場合も素通りに ---
 def _dt_to_date(dt):
-    """Model DateTime -> date / None（フォーム初期表示用）"""
+    """Model DateTime|date -> date / None（フォーム初期表示用）"""
     if dt is None:
         return None
-    return dt.date()
+    return dt.date() if hasattr(dt, "date") else dt
 
 
 def _set_entrusted_book_choices(form: ClientForm):
@@ -133,7 +133,6 @@ def create():
     form = ClientForm()
     _set_entrusted_book_choices(form)
 
-    # クエリから簿IDを引き継いで初期化（GET時のみ）
     pre_book_id = request.args.get("entrusted_book_id", type=int)
     if request.method == "GET" and pre_book_id:
         if EntrustedBook.query.get(pre_book_id):
@@ -143,6 +142,7 @@ def create():
         client = Client(
             entrusted_book_id=form.entrusted_book_id.data,
             client_type_id=form.client_type_id.data,
+            entity_type_id=form.entity_type_id.data,          # ★追加
             name=form.name.data,
             name_kana=form.name_kana.data,
             birth_date=_date_to_dt(form.birth_date.data),
@@ -153,8 +153,8 @@ def create():
             email=form.email.data,
             intention_confirmed_at=_date_to_dt(form.intention_confirmed_at.data),
             note=form.note.data,
-            equity_numerator=form.equity_numerator.data,  # None または int
-            equity_denominator=form.equity_denominator.data,  # None または int
+            equity_numerator=form.equity_numerator.data,
+            equity_denominator=form.equity_denominator.data,
         )
         db.session.add(client)
         db.session.commit()
@@ -162,18 +162,16 @@ def create():
         return redirect(url_for("entrusted_book.detail", book_id=client.entrusted_book_id))
 
     return render_template("client/form.html", form=form, title="New Client")
-
-
 # --------------------------
 # Edit（更新）
 # --------------------------
+# Edit（更新）
 @client_bp.route("/<int:client_id>/edit", methods=["GET", "POST"])
 def edit(client_id):
     client = Client.query.get_or_404(client_id)
     form = ClientForm(obj=client)
     _set_entrusted_book_choices(form)
 
-    # DateField は date 型なので上書き
     if request.method == "GET":
         form.birth_date.data = client.birth_date
         form.intention_confirmed_at.data = _dt_to_date(client.intention_confirmed_at)
@@ -181,6 +179,7 @@ def edit(client_id):
     if form.validate_on_submit():
         client.entrusted_book_id = form.entrusted_book_id.data
         client.client_type_id = form.client_type_id.data
+        client.entity_type_id = form.entity_type_id.data
         client.name = form.name.data
         client.name_kana = form.name_kana.data
         client.birth_date = _date_to_dt(form.birth_date.data)
@@ -191,7 +190,7 @@ def edit(client_id):
         client.email = form.email.data
         client.intention_confirmed_at = _date_to_dt(form.intention_confirmed_at.data)
         client.note = form.note.data
-        client.equity_numerator = form.equity_numerator.data  # None または int
+        client.equity_numerator = form.equity_numerator.data
         client.equity_denominator = form.equity_denominator.data
 
         db.session.commit()
@@ -202,7 +201,6 @@ def edit(client_id):
                            form=form,
                            is_edit=True,
                            title="Edit Client")
-
 
 # --------------------------
 # Confirm Delete（確認）
@@ -225,17 +223,18 @@ def confirm_delete(client_id):
 # --------------------------
 # Delete（削除）
 # --------------------------
+# Delete（削除）
 @client_bp.route("/<int:client_id>/delete", methods=["POST"])
 def delete(client_id):
     form = CSRFOnlyForm()
+    client = Client.query.get_or_404(client_id)                 # ★先に取得
     cancel_url = request.args.get("next") or url_for(
-        "entrusted_book.detail", book_id=client_id
+        "entrusted_book.detail", book_id=client.entrusted_book_id  # ★book_idにclient_idを入れていたのを修正
     )
-    if not form.validate_on_submit():  # CSRF NGならここで弾ける
+    if not form.validate_on_submit():
         flash("不正なリクエストです。（CSRF）", "danger")
         return redirect(cancel_url)
 
-    client = Client.query.get_or_404(client_id)
     db.session.delete(client)
     db.session.commit()
     flash(f"Client #{client_id} deleted.", "success")

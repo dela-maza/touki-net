@@ -1,4 +1,4 @@
-### apps/amount/models.py
+### apps/document/amount/models.py
 from datetime import datetime
 from db import db
 from sqlalchemy import text

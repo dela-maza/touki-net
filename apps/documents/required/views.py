@@ -5,7 +5,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import joinedload
 from datetime import datetime
-from wtforms.fields import FieldList
+from apps.common.forms import CSRFOnlyForm
 from db import db
 from apps.documents.required.models import RequiredDocument
 from apps.documents.required.forms import RequiredDocumentForm
@@ -32,9 +32,9 @@ def _commit_with_flash(ok_msg: str, ng_msg: str) -> bool:
         db.session.commit()
         flash(ok_msg, "success")
         return True
-    except SQLAlchemyError:
+    except SQLAlchemyError as e:
         db.session.rollback()
-        flash(ng_msg, "danger")
+        flash(f"{ng_msg}: {e}", "danger")  # ← 例外を表示
         return False
 
 from wtforms import FieldList
@@ -95,11 +95,11 @@ def index() -> str:
 # --------------------------
 # Detail（詳細）
 # --------------------------
-@required_bp.route("/<int:doc_id>")
-def detail(doc_id: int) -> str:
+@required_bp.route("/<int:document_id>")
+def detail(document_id: int) -> str:
     doc = (RequiredDocument.query
            .options(joinedload(RequiredDocument.client))
-           .get_or_404(doc_id))
+           .get_or_404(document_id))
     return render_template("required/detail.html", document=doc)
 
 
@@ -122,7 +122,7 @@ def create():
     # 戻り先（ツールバー＆下部ボタン用）
     back_url = (
             request.args.get("back")
-            or url_for("documents.index", client_id=client.id)
+            or url_for("client.documents_index", client_id=client.id)   # ← ここを修正
     )
 
     if request.method == "GET":
@@ -161,7 +161,7 @@ def create():
             # new_id = doc.id
             db.session.commit()
             flash("必要書類を作成しました。", "success")
-            return redirect(url_for("required.detail", doc_id=doc.id), code=303)
+            return redirect(url_for("required.detail", document_id=doc.id), code=303)
         except Exception as e:
             db.session.rollback()
             # ここでエラー内容を必ず露出させる
@@ -186,9 +186,9 @@ def create():
 # --------------------------
 # Edit（更新）
 # --------------------------
-@required_bp.route("/<int:doc_id>/edit", methods=["GET", "POST"])
-def edit(doc_id: int):
-    doc = RequiredDocument.query.options(joinedload(RequiredDocument.client)).get_or_404(doc_id)
+@required_bp.route("/<int:document_id>/edit", methods=["GET", "POST"])
+def edit(document_id: int):
+    doc = RequiredDocument.query.options(joinedload(RequiredDocument.client)).get_or_404(document_id)
     form = RequiredDocumentForm(obj=doc)
     # HiddenField を復元
     form.client_id.data = doc.client_id
@@ -211,7 +211,7 @@ def edit(doc_id: int):
 
         if _commit_with_flash("必要書類を更新しました。", "必要書類の更新に失敗しました。"):
             # 一覧から戻る導線があるなら、必要に応じて client_id を付ける
-            return redirect(url_for("required.detail", doc_id=doc.id))
+            return redirect(url_for("required.detail", document_id=doc.id))
 
     return render_template("required/form.html", form=form, document=doc, client=doc.client, is_edit=True)
 
@@ -219,20 +219,32 @@ def edit(doc_id: int):
 # --------------------------
 # Confirm Delete（確認）
 # --------------------------
-@required_bp.route("/<int:doc_id>/confirm_delete")
-def confirm_delete(doc_id: int) -> str:
-    doc = RequiredDocument.query.get_or_404(doc_id)
-    return render_template("required/confirm_delete.html", document=doc)
+@required_bp.route("/<int:document_id>/confirm_delete")
+def confirm_delete(document_id: int) -> str:
+    doc = RequiredDocument.query.get_or_404(document_id)
+    cancel_url = request.args.get("next") or url_for(
+        "client.documents_index", client_id=doc.client_id
+    )
+    form = CSRFOnlyForm()
+    return render_template("required/confirm_delete.html",
+                           document=doc, form=form, cancel_url=cancel_url)
 
 
 # --------------------------
 # Delete（削除）
 # --------------------------
-@required_bp.route("/<int:doc_id>/delete", methods=["POST"])
-def delete(doc_id: int):
-    doc = RequiredDocument.query.get_or_404(doc_id)
+@required_bp.route("/<int:document_id>/delete", methods=["POST"])
+def delete(document_id: int):
+    form = CSRFOnlyForm()
+    cancel_url = request.args.get("next") or url_for(
+        "client.documents_index", client_id=RequiredDocument.query.get_or_404(document_id).client_id
+    )
+    if not form.validate_on_submit():
+        flash("不正なリクエストです。（CSRF）", "danger")
+        return redirect(cancel_url)
+
+    doc = RequiredDocument.query.get_or_404(document_id)
     db.session.delete(doc)
     if _commit_with_flash("必要書類を削除しました。", "必要書類の削除に失敗しました。"):
-        # 元の一覧へ戻す。client_id を付けるとクライアント別一覧に戻せる
-        return redirect(url_for("documents.index", client_id=doc.client_id))
-    return redirect(url_for("required.detail", doc_id=doc.id))
+        return redirect(url_for("client.documents_index", client_id=doc.client_id))
+    return redirect(url_for("required.detail", document_id=doc.id))

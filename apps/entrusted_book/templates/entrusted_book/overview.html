@@ -1,35 +1,60 @@
 <!--apps/entrusted_book/templates/entrusted_book/overview.html-->
 {% extends "_layout/page_base.html" %}
 
+<!-- ヘッダーアイコン -->
 {% set icon = 'icon/24/book.svg' %}
-{% block title %}Entrusted Book #{{ book.id }}{% endblock %}
-{% block heading %}Entrusted Book{% endblock %}
 
+<!-- タイトル -->
+{% block title %}
+Entrusted Book #{{ book.id }}
+{% endblock %}
+
+<!-- ヘッダータイトル -->
+{% block heading %}
+Entrusted Book
+<span class="overview__heading">- {{ book.name }} -</span>
+{% endblock %}
+
+<!-- 専用スタイルシート -->
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/component/detail-card.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/component/breadcrumb.css') }}">
 <link rel="stylesheet" href="{{ url_for('entrusted_book.static', filename='css/overview.css') }}">
 {% endblock %}
 
+<!-- メタ情報 -->
 {% block header_meta %}
-<span class="pill"><b>Contract</b> {{ book.contract_date or '–' }}</span>
-<span class="pill"><b>Execution</b> {{ book.execution_date or '–' }}</span>
+<div class="pill_group">
+    <span class="pill"><b>Contract</b> {{ book.contract_date or '–' }}</span>
+    <span class="pill"><b>Execution</b> {{ book.execution_date or '–' }}</span>
+</div>
 {% endblock %}
 
+<!-- ヘッダー右側：アクション -->
 {% block header_actions %}
-<a class="btn icon" href="{{ url_for('entrusted_book.index') }}"><img src="{{ url_for('static', filename='icon/16/list.svg') }}" alt=""></a>
+<a class="btn icon" href="{{ url_for('entrusted_book.index') }}">
+    <img src="{{ url_for('static', filename='icon/16/list.svg') }}" alt="">
+</a>
+<a class="btn icon tooltip tooltip-top"
+   href="{{ url_for('entrusted_book.edit', book_id=book.id) }}" title="Edit">
+    <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="">
+</a>
 {% endblock %}
 
-
-
+<!-- パンくずリスト -->
 {% block breadcrumb %}
-<nav class="breadcrumb">
-    <span>{{ book.name or '(no name)' }}</span>
-</nav>
 {% endblock %}
 
+<!-- 備考・注意欄 -->
+{% block header_note %}
+{% if book.note %}
+<span class="page-header__note">
+    {{ book.note }}
+</span>
+{% endif %}
+{% endblock %}
 
-
+<!-- コンテンツ -->
 {% block content %}
 <div class="overview">
     <div class="overview__container">

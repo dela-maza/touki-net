@@ -1,10 +1,23 @@
-{# apps/entrusted_book/templates/entrusted_book/form.html #}
+<!--apps/entrusted_book/templates/entrusted_book/form.html-->
 {% extends "_layout/form_base.html" %}
+
+<!-- ヘッダー左アイコン -->
+{% set icon = 'icon/24/book.svg' %}
 
 <!--submitがフォーム外なのでフォームIDを決めておく-->
 {% set form_id = "entrusted-book-form" %}
 
-{# ヘッダー右側のボタンだけを差し込む #}
+<!-- タイトル -->
+{% block title %}
+{{ form.name }}
+{% endblock %}
+
+<!-- ヘッダータイトル -->
+{% block heading %}
+{{ title }}
+{% endblock %}
+
+<!-- ヘッダー右側：アクション -->
 {% block header_actions %}
 <button type="submit" class="btn primary" form="{{ form_id }}">
     {% if is_edit %}
@@ -21,7 +34,8 @@
 </a>
 {% endblock %}
 
-{% block body %}
+<!-- 本文 -->
+{% block content %}
 <form method="POST" id="{{ form_id }}">
     {{ form.hidden_tag() }}  {# ← CSRF 含む #}
 

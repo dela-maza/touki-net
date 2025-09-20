@@ -1,27 +1,32 @@
-{# apps/entrusted_book/templates/entrusted_book/index.html #}
+<!--apps/entrusted_book/templates/entrusted_book/index.html-->
 {% extends "_layout/page_base.html" %}
 
-{% block title %}Entrusted Books{% endblock %}
+<!-- タイトル -->
+{% block title %}
+Entrusted Books
+{% endblock %}
 
-{# ヘッダー左：アイコン #}
+<!-- 専用スタイルシート -->
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/component/data-table.css') }}">
+{% endblock %}
+
+<!-- ヘッダーアイコン -->
 {% block heading_icon %}
 <img src="{{ url_for('static', filename='icon/24/book.svg') }}" alt="icon" width="20" height="20">
 {% endblock %}
 
-{# ヘッダー中央：タイトル #}
+<!-- ヘッダータイトル -->
 {% block heading %}Entrusted Books{% endblock %}
 
-{# ヘッダー右：アクション #}
+<!-- ヘッダー右側：アクション -->
 {% block header_actions %}
 <a class="btn icon" href="{{ url_for('entrusted_book.create') }}" title="New Book">
     <img src="{{ url_for('static', filename='icon/16/new.svg') }}" alt="">
 </a>
 {% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/component/data-table.css') }}">
-{% endblock %}
-
+<!-- コンテンツ -->
 {% block content %}
 <div class="table-container">
     {% if books %}

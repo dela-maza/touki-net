@@ -21,14 +21,18 @@ h1, h2, h3, h4, h5, h6 {
 /* 定数 */
 :root {
     /* color */
-    --color-bg: #fff;
-    --color-fg: #24292f;
+    --color-bg: #fff; /* back-ground */
+    --color-fg: #24292f; /* fore-ground */
     --color-muted: #57606a;
     --color-border: #d0d7de;
     --color-primary: #189b3c;
     --color-primary-hover: #2c974b;
     --color-danger: #d73a49;
     --color-danger-hover: #b92534;
+    --light-bg: #f6f8fa;
+
+    /* border-color */
+    --border-color: #d0d7de;
 
     /* header */
     --color-header-bg: #f6f8fa;
@@ -59,6 +63,7 @@ h1, h2, h3, h4, h5, h6 {
     --space-8: 2.0rem; /* 32px */
     --space-9: 2.25rem; /* 36px */
     --space-10: 2.5rem; /* 40px */
+
     /* layout */
     --container-w: 1000px;
     --form-container-w: 1000px;

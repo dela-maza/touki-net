@@ -1,135 +1,126 @@
-<!DOCTYPE html>
-<!-- documents/delivery/templates/delivery/form.html -->
-<html lang="ja">
-<head>
-    <meta charset="UTF-8"/>
-    <title>{{ "納品書を編集" if is_edit else "納品書を作成" }}</title>
+<!--apps/documents/delivery/templates/delivery/form.html-->
+{% extends "_layout/form_base.html" %}
 
-    <!-- 共通CSS（requiredと同じ） -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/btn.css') }}">
-    <link rel="stylesheet" href="{{ url_for('documents.static', filename='css/document.css') }}">
-    <link rel="stylesheet" href="{{ url_for('documents.static', filename='css/document_form.css') }}">
-</head>
-<body>
+<!-- ヘッダー左アイコン -->
+{% set icon = 'icon/24/package-dependents.svg' %}
 
-{# ------- ルーティング先（新規 or 編集） ------- #}
-{% if is_edit %}
-{% set action_url = url_for('delivery.edit', doc_id=document.id) %}
-{% else %}
-{% set action_url = url_for('delivery.create', client_id=client.id) %}
-{% endif %}
+<!-- フォームがヘッダー外の送信ボタンを受け取れるようにIDを決める -->
+{% set form_id = "delivery-form" %}
 
-<form id="delivery-form" method="POST" action="{{ action_url }}">
+<!-- タイトル -->
+{% block title %}
+{{ client.name }}
+{% endblock %}
+
+<!-- ヘッダータイトル -->
+{% block heading %}
+{{ title }}
+{% endblock %}
+
+<!-- ヘッダーメタ情報 -->
+{% block header_meta %}
+<span class="form-header__heading">- {{ client.name }} -</span>
+{% endblock %}
+
+<!-- ヘッダー右側：アクション -->
+{% block header_actions %}
+<button type="submit" class="btn primary" form="{{ form_id }}">
+    {% if is_edit %}
+    <img src="{{ url_for('static', filename='icon/16/check.svg') }}" alt=""> Update
+    {% else %}
+    <img src="{{ url_for('static', filename='icon/16/new.svg') }}" alt=""> Create
+    {% endif %}
+</button>
+<a class="btn secondary" href="{{ back_url or url_for('client.documents_index', client_id=client.id) }}">
+    <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt=""> Cancel
+</a>
+{% endblock %}
+
+<!-- 本文 -->
+{% block content %}
+<form id="{{ form_id }}" method="POST">
     {{ form.hidden_tag() }}
     {{ form.client_id() }}
 
-    {# ------- 操作用ツールバー（画面のみ） ------- #}
-    <div class="toolbar">
-        <div class="toolbar-inner">
-            <div class="left">
-                <a href="{{ back_url or url_for('documents.index', client_id=client.id) }}" class="btn secondary">
-                    <img src="{{ url_for('static', filename='icon/16/reply.svg') }}" alt="back">
-                    back
-                </a>
+    <div class="container">
+        <div class="form-box">
+            <!-- 宛名/簿名/発送日 -->
+
+
+            <div class="form-group">
+                {{ form.entrusted_book_name.label(class="form-label") }}
+                {{ form.entrusted_book_name(class="form-input") }}
+                {% if form.entrusted_book_name.errors %}
+                <ul class="form-errors">{% for e in form.entrusted_book_name.errors %}
+                    <li>{{ e }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
             </div>
-            <div class="right">
-                <button type="submit" form="delivery-form" class="btn primary">
-                    <img src="{{ url_for('static', filename='icon/16/check(white).svg') }}" alt="check">
-                    Update
-                </button>
-                <a href="{{ back_url or url_for('documents.index', client_id=client.id) }}" class="btn secondary">
-                    <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="cancel">
-                    Cancel
-                </a>
+
+            <div class="form-group">
+                {{ form.sent_date.label(class="form-label") }}
+                {{ form.sent_date(class="form-input", type="date") }}
+                {% if form.sent_date.errors %}
+                <ul class="form-errors">{% for e in form.sent_date.errors %}
+                    <li>{{ e }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+
+            <!-- 挨拶（上段） -->
+            <div class="form-group">
+                {{ form.greeting_paragraph.label(class="form-label") }}
+                {{ form.greeting_paragraph(class="form-textarea", rows="6", placeholder="拝啓、いつもお世話になっております。…")
+                }}
+                {% if form.greeting_paragraph.errors %}
+                <ul class="form-errors">{% for e in form.greeting_paragraph.errors %}
+                    <li>{{ e }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+
+            <!-- 納品した書類（2列） -->
+            <div class="form-group">
+                <label class="form-label">納品した書類</label>
+                <div class="table-container">
+                    <table class="form-table form-table--two-cols">
+                        <colgroup>
+                            <col style="width:85%">
+                            <col style="width:15%">
+                        </colgroup>
+                        <thead>
+                        <tr>
+                            <th>書類名</th>
+                            <th>枚数</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for sub in form.documents %}
+                        <tr>
+                            <td>{{ sub.form.doc_name(class="form-input form-table__input") }}</td>
+                            <td>{{ sub.form.copies(class="form-input form-table__input") }}</td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 結び（下段） -->
+            <div class="form-group">
+                {{ form.closing_paragraph.label(class="form-label") }}
+                {{ form.closing_paragraph(class="form-textarea", rows="6") }}
+                {% if form.closing_paragraph.errors %}
+                <ul class="form-errors">{% for e in form.closing_paragraph.errors %}
+                    <li>{{ e }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
             </div>
         </div>
     </div>
-
-    <div class="container">
-        <header class="section">
-            <h1 class="page-title">納品書</h1>
-
-            <div class="meta">
-                <dl>
-                    <dt>宛名</dt>
-                    <dd>{{ client.name }} 様</dd>
-
-                    <dt>物件名</dt>
-                    <dd>
-                        <label class="sr-only" for="entrusted_book_name">受託簿名</label>
-                        {{ form.entrusted_book_name(id="entrusted_book_name") }}
-                        {% if form.entrusted_book_name.errors %}
-                        <div class="error">{{ form.entrusted_book_name.errors[0] }}</div>
-                        {% endif %}
-                    </dd>
-
-                    <dt>発信日</dt>
-                    <dd>
-                        <label class="sr-only" for="sent_date">発送日</label>
-                        {{ form.sent_date(id="sent_date") }}
-                    </dd>
-                </dl>
-            </div>
-        </header>
-
-        {# ------- 挨拶（上段） ------- #}
-        <section class="section">
-            <label class="sr-only" for="greeting_paragraph">挨拶文（上段）</label>
-            {{ form.greeting_paragraph(
-            id="greeting_paragraph",
-            class="paragraph-input" + (" is-invalid" if form.greeting_paragraph.errors else ""),
-            placeholder="拝啓、いつもお世話になっております。…"
-            ) }}
-            {% if form.greeting_paragraph.errors %}
-            <div class="error">{{ form.greeting_paragraph.errors[0] }}</div>
-            {% endif %}
-        </section>
-
-        {# ------- 納品した書類リスト（※ deliveryは note なし／2列） ------- #}
-        <section class="section">
-            <h2>納品した書類</h2>
-            <table class="list">
-                <thead>
-                <tr>
-                    <th class="col-name">書類名</th>
-                    <th class="col-copies">枚数</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for sub in form.documents %}
-                <tr>
-                    <td>{{ sub.form.doc_name(class="cell-input") }}</td>
-                    <td>{{ sub.form.copies(class="cell-input") }}</td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </section>
-
-        {# ------- 結び（下段） ------- #}
-        <section class="section">
-            <label class="sr-only" for="closing_paragraph">結び（下段）</label>
-            {{ form.closing_paragraph(
-            id="closing_paragraph",
-            class="paragraph-input" + (" is-invalid" if form.closing_paragraph.errors else "")
-            ) }}
-            {% if form.closing_paragraph.errors %}
-            <div class="error">{{ form.closing_paragraph.errors[0] }}</div>
-            {% endif %}
-        </section>
-    </div>
 </form>
-
-{# フラッシュ #}
-{% with messages = get_flashed_messages(with_categories=true) %}
-{% if messages %}
-<ul class="flash">
-    {% for category, message in messages %}
-    <li class="flash-{{ category }}">{{ message }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
-{% endwith %}
-</body>
-</html>
+{% endblock %}

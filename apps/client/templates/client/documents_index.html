@@ -1,19 +1,30 @@
 <!--apps/client/templates/client/documents_index.html-->
 {% extends "_layout/page_base.html" %}
 
-{% block title %}Documents{% endblock %}
+<!-- ヘッダーアイコン -->
+{% block heading_icon %}
+<img src="{{ url_for('static', filename='icon/24/file-directory.svg') }}" alt="icon" width="20" height="20">
+{% endblock %}
 
+<!-- タイトル -->
+{% block title %}
+Documents
+{% endblock %}
+
+<!-- 専用スタイルシート -->
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/component/detail-card.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/component/breadcrumb.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/component/data-table.css') }}">
 {% endblock %}
 
-{# ヘッダー左側：アイコン & タイトル #}
-{% set icon = 'icon/24/file-directory.svg' %}
-{% block heading %}Documents{% endblock %}
 
-{# ヘッダー右側：アクション #}
+<!-- ヘッダータイトル -->
+{% block heading %}
+Documents
+{% endblock %}
+
+<!-- ヘッダー右側：アクション -->
 {% block header_actions %}
 {% if client %}
 <img src="{{ url_for('static', filename='icon/16/new.svg') }}" alt="">
@@ -36,7 +47,7 @@
 {% endif %}
 {% endblock %}
 
-{# パンくずは page_base の breadcrumb ブロックへ #}
+<!-- パンくずリスト -->
 {% block breadcrumb %}
 {% if entrusted_book or client %}
 <nav class="breadcrumb" aria-label="Breadcrumb">
@@ -62,6 +73,7 @@
 {% endif %}
 {% endblock %}
 
+<!-- コンテンツ -->
 {% block content %}
 <div class="table-container">
     {% if documents and documents|length > 0 %}
@@ -79,9 +91,9 @@
         {% for row in documents %}
         {% set detail_href =
         row.document_type == 'amount' and url_for('amount.detail', document_id=row.id) or
-        row.document_type == 'required' and url_for('required.detail', doc_id=row.id) or
-        row.document_type == 'delivery' and url_for('delivery.detail', doc_id=row.id) or
-        row.document_type == 'origin' and url_for('origin.detail', doc_id=row.id) or
+        row.document_type == 'required' and url_for('required.detail', document_id=row.id) or
+        row.document_type == 'delivery' and url_for('delivery.detail', document_id=row.id) or
+        row.document_type == 'origin' and url_for('origin.detail', document_id=row.id) or
         '#' %}
         <tr class="clickable-row" data-href="{{ detail_href }}">
             <td>{{ row.id }}</td>
@@ -122,30 +134,30 @@
                 <a class="btn icon" href="{{ url_for('required.detail', document_id=row.id) }}" title="Edit">
                     <img src="{{ url_for('static', filename='icon/16/eye.svg') }}" alt="">
                 </a>
-                <a class="btn icon" href="{{ url_for('required.edit', doc_id=row.id) }}" title="Edit">
+                <a class="btn icon" href="{{ url_for('required.edit', document_id=row.id) }}" title="Edit">
                     <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="">
                 </a>
-                <a class="btn icon" href="{{ url_for('required.confirm_delete', doc_id=row.id) }}" title="Delete">
+                <a class="btn icon" href="{{ url_for('required.confirm_delete', document_id=row.id) }}" title="Delete">
                     <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="">
                 </a>
                 {% elif row.document_type == 'delivery' %}
                 <a class="btn icon" href="{{ url_for('delivery.detail', document_id=row.id) }}" title="Edit">
                     <img src="{{ url_for('static', filename='icon/16/eye.svg') }}" alt="">
                 </a>
-                <a class="btn icon" href="{{ url_for('delivery.edit', doc_id=row.id) }}" title="Edit">
+                <a class="btn icon" href="{{ url_for('delivery.edit', document_id=row.id) }}" title="Edit">
                     <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="">
                 </a>
-                <a class="btn icon" href="{{ url_for('delivery.confirm_delete', doc_id=row.id) }}" title="Delete">
+                <a class="btn icon" href="{{ url_for('delivery.confirm_delete', document_id=row.id) }}" title="Delete">
                     <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="">
                 </a>
                 {% elif row.document_type == 'origin' %}
                 <a class="btn icon" href="{{ url_for('origin.detail', document_id=row.id) }}" title="Edit">
                     <img src="{{ url_for('static', filename='icon/16/eye.svg') }}" alt="">
                 </a>
-                <a class="btn icon" href="{{ url_for('origin.edit', doc_id=row.id) }}" title="Edit">
+                <a class="btn icon" href="{{ url_for('origin.edit', document_id=row.id) }}" title="Edit">
                     <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="">
                 </a>
-                <a class="btn icon" href="{{ url_for('origin.confirm_delete', doc_id=row.id) }}" title="Delete">
+                <a class="btn icon" href="{{ url_for('origin.confirm_delete', document_id=row.id) }}" title="Delete">
                     <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="">
                 </a>
                 {% endif %}
@@ -158,4 +170,8 @@
     <div class="empty-hint">No documents yet.</div>
     {% endif %}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/table.js') }}" defer></script>
 {% endblock %}

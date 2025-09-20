@@ -1,8 +1,7 @@
-### apps/documents.delivery/models.py
+### apps/documents/delivery/models.py
 from datetime import datetime
 from db import db
 from sqlalchemy.dialects.postgresql import JSONB
-# from typing import Dict
 
 
 class DeliveryDocument(db.Model):

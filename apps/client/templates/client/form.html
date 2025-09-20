@@ -1,36 +1,32 @@
-{# apps/client/templates/client/form.html #}
+<!--apps/client/templates/client/form.html-->
 {% extends "_layout/form_base.html" %}
 
-{# フォームがヘッダー外にあるので、ヘッダーボタンは form="" で紐づける #}
+{% set icon = 'icon/24/person.svg' %}
 {% set form_id = "client-form" %}
 
-{# 戻り先（受託簿 or クライアント一覧） #}
 {% set back_book_id = form.entrusted_book_id.data or request.args.get('entrusted_book_id', type=int) %}
 {% set back_url = url_for('entrusted_book.detail', book_id=back_book_id) if back_book_id else url_for('client.index') %}
 
-{# ヘッダー右側のアクション #}
 {% block header_actions %}
 <button type="submit" class="btn primary" form="{{ form_id }}">
     {% if is_edit %}
-    <img src="{{ url_for('static', filename='icon/16/check.svg') }}" alt="">
-    Update
+    <img src="{{ url_for('static', filename='icon/16/check.svg') }}" alt=""> Update
     {% else %}
-    <img src="{{ url_for('static', filename='icon/16/new.svg') }}" alt="">
-    Create
+    <img src="{{ url_for('static', filename='icon/16/new.svg') }}" alt=""> Create
     {% endif %}
 </button>
 <a href="{{ back_url }}" class="btn secondary">
-    <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="">
-    Cancel
+    <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt=""> Cancel
 </a>
 {% endblock %}
 
-{% block body %}
+{% block content %}
 <form method="POST" id="{{ form_id }}">
-    {{ form.hidden_tag() }} {# CSRF 含む #}
+    {{ form.hidden_tag() }}
 
     <div class="container">
         <div class="form-box">
+
             <!-- 受託簿 / 種別 -->
             <div class="form-group">
                 {{ form.entrusted_book_id.label(class="form-label") }}
@@ -45,6 +41,15 @@
                 {{ form.client_type_id(class="form-input") }}
                 {% if form.client_type_id.errors %}
                 <ul class="form-errors">{% for e in form.client_type_id.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+                {% endif %}
+            </div>
+
+            <!-- ★ 個人／法人 -->
+            <div class="form-group">
+                {{ form.entity_type_id.label(class="form-label") }}
+                {{ form.entity_type_id(class="form-input") }}
+                {% if form.entity_type_id.errors %}
+                <ul class="form-errors">{% for e in form.entity_type_id.errors %}<li>{{ e }}</li>{% endfor %}</ul>
                 {% endif %}
             </div>
 
@@ -146,6 +151,7 @@
                 </ul>
                 {% endif %}
             </div>
+
         </div>
     </div>
 </form>

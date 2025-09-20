@@ -1,35 +1,55 @@
 <!-- apps/templates/_layout/form_base.html -->
-{# templates/_layout/form_base.html #}
 <!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- タイトル -->
     <title>{{ title or "Form" }}</title>
+    <!-- スタイルシート base -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.1/normalize.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <!-- スタイルシート layout -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/layout/form.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/layout/header.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/layout/form-header.css') }}">
+    <!-- スタイルシート component -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/component/form-table.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/component/btn.css') }}">
+    <!-- 専用スタイルシート -->
+    {% block extra_css %}{% endblock %}
 </head>
 <body>
+
+<!-- ヘッダー -->
 <header class="form-header">
     <div class="container">
         <div class="form-header__inner">
             <div class="form-header__left">
                 <h3 class="form-header__title header-title">
-                    {% if icon %}<img src="{{ url_for('static', filename=icon) }}" alt="icon">{% endif %}
-                    <span>{{ title or "Form" }}</span>
+                    {% if icon %}
+                    <img src="{{ url_for('static', filename=icon) }}" alt="icon">
+                    {% endif %}
+                    <!-- ヘッダータイトル -->
+                    {% block heading %}Page{% endblock %}
+                    <!-- ヘッダーメタ情報 -->
+                    {% block header_meta %}{% endblock %}
                 </h3>
             </div>
             <div class="form-header__actions">
+                <!-- ヘッダー右側：アクション -->
                 {% block header_actions %}{% endblock %}
             </div>
         </div>
     </div>
 </header>
 
-{% block body %}{% endblock %}
+<!-- コンテンツ -->
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+<!-- 専用JS -->
+{% block extra_js %}{% endblock %}
 </body>
 </html>

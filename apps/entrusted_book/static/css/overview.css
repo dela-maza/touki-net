@@ -1,8 +1,12 @@
 /* entrusted_book/static/css/overview.css */
-
-/* EntrustedBook overview 専用ラッパー */
 .overview__container {
     margin: 0 50px;
+}
+
+.overview__heading {
+    color: #333333;
+    font-size: var( --font-md);
+    padding: 0 var(--space-3);
 }
 
 /* 下部の3カラム（幅に応じて1→2→3列） */

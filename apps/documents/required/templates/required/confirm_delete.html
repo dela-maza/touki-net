@@ -1,3 +1,5 @@
+<!-- apps/documents/required/templates/required/confirm_delete.html -->
+
 <!doctype html>
 <html lang="ja">
 <head>
@@ -18,12 +20,8 @@
         </p>
 
         <table class="meta-table">
-            <tr>
-                <th>Client</th><td>{{ document.client.name }}</td>
-            </tr>
-            <tr>
-                <th>Book</th><td>{{ document.entrusted_book_name }}</td>
-            </tr>
+            <tr><th>Client</th><td>{{ document.client.name }}</td></tr>
+            <tr><th>Book</th><td>{{ document.entrusted_book_name }}</td></tr>
             <tr>
                 <th>Created At</th>
                 <td>{{ document.created_at.strftime('%Y-%m-%d') if document.created_at else '' }}</td>
@@ -31,7 +29,7 @@
         </table>
 
         <form method="post" action="{{ url_for('required.delete', doc_id=document.id, next=cancel_url) }}">
-            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            {{ form.hidden_tag() }}
             <div class="form-actions">
                 <button type="submit" class="btn danger">
                     <img src="{{ url_for('static', filename='icon/16/trash(white).svg') }}" alt="delete icon">

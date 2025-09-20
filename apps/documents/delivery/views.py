@@ -1,4 +1,4 @@
-# apps/documents/delivery/views.py
+### apps/documents/delivery/views.py
 from __future__ import annotations
 
 from datetime import datetime
@@ -9,17 +9,18 @@ from sqlalchemy.orm import joinedload
 from wtforms import FieldList
 
 from db import db
+
+from apps.common.forms import CSRFOnlyForm
 from apps.client.models import Client
 from apps.documents.delivery.config_loader import load_paragraphs, get_default_documents
 from apps.documents.delivery.models import DeliveryDocument
 from apps.documents.delivery.forms import DeliveryDocumentForm
 
-
 # --------------------------
 # ブループリント
 # --------------------------
 delivery_bp = Blueprint(
-    "delivery",                 # Blueprint 名
+    "delivery",  # Blueprint 名
     __name__,
     url_prefix="/documents/delivery",
     template_folder="templates",
@@ -41,6 +42,7 @@ def _commit_with_flash(ok_msg: str, ng_msg: str) -> bool:
         flash(f"{ng_msg}: {e}", "danger")
         return False
 
+
 def _fill_documents(field_list: FieldList, rows: list[dict[str, str]]) -> None:
     """rows: [{doc_name, copies}] を FieldList<FormField> に流し込む。"""
     while len(field_list) < len(rows):
@@ -48,7 +50,7 @@ def _fill_documents(field_list: FieldList, rows: list[dict[str, str]]) -> None:
     for entry, row in zip(field_list, rows):
         f = entry.form
         f.doc_name.data = row.get("doc_name", "")
-        f.copies.data   = row.get("copies", "")
+        f.copies.data = row.get("copies", "")
 
 
 def _collect_documents(field_list: FieldList) -> list[dict[str, str]]:
@@ -57,7 +59,7 @@ def _collect_documents(field_list: FieldList) -> list[dict[str, str]]:
     for entry in field_list:
         f = entry.form
         doc_name = (f.doc_name.data or "").strip()
-        copies   = (f.copies.data or "").strip()
+        copies = (f.copies.data or "").strip()
         if doc_name or copies:
             out.append({"doc_name": doc_name, "copies": copies})
     return out
@@ -86,12 +88,13 @@ def index() -> str:
 # --------------------------
 # Detail（詳細）
 # --------------------------
-@delivery_bp.route("/<int:doc_id>")
-def detail(doc_id: int) -> str:
+@delivery_bp.route("/<int:document_id>")
+def detail(document_id: int) -> str:
     doc = (DeliveryDocument.query
            .options(joinedload(DeliveryDocument.client))
-           .get_or_404(doc_id))
+           .get_or_404(document_id))
     return render_template("delivery/detail.html", document=doc)
+
 
 # --------------------------
 # Create（新規）
@@ -110,13 +113,13 @@ def create():
     form.client_id.data = client.id  # HiddenField へセット
 
     # 戻り先（ツールバー＆下部ボタン用）
-    back_url = request.args.get("back") or url_for("documents.index", client_id=client.id)
+    back_url = request.args.get("back") or url_for("client.documents_index", client_id=client.id)
 
     if request.method == "GET":
         # ---- 段落：config_loader から初期文面を流し込み ----
         paras = load_paragraphs()  # {"greeting": "...", "closing": "..."}
         form.greeting_paragraph.data = paras.get("greeting", "")
-        form.closing_paragraph.data  = paras.get("closing", "")
+        form.closing_paragraph.data = paras.get("closing", "")
 
         # 行：client_type に応じたセクションから
         defaults = get_default_documents(client.client_type)  # ★ここがポイント
@@ -142,10 +145,11 @@ def create():
             db.session.flush()  # new id を発番
             db.session.commit()
             flash("納品書を作成しました。", "success")
-            return redirect(url_for("delivery.detail", doc_id=doc.id), code=303)
+            return redirect(url_for("delivery.detail", document_id=doc.id), code=303)
         except Exception as e:
             db.session.rollback()
-            import traceback; traceback.print_exc()
+            import traceback;
+            traceback.print_exc()
             flash(f"納品書の作成に失敗しました: {e}", "danger")
 
     elif form.is_submitted():  # POSTだがバリデーションNG
@@ -159,14 +163,16 @@ def create():
         client=client,
         is_edit=False,
         back_url=back_url,
+        title="New Delivery",
     )
+
 
 # --------------------------
 # Edit（更新）
 # --------------------------
-@delivery_bp.route("/<int:doc_id>/edit", methods=["GET", "POST"])
-def edit(doc_id: int):
-    doc = DeliveryDocument.query.options(joinedload(DeliveryDocument.client)).get_or_404(doc_id)
+@delivery_bp.route("/<int:document_id>/edit", methods=["GET", "POST"])
+def edit(document_id: int):
+    doc = DeliveryDocument.query.options(joinedload(DeliveryDocument.client)).get_or_404(document_id)
     form = DeliveryDocumentForm(obj=doc)
     # HiddenField を復元
     form.client_id.data = doc.client_id
@@ -178,34 +184,45 @@ def edit(doc_id: int):
     if form.validate_on_submit():
         # 基本フィールド
         doc.entrusted_book_name = form.entrusted_book_name.data
-        doc.greeting_paragraph  = form.greeting_paragraph.data or ""
-        doc.closing_paragraph   = form.closing_paragraph.data or ""
-        doc.sent_date           = form.sent_date.data
+        doc.greeting_paragraph = form.greeting_paragraph.data or ""
+        doc.closing_paragraph = form.closing_paragraph.data or ""
+        doc.sent_date = form.sent_date.data
         # FieldList → JSONB
         doc.documents = _collect_documents(form.documents)
 
         if _commit_with_flash("納品書を更新しました。", "納品書の更新に失敗しました。"):
-            return redirect(url_for("delivery.detail", doc_id=doc.id))
+            return redirect(url_for("delivery.detail", document_id=doc.id))
 
-    return render_template("delivery/form.html", form=form, document=doc, client=doc.client, is_edit=True)
+    return render_template("delivery/form.html",
+                           form=form,
+                           document=doc,
+                           client=doc.client,
+                           title="Edit Delivery",
+                           is_edit=True)
 
 
 # --------------------------
 # Confirm Delete（確認）
 # --------------------------
-@delivery_bp.route("/<int:doc_id>/confirm_delete")
-def confirm_delete(doc_id: int) -> str:
-    doc = DeliveryDocument.query.get_or_404(doc_id)
-    return render_template("delivery/confirm_delete.html", document=doc)
+@delivery_bp.route("/<int:document_id>/confirm_delete")
+def confirm_delete(document_id: int) -> str:
+    doc = DeliveryDocument.query.get_or_404(document_id)
+    form = CSRFOnlyForm()
+    return render_template("delivery/confirm_delete.html", document=doc, form=form)
 
 
 # --------------------------
 # Delete（削除）
 # --------------------------
-@delivery_bp.route("/<int:doc_id>/delete", methods=["POST"])
-def delete(doc_id: int):
-    doc = DeliveryDocument.query.get_or_404(doc_id)
+@delivery_bp.route("/<int:document_id>/delete", methods=["POST"])
+def delete(document_id: int):
+    form = CSRFOnlyForm()
+    if not form.validate_on_submit():
+        flash("不正なリクエストです。（CSRF）", "danger")
+        return redirect(url_for("delivery.detail", document_id=document_id))
+
+    doc = DeliveryDocument.query.get_or_404(document_id)
     db.session.delete(doc)
     if _commit_with_flash("納品書を削除しました。", "納品書の削除に失敗しました。"):
-        return redirect(url_for("documents.index", client_id=doc.client_id))
-    return redirect(url_for("delivery.detail", doc_id=doc.id))
+        return redirect(url_for("client.documents_index", client_id=doc.client_id))
+    return redirect(url_for("delivery.detail", document_id=doc.id))

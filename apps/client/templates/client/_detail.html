@@ -18,59 +18,80 @@
 
     <!-- 一体化カード本体 -->
     <article class="card card--attach">
-
         {% if book.clients %}
         {% for client in book.clients %}
         <!-- 行（クライアント1件） -->
         <section class="card-section">
             <header class="card-section__header">
-                <div class="card-section__title">{{ client.name }}</div>
-                <div class="row-actions">
-                    <a class="btn icon" href="{{ url_for('client.edit', client_id=client.id) }}" title="Edit">
-                        <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="">
-                    </a>
-                    <a class="btn icon" href="{{ url_for('client.confirm_delete', client_id=client.id) }}" title="Delete">
-                        <img src="{{ url_for('static', filename='icon/16/trash.svg') }}" alt="">
-                    </a>
-                    <a class="btn icon" href="{{ url_for('client.documents_index', client_id=client.id) }}" title="Documents">
-                        <img src="{{ url_for('static', filename='icon/16/note.svg') }}" alt="">
-                    </a>
+                <div class="card-section__inner">
+
+                    <h3 class="card-section___title ">
+                        {{ client.name or '-' }}
+                    </h3>
+
+                    <div class="row-actions">
+                        <a class="btn icon" href="{{ url_for('client.documents_index', client_id=client.id) }}"
+                           title="Documents">
+                            <img src="{{ url_for('static', filename='icon/16/file-directory.svg') }}" alt="">
+                        </a>
+                        <a class="btn icon" href="{{ url_for('client.edit', client_id=client.id) }}" title="Edit">
+                            <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="">
+                        </a>
+                        <a class="btn icon" href="{{ url_for('client.confirm_delete', client_id=client.id) }}"
+                           title="Delete">
+                            <img src="{{ url_for('static', filename='icon/16/trash.svg') }}" alt="">
+                        </a>
+                    </div>
+
                 </div>
+
+
+                <div class="pill_group">
+                    <span class="pill">{{ client.client_type.label }}</span>
+                    <span class="pill">{{ client.entity_type.label }}</span>
+                </div>
+
             </header>
 
             <div class="card-section__body">
                 <table class="meta-table meta-table--plain">
                     <tbody>
                     <tr>
-                        <th>ID</th><td>{{ client.id }}</td>
+                        <th>ID</th>
+                        <td>{{ client.id }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Name</th>
+                        <td>{{ client.name or '-' }}</td>
                     </tr>
                     <tr>
-                        <th>Type</th><td>{{ client.client_type.label }}</td>
-                    </tr>
-                    <tr>
-                        <th>name</th><td>{{ client.name or '-' }}</td>
-                    </tr>
-                    <tr>
-                        <th>name_kana</th><td>{{ client.name_kana or '-' }}</td>
+                        <th>Kana</th>
+                        <td>{{ client.name_kana or '-' }}</td>
                     </tr>
                     <tr>
                         <th>Birth date</th>
                         <td>{{ client.birth_date.strftime('%Y-%m-%d') if client.birth_date else '-' }}</td>
                     </tr>
                     <tr>
-                        <th>Postal</th><td>{{ client.postal_code or '-' }}</td>
+                        <th>Postal</th>
+                        <td>{{ client.postal_code_with_mark() }}</td>
                     </tr>
                     <tr>
-                        <th>Address</th><td>{{ client.address or '-' }}</td>
+                        <th>Address</th>
+                        <td>{{ client.address or '-' }}</td>
                     </tr>
                     <tr>
-                        <th>Phone</th><td>{{ client.phone_number or '-' }}</td>
+                        <th>Phone</th>
+                        <td>{{ client.phone_number or '-' }}</td>
                     </tr>
                     <tr>
-                        <th>Email</th><td>{{ client.email or '-' }}</td>
+                        <th>Email</th>
+                        <td>{{ client.email or '-' }}</td>
                     </tr>
                     <tr>
-                        <th>Note</th><td>{{ client.note or '-' }}</td>
+                        <th>Note</th>
+                        <td>{{ client.note or '-' }}</td>
                     </tr>
                     <tr>
                         <th>Equity</th>
@@ -87,12 +108,10 @@
                     </tbody>
                 </table>
             </div>
-
         </section>
         {% endfor %}
         {% else %}
         <div class="help">No clients yet.</div>
         {% endif %}
-
     </article>
 </div>

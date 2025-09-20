@@ -10,23 +10,39 @@
     justify-content:space-between;
     gap: var(--space-2);
 }
-
-/* --- 修正: “カード化”のときは共通枠を消してカードと一体化 --- */
-.section-header.section-header--card{
-    /* 共通の枠を打ち消す */
-    margin: 0;                    /* ← 外側余白なし */
-    border: 1px solid var(--color-border);
-    padding: var(--space-3) var(--space-4);
-    background:#fff;
-    border-radius: var(--radius-md) var(--radius-md) 0 0;
-    box-shadow: none;
-
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap: var(--space-2);
+/* 1段目: 氏名＋アクション, 2段目: ピル群 */
+.card-section__header {
+    display: flex;
+    flex-direction: column;  /* ← 列方向を維持 */
+    align-items: stretch;
+    gap: 8px;
+    padding: var(--space-3) var(--space-3);
+    background: #f3f4f6;
+    border-bottom: 1px solid #c9d1d9;
 }
 
+/* 1段目は左右に振り分け */
+.card-section__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* 2段目のピル群は右寄せ */
+.card-section__header .pill_group {
+    margin: var(--space-1) 0;
+}
+.section-header.section-header--card {
+    margin: 0;
+    border: 1px solid var(--color-border);
+    padding: var(--space-3) var(--space-4);
+    background: #fff;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    box-shadow: none;
+}
+.card-section___title{
+    font-weight: normal;
+}
 /* 基本は attach なので上枠なし */
 .card.card--attach {
     border: 1px solid var(--color-border);
@@ -45,23 +61,6 @@
 /* 行ごとの区切りは2行目以降だけ */
 .card-section + .card-section{
     border-top:1px solid var(--color-border);
-}
-
-.card-section__header,
-.card-section__footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-2);
-    padding: 10px 16px;
-    background: #f3f4f6;          /* ← 少し濃くした背景 */
-    color: var(--color-fg);       /* 文字色はベースの本文色 */
-    font-weight: 500;             /* ← 見やすさを上げる */
-    border-bottom: 1px solid #d1d5da; /* ← borderもワントーン濃く */
-}
-
-.card-section__header {
-    border-bottom: 1px solid #c9d1d9; /* ← headerだけさらに少し強調 */
 }
 
 .card-section__body {

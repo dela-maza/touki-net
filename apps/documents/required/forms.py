@@ -5,7 +5,7 @@ from wtforms.validators import DataRequired, Length, Optional
 from wtforms import Form as WTForm
 
 
-class DocumentItemForm(FlaskForm):
+class DocumentItemForm(WTForm):
     """
     書類1行分（名称・注意・部数）
     - 本来なら 'name' としたいが、WTForms の FormField 自体が .name 属性を持つため
