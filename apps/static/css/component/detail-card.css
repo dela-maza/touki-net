@@ -1,49 +1,30 @@
 /* apps/static/css/layout/detail-card.css */
+/* ================================
+   Detail Card Layout (cleaned)
+   ================================ */
 
-.section-header{
-    /*border: 1px solid var(--color-header-border);*/
-    margin: var(--space-1) var(--space-1);
-    padding: var(--space-1) 0;
-    border-radius: var(--space-2);
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap: var(--space-2);
-}
-/* 1段目: 氏名＋アクション, 2段目: ピル群 */
-.card-section__header {
-    display: flex;
-    flex-direction: column;  /* ← 列方向を維持 */
-    align-items: stretch;
-    gap: 8px;
-    padding: var(--space-3) var(--space-3);
-    background: #f3f4f6;
-    border-bottom: 1px solid #c9d1d9;
-}
-
-/* 1段目は左右に振り分け */
-.card-section__inner {
+/* = Header (セクション見出し) = */
+.section-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: var(--space-2);
+    margin: var(--space-1);
+    padding: var(--space-1) 0;
+    border-radius: var(--space-2);
 }
 
-/* 2段目のピル群は右寄せ */
-.card-section__header .pill_group {
-    margin: var(--space-1) 0;
-}
-.section-header.section-header--card {
+/* カード一体型ヘッダ（最上段の大見出し） */
+.section-header--card {
     margin: 0;
-    border: 1px solid var(--color-border);
     padding: var(--space-3) var(--space-4);
     background: #fff;
+    border: 1px solid var(--color-border);
     border-radius: var(--radius-md) var(--radius-md) 0 0;
     box-shadow: none;
 }
-.card-section___title{
-    font-weight: normal;
-}
-/* 基本は attach なので上枠なし */
+
+/* = Card container (一体化カード) = */
 .card.card--attach {
     border: 1px solid var(--color-border);
     border-top: none;
@@ -52,22 +33,50 @@
     margin-top: 0;
 }
 
-/* 最初のカードだけは上部の枠と角丸を復活 */
+/* 最初のカードだけ上枠と角丸を復活 */
 .card.card--attach:first-of-type {
     border-top: 1px solid var(--color-border);
     border-radius: var(--radius-md);
 }
 
-/* 行ごとの区切りは2行目以降だけ */
-.card-section + .card-section{
-    border-top:1px solid var(--color-border);
+/* 各セクションの境界線（2行目以降） */
+.card-section + .card-section {
+    border-top: 1px solid var(--color-border);
 }
 
+/* = Card section header (氏名 + アクション / ピル群) = */
+.card-section__header {
+    display: flex;
+    flex-direction: column;   /* 1段目: 氏名+アクション, 2段目: ピル群 */
+    gap: var(--space-2);
+    padding: var(--space-3);
+    background: #f3f4f6;
+    border-bottom: 1px solid #c9d1d9;
+}
+
+/* 1段目（氏名+アクション）は左右に配置 */
+.card-section__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* タイトルは通常ウェイト */
+.card-section___title {
+    font-weight: normal;
+}
+
+/* 2段目のピル群 */
+.card-section__header .pill_group {
+    margin: var(--space-1) 0;
+}
+
+/* = Card section body = */
 .card-section__body {
     padding: 14px 16px;
 }
 
-/* table */
+/* = Meta table (キー/値テーブル) = */
 .meta-table--plain {
     width: 100%;
     border-collapse: collapse;
@@ -76,13 +85,31 @@
 .meta-table--plain th {
     text-align: left;
     font-weight: normal;
-    /*color: var(--color-fg-muted, #555);*/
-    padding: var(--space-1) 0;
-    white-space: nowrap; /* キーを折り返さない */
+    white-space: nowrap;      /* キーを折り返さない */
     vertical-align: top;
+    padding: var(--space-1) 0;
 }
 
 .meta-table--plain td {
-    padding:0;
+    padding: 0;
     color: var(--color-fg, #24292f);
+}
+
+/* 行セパレータ（見出しブロックの区切り） */
+.meta-table tr.row-divide > td {
+    padding: 0;
+    height: 10px;             /* 余白を確保 */
+    border: none;
+    position: relative;
+}
+.meta-table tr.row-divide > td::before {
+    content: "";
+    display: block;
+    border-top: 1px solid var(--color-border);
+    margin: 6px 0;
+}
+
+/* = Optional: 小画面の余白微調整 = */
+@media (max-width: 900px) {
+    .card-section__header { gap: var(--space-1); }
 }

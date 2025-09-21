@@ -160,6 +160,16 @@ Documents
                 <a class="btn icon" href="{{ url_for('origin.confirm_delete', document_id=row.id) }}" title="Delete">
                     <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="">
                 </a>
+                {% elif row.document_type == 'origin' %}
+                <a class="btn icon" href="{{ url_for('origin.detail', document_id=row.id) }}" title="Edit">
+                    <img src="{{ url_for('static', filename='icon/16/eye.svg') }}" alt="">
+                </a>
+                <a class="btn icon" href="{{ url_for('origin.edit', document_id=row.id) }}" title="Edit">
+                    <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="">
+                </a>
+                <a class="btn icon" href="{{ url_for('origin.confirm_delete', document_id=row.id) }}" title="Delete">
+                    <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt="">
+                </a>
                 {% endif %}
             </td>
         </tr>

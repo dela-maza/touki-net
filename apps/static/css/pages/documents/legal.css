@@ -1,0 +1,148 @@
+
+.document__container {
+    box-sizing: border-box;
+    max-width: 1050px;
+    margin: 0 auto;
+    font-family: "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝", "MS PMincho", serif;
+    border: 1px solid #e0e0e0;
+    font-size: 0.95rem;
+    padding: 50px 50px;
+    background: #fff;
+}
+
+.page-title{
+    text-align: center;
+    font-size: 1rem;
+}
+.section-title {
+    font-weight: bold;
+
+    margin: 1.0em 0 0em;
+}
+
+.subsection {
+    margin: 1em 0;
+}
+
+.subsection-title {
+    font-weight: normal;
+    margin: 0.5em 0;
+    padding-left: 1em; /* 字下げ */
+}
+
+.party-block {
+    margin-left: 2em; /* 権利者/義務者ブロックを字下げ */
+    margin-bottom: 0.3em;
+}
+
+.party-label {
+    font-weight: normal;
+    padding: var(--space-1) 0;
+}
+
+.party-value {
+    margin-left: 1.5em; /* 名前・住所をさらに字下げ */
+    padding: var(--space-1) 0;
+    white-space: pre-wrap; /* 改行保持 */
+}
+
+ol.cause-list {
+    list-style: none;            /* デフォルト番号を消す */
+    counter-reset: item;        /* cause-listが出てくると、item という名前のカウンターを0にリセット */
+    padding-left: 1.5rem;        /* 全体のインデント */
+}
+
+ol.cause-list li {
+    counter-increment: item;    /* li が1個出てくるごとに item を+1する */
+    margin-bottom: .65rem;
+    text-indent: -2rem;          /* 番号分を戻す */
+    padding-left: 2rem;          /* 本文開始位置を揃える */
+}
+
+ol.cause-list li::before {
+    content: "（" counter(item) "）";/* 現在のカウンター値:itemを表示する */
+    font-weight: 600;
+    margin-right: .25rem;        /* 番号と本文の隙間 */
+}
+
+
+/* ======================================
+    signature-table
+====================================== */
+.date {
+    margin-bottom: 1rem;
+}
+
+.signature-table  {
+    border-collapse: collapse;
+    width: 100%;
+    text-align: center;
+}
+
+.signature-table  th,
+.signature-table td {
+    border: 1px solid #000;
+    padding: 8px;
+}
+
+.signature-table .stamp-col {
+    width: 80px; /* 実印欄の幅 */
+}
+
+.signature-table .label {
+    width: 80px;
+}
+
+.signature-table .value {
+    text-align: left;
+    padding-left: 1em;
+}
+
+
+
+@media print {
+    .page-header,
+    .btn,
+    .help,
+    .error {
+        display: none !important;
+    }
+
+    @page {
+        size: A4;
+        margin: 12mm 1mm;
+    }
+
+
+    .document__container {
+        width: 168mm;
+        margin: 5mm auto 0;
+        box-sizing: border-box;
+        padding: 0 2mm;
+        border: 1pt solid transparent;
+        background: #fff;
+
+        /* 全体の基準フォントを落とす */
+        font-size: 10pt; /* または 0.9rem / 10.5pt など */
+        line-height: 1.4;
+    }
+
+    .estate-description-flex { display:flex; gap:12px; }
+    .estate-description-col  { height: calc(1.2em * 14) !important; } /* 印刷時固定行数例 */
+
+    .signature-table {
+        position: fixed;
+        bottom: 0; /* ページ下から 5cm */
+        left: 0;
+        right: 0;
+        width: 100%; /* ページ幅いっぱいにする場合 */
+        border-collapse: collapse;
+    }
+
+    .signature-table th,
+    .signature-table td {
+        border: 1px solid #000;
+        padding: 4px;
+    }
+
+}

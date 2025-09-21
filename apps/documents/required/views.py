@@ -213,7 +213,11 @@ def edit(document_id: int):
             # 一覧から戻る導線があるなら、必要に応じて client_id を付ける
             return redirect(url_for("required.detail", document_id=doc.id))
 
-    return render_template("required/form.html", form=form, document=doc, client=doc.client, is_edit=True)
+    return render_template("required/form.html",
+                           form=form,
+                           document=doc,
+                           client=doc.client,
+                           is_edit=True)
 
 
 # --------------------------

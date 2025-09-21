@@ -1,0 +1,238 @@
+/* apps/css/pages/documents/document.css */
+.container {
+    width: 1050px;
+    margin: 0 auto;
+}
+
+.document__container {
+    box-sizing: border-box;
+    max-width: 1050px;
+    margin: 0 auto;
+    font-family: "ヒラギノ明朝 Pro W3", "Hiragino Mincho Pro", "ＭＳ Ｐ明朝", "MS PMincho", serif;
+    border: 1px solid #e0e0e0;
+    font-size: 0.95rem;
+    padding: 30px 70px;
+    background: #fff;
+}
+
+.document__container .help {
+    color: #6b7280;
+    font-size: 0.9em;
+    margin-top: 4px;
+}
+
+.document__container.error {
+    color: #b42318;
+    font-size: 0.9em;
+    margin-top: 4px;
+}
+
+/* 表（書類リスト） */
+.document__container table.list {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1.5px solid #c6d9fc;
+    margin-top: 4px;
+}
+
+.document__container table.list th,
+.document__container table.list td {
+    border: 1px solid #c6d9fc;
+    padding: 8px;
+    vertical-align: top;
+}
+
+.document__container table.list th {
+    background-color: #edf5fd;
+    border-bottom: 1px solid #c6d9fc;
+    font-weight: 600;
+}
+
+/* 列幅をパーセンテージで指定 */
+.document__container table.list .col-name {
+    width: 50%;
+}
+
+.document__container table.list .col-note {
+    width: 40%;
+}
+
+.document__container table.list .col-copies {
+    width: 10%;
+}
+
+/* グリッド */
+.document__container .meta-grid {
+    display: grid;
+    grid-template-columns: 80px 1fr  1fr; /* ラベル100px / 値 / ラベル100px / 値 */
+    gap: 50px 35px;
+    margin-bottom: 1.5rem;
+    /*font-size: 0.95rem;*/
+    align-items: start;
+}
+
+.document__container .meta-grid .label {
+    font-weight: normal;
+}
+
+.document__container .meta-grid .value {
+    padding: 2px 4px;
+}
+
+.document__container .recipient {
+    width: 100%;
+    margin-right: 150px;
+    border-bottom: 1px solid #b7b7b7;
+}
+
+.document__container .sent-date {
+    text-align: right;
+    margin-bottom: 20px;
+}
+
+.document__container .office-info {
+    font-style: normal; /* デフォルトのイタリック解除 */
+    padding-left: var(--space-8);
+    line-height: 1.8; /* 行間調整 */
+}
+
+.document__container .office-info div {
+    margin-bottom: 2px; /* 行間の余白 */
+}
+
+
+.document__container h1 {
+    font-size: 1.3rem;
+    padding-bottom: 1rem;
+}
+
+.document__container h2 {
+    font-size: 0.95rem;
+}
+
+.document__container h1, h2 {
+    margin: 0 0 4px
+}
+
+.document__container h1.page-title,
+.document__container h2.page-title {
+    text-align: center;
+    margin: 2em 0;
+}
+
+.document__container .paragraph {
+    margin: 2rem 0;
+    text-indent: 1em;
+}
+
+/* メタ（宛名・物件名・日付） */
+.document__container .meta {
+    margin: 0;
+}
+
+.document__container table.list {
+    font-size: 0.95rem;
+    border: 2px solid #7a7a7a;
+}
+
+.document__container table.list th,
+.document__container table.list td {
+    border: 1px solid #cecece;
+}
+
+.document__container table.list .col-name {
+    border-right: 1px solid transparent;
+}
+
+.document__container table.list .col-copies {
+    text-align: center;
+}
+
+.office-signet {
+    display: flex;
+    align-items: center;   /* アイコンとテキストを縦方向で揃える */
+    gap: 8px;              /* 画像とテキストの間 */
+}
+
+.signet-icon {
+    width: 32px;           /* サイズ調整 */
+    height: auto;
+}
+
+.signet-text {
+    display: flex;
+    flex-direction: column; /* テキストを縦並び */
+    line-height: 1.4;
+}
+
+.signet-text .office-name {
+    padding-left: 0;
+}
+
+@media print {
+    .page-header,
+    .btn,
+    .help,
+    .error {
+        display: none !important;
+    }
+
+    @page {
+        size: A4;
+        margin: 18mm 17mm;
+    }
+
+
+    .document__container {
+        width: 168mm;
+        margin: 0 auto;
+        box-sizing: border-box;
+        padding: 0 8mm;
+        border: 1pt solid transparent;
+        background: #fff;
+
+        /* 全体の基準フォントを落とす */
+        font-size: 10pt; /* または 0.9rem / 10.5pt など */
+        line-height: 1.4;
+    }
+
+    .document__container .meta-grid {
+        display: grid;
+        grid-template-columns: 50px 1fr  1fr; /* ラベル100px / 値 / ラベル100px / 値 */
+        gap: 50px 5px;
+        margin-bottom: 1.5rem;
+        /*font-size: 0.95rem;*/
+        align-items: start;
+    }
+
+    /* 見出し系 */
+    .document__container h1 {
+        font-size: 11pt;
+        margin-bottom: 1.5em;
+    }
+
+    .document__container h2 {
+        font-size: 9pt;
+        margin: 0.7em 0;
+    }
+
+    /* メタ情報や宛名部分 */
+    .document__container .meta-grid,
+    .document__container .sent-date,
+    .document__container .office-info,
+    .document__container .paragraph {
+        font-size: 8pt;
+    }
+
+    /* 書類リストの表 */
+    .document__container table.list {
+        font-size: 9pt;
+        border: 2px solid #000;
+    }
+
+    .document__container table.list th,
+    .document__container table.list td {
+        border: 1px solid #a8a8a8;
+        padding: 4px;
+    }
+}

@@ -21,11 +21,11 @@
     </div>
 
     <div class="nav-buttons">
+        <a class="btn icon" href="{{ url_for('client.documents_index', client_id=document.client.id) }}">
+            <img src="{{ url_for('static', filename='icon/16/file-directory.svg') }}" alt="book icon">
+        </a>
         <a class="btn icon" href="{{ url_for('amount.edit', document_id=document. id,client_id=document.client.id) }}">
             <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="book icon">
-        </a>
-        <a class="btn icon" href="{{ url_for('amount.index', client_id=document.client.id) }}">
-            <img src="{{ url_for('static', filename='icon/16/list.svg') }}" alt="book icon">
         </a>
     </div>
 </div>
@@ -35,6 +35,18 @@
         <table class="header-frame">
             <tr>{% for _ in range(13) %}<td></td>{% endfor %}</tr>
             {% import "macros.html" as macros %}
+
+            <tr>
+                <td height="60" colspan="4"></td>
+            </tr>
+
+            <tr>
+                <td class="document-title" colspan="13" align="center">見積書</td>
+            </tr>
+            <tr>
+                <td height="20" colspan="4"></td>
+            </tr>
+
             <tr>
                 <td colspan="10"></td>
                 <td colspan="3" align="right">
@@ -43,11 +55,11 @@
                     <span id="receipt_date"  class="date-label" style="display:none;">{{ macros.render_wareki_date(document.receipt_date) }}</span>
                 </td>
             </tr>
-            <tr><td height="40" colspan="4"></td></tr>
+
             <tr>
-                <td class="document-title" colspan="13" align="center">見積書</td>
+                <td height="60" colspan="13"></td>
             </tr>
-            <tr><td height="60" colspan="13"></td></tr>
+
             <tr>
                 <td id="client-name" class="client-name" colspan="5">{{ document.client.name }}</td>
                 <td colspan="1">殿</td>
@@ -97,7 +109,9 @@
                 <td colspan="5"  style="word-break: break-word;">Tell：{{ office.tell }}</td>
             </tr>
 
-            <tr><td colspan="13" height="50"></td></tr>
+            <tr>
+                <td colspan="13" height="50"></td>
+            </tr>
         </table>
 
         <table class="frame">

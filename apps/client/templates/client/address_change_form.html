@@ -1,0 +1,41 @@
+<!-- apps/client/templates/client/address_change_form.html -->
+{% extends "_layout/form_base.html" %}
+{% set icon = 'icon/24/truck.svg' %}
+{% set form_id = "addr-change-form" %}
+
+{% block header_actions %}
+<button type="submit" class="btn primary" form="{{ form_id }}">
+    <img src="{{ url_for('static', filename='icon/16/check.svg') }}" alt=""> Save
+</button>
+<a href="{{ url_for('client.documents_index', client_id=client.id) }}" class="btn secondary">
+    <img src="{{ url_for('static', filename='icon/16/x.svg') }}" alt=""> Cancel
+</a>
+{% endblock %}
+
+{% block content %}
+<form id="{{ form_id }}" method="POST">
+    {{ form.hidden_tag() }}
+
+    <div class="container">
+        <div class="form-box">
+            <div class="form-group">
+                {{ form.old_address.label(class="form-label") }}
+                {{ form.old_address(class="form-textarea", placeholder="例）福岡市南区…") }}
+                {% if form.old_address.errors %}<ul class="form-errors">{% for e in form.old_address.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.new_address.label(class="form-label") }}
+                {{ form.new_address(class="form-textarea", placeholder="例）福岡市中央区…") }}
+                {% if form.new_address.errors %}<ul class="form-errors">{% for e in form.new_address.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+
+            <div class="form-group">
+                {{ form.change_date.label(class="form-label") }}
+                {{ form.change_date(class="form-input", type="date") }}
+                {% if form.change_date.errors %}<ul class="form-errors">{% for e in form.change_date.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

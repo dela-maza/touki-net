@@ -23,6 +23,13 @@
     display: flex;
 }
 
+.flex-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
 .flex-align-center {
     display: flex;
     align-items: center;
@@ -37,4 +44,21 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.flex-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* divider 系 */
+.divider {
+    display: inline-block;
+    width: 1px;
+    height: 1em; /* 行の高さに追従させる */
+    background-color: var(--color-border);
+    margin: 0 var(--space-2);
+    vertical-align: middle;
 }

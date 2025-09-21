@@ -51,7 +51,7 @@ body{
 
 .form-textarea {
     width: 100%;
-    min-height: 300px;
+    /*min-height: 300px;*/
     padding: 0.5rem;
     border: 1px solid #d0d7de;
     border-radius: 6px;
@@ -64,4 +64,10 @@ body{
     padding-left: 1.25rem;
     color: #d1242f;
     font-size: 13px;
+}
+
+.page-title{
+    padding: 1.5rem 0;
+    font-size: 1.3rem;
+    text-align: center;
 }

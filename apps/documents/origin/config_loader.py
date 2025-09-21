@@ -2,8 +2,9 @@
 from __future__ import annotations
 import os, configparser
 from functools import lru_cache
-from typing import Iterable, List, Dict, Optional
-from datetime import date, datetime
+from typing import List, Dict, Optional
+from datetime import date
+from apps.utils.common import to_japanese_era
 
 from .constants import CauseType
 
@@ -17,8 +18,7 @@ CONFIG_FILE = os.path.join(os.path.dirname(__file__), "config.ini")
 @lru_cache(maxsize=1)
 def _parser() -> configparser.ConfigParser:
     cp = configparser.ConfigParser()
-    # 大文字・小文字を区別したいので option 名の小文字化を抑止
-    cp.optionxform = str
+    cp.optionxform = str  # 大文字・小文字保持
     if not os.path.exists(CONFIG_FILE):
         raise FileNotFoundError(f"origin config.ini not found: {CONFIG_FILE}")
     cp.read(CONFIG_FILE, encoding="utf-8")
@@ -30,23 +30,22 @@ def _parser() -> configparser.ConfigParser:
 # ----------------------------
 def get_cause_templates(cause_type: CauseType) -> List[str]:
     """
-    指定 cause_type のセクション（例: 'SALE'）から line1, line2, ... を
-    連番順にリストで返す。未定義なら空リスト。
+    指定 cause_type のセクション（例: 'SALE'）から CAUSE_FACT_1, 2... を順に返す。
     """
     cp = _parser()
     sec = cause_type.name  # SALE / GIFT / DIVISION
     if not cp.has_section(sec):
         return []
 
-    # 'line' で始まるキーだけを拾い、数字でソート
     items = []
     for k, v in cp.items(sec):
-        if k.startswith("line"):
+        if k.startswith("CAUSE_FACT_"):
             try:
-                idx = int(k.replace("line", "").strip())
+                idx = int(k.replace("CAUSE_FACT_", "").strip())
             except ValueError:
                 continue
             items.append((idx, v))
+
     items.sort(key=lambda x: x[0])
     return [v for _, v in items]
 
@@ -55,23 +54,18 @@ def get_cause_templates(cause_type: CauseType) -> List[str]:
 # 2) プレースホルダを埋めて返す
 # ----------------------------
 def _fmt_date(d: Optional[date]) -> str:
-    if not d:
-        return ""
-    # 必要なら和暦などに差し替え可
-    return d.strftime("%Y-%m-%d")
+    return "" if not d else to_japanese_era(d)
 
 
 def render_cause_lines(
         cause_type: CauseType,
         *,
         contract_date: Optional[date] = None,
-        payment_date: Optional[date] = None,
+        execution_date: Optional[date] = None,
         extra_ctx: Optional[Dict[str, str]] = None,
 ) -> List[str]:
     """
-    config.ini の行テンプレートに {{ contract_date }} / {{ payment_date }} をはめて
-    行ごとの文字列リストを返す。未定義の変数は空文字に置換。
-    （シンプルな置換器：Jinja を使わず {{ var }} だけ対応）
+    config.ini の行テンプレートに {{ contract_date }} / {{ execution_date }} を埋める。
     """
     tmpl_lines = get_cause_templates(cause_type)
     if not tmpl_lines:
@@ -79,7 +73,7 @@ def render_cause_lines(
 
     ctx = {
         "contract_date": _fmt_date(contract_date),
-        "payment_date": _fmt_date(payment_date),
+        "execution_date": _fmt_date(execution_date),
     }
     if extra_ctx:
         ctx.update({k: ("" if v is None else str(v)) for k, v in extra_ctx.items()})
@@ -87,31 +81,30 @@ def render_cause_lines(
     def _render_one(s: str) -> str:
         out = s
         for k, v in ctx.items():
-            out = out.replace(f"{{{{ {k} }}}}", v)   # "{{ k }}" の置換
+            out = out.replace(f"{{{{ {k} }}}}", v)
         return out
 
     return [_render_one(s) for s in tmpl_lines]
 
 
 # ----------------------------
-# 3) 1つのテキストにまとめたい時用
+# 3) まとめて文字列化
 # ----------------------------
-def render_cause_text(
+def render_cause_fact(
         cause_type: CauseType,
         *,
         contract_date: Optional[date] = None,
-        payment_date: Optional[date] = None,
+        execution_date: Optional[date] = None,
         joiner: str = "\n",
         extra_ctx: Optional[Dict[str, str]] = None,
 ) -> str:
     """
-    行リストを join して1つのテキストにして返す。
-    詳細画面で <li> にしたい場合は render_cause_lines() を使ってください。
+    行を join して一つのテキストにする。
     """
     lines = render_cause_lines(
         cause_type,
         contract_date=contract_date,
-        payment_date=payment_date,
+        execution_date=execution_date,
         extra_ctx=extra_ctx,
     )
     return joiner.join(lines)

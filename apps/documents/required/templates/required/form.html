@@ -1,28 +1,28 @@
-{# apps/documents/required/templates/required/form.html #}
+<!-- apps/documents/required/templates/required/form.html -->
 {% extends "_layout/form_base.html" %}
 
-{# ヘッダー左アイコン #}
+<!-- ヘッダー左アイコン -->
 {% set icon = 'icon/24/file-badge.svg' %}
 
-{# フォームがヘッダー外の送信ボタンを受け取れるようにIDを決める #}
+<!-- フォームがヘッダー外の送信ボタンを受け取れるようにIDを決める -->
 {% set form_id = "required-form" %}
 
-{# タイトル #}
+<!-- タイトル -->
 {% block title %}
 {{ client.name }}
 {% endblock %}
 
-{# ヘッダータイトル #}
+<!-- ヘッダータイトル -->
 {% block heading %}
-{{ title }}
+Required
 {% endblock %}
 
-{# ヘッダーメタ情報 #}
+<!-- ヘッダーメタ情報 -->
 {% block header_meta %}
 <span class="form-header__heading">- {{ client.name }} -</span>
 {% endblock %}
 
-{# ヘッダー右側：アクション #}
+<!-- ヘッダー右側：アクション -->
 {% block header_actions %}
 <button type="submit" class="btn primary" form="{{ form_id }}">
     {% if is_edit %}
@@ -36,7 +36,7 @@
 </a>
 {% endblock %}
 
-{# 本文 #}
+<!-- 本文 -->
 {% block content %}
 <form id="{{ form_id }}" method="POST">
     {{ form.hidden_tag() }}

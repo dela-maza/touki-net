@@ -1,0 +1,104 @@
+<!-- apps/documents/origin/templates/origin/detail.html -->
+
+{% extends "_layout/page_base.html" %}
+
+<!-- タイトル -->
+{% block title %}登記原因証明情報{% endblock %}
+
+<!-- 専用スタイルシート -->
+{% block extra_css %}
+<!--<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/documents/document.css') }}">-->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/documents/legal.css') }}">
+{% endblock %}
+
+<!-- ヘッダーアイコン -->
+{% block heading_icon %}
+<img src="{{ url_for('static', filename='icon/24/file-badge.svg') }}" alt="icon" width="20" height="20">
+{% endblock %}
+
+<!-- ヘッダータイトル -->
+{% block heading %}
+Origin
+{% endblock %}
+
+<!-- ヘッダー右側：アクション -->
+{% block header_actions %}
+<a href="{{ url_for('client.documents_index', client_id=document.client.id) }}" class="btn icon">
+    <img src="{{ url_for('static', filename='icon/16/file-directory.svg') }}" alt="">
+</a>
+<a href="{{ url_for('origin.edit', document_id=document.id) }}" class="btn icon">
+    <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="">
+</a>
+<button type="button" class="btn icon" onclick="window.print()">
+    <img src="{{ url_for('static', filename='icon/16/printer.svg') }}" alt="">
+</button>
+{% endblock %}
+
+<!-- コンテンツ -->
+{% block content %}
+<div class="container document__container">
+    <header class="section">
+        <h1 class="page-title">登記原因証明情報</h1>
+    </header>
+
+    <section class="section">
+        <div class="section-title">１．当事者及び不動産</div>
+
+        <div class="subsection">
+            <div class="subsection-title">（１）当事者</div>
+            <div class="party-block">
+                <div class="party-label ms-10">権利者（甲）</div>
+                <div class="party-value ms-10 ps-10">{{ (document.right_holders or '') | replace('\n', '<br>') | safe }}</div>
+            </div>
+            <div class="party-block">
+                <div class="party-label ms-10">義務者（乙）</div>
+                <div class="party-value ms-10 ps-10">{{ (document.obligation_holders or '') | replace('\n', '<br>') | safe }}</div>
+            </div>
+        </div>
+
+        <div class="subsection">
+            <div class="subsection-title">（２）不動産の表示</div>
+            <div class="real-estate-flex ms-10 ps-10">
+                {% for desc in (document.real_estate_descriptions or []) %}
+                {% if desc.strip() %}
+                <div class="real-estate-col">
+                    {{ desc | replace('\n', '<br>') | safe }}
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="section-title">２．登記の原因となる事実又は法律行為</div>
+        {% set lines = (document.cause_fact or '').split('\n') %}
+        <ol class="cause-list">
+            {% for line in lines if line.strip() %}
+            <li>{{ line.lstrip('- ') }}</li>
+            {% endfor %}
+        </ol>
+    </section>
+
+    <p class="date">令和7年9月　日</p>
+
+    <table class="signature-table">
+        <tr>
+            <th class="stamp-col">実印</th>
+            <th colspan="2">住所・氏名</th>
+            <th class="stamp-col">実印</th>
+        </tr>
+        <tr>
+            <td rowspan="2"></td>
+            <td class="label">住所</td>
+            <td class="value">福岡市南区松原七丁目７番２０号</td>
+            <td rowspan="2"></td>
+        </tr>
+        <tr>
+            <td class="label">氏名</td>
+            <td class="value">佐 藤　千 恵</td>
+        </tr>
+    </table>
+
+</div>
+{% endblock %}

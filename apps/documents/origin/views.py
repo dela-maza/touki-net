@@ -1,19 +1,18 @@
 # apps/documents/origin/views.py
 from __future__ import annotations
-
 from datetime import datetime
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import joinedload
-
 from db import db
-
+from apps.entrusted_book.models import EntrustedBook
+from apps.client.models import Client
 from apps.utils.common import to_zenkaku_digits
-from apps.client.models import Client, ClientType
+from apps.client.constants import ClientType
 from apps.documents.origin.constants import CauseType
 from apps.documents.origin.models import OriginDocument
 from apps.documents.origin.forms import OriginDocumentForm
-from apps.documents.origin.config_loader import render_cause_text
+from apps.documents.origin.config_loader import render_cause_fact
 
 # --------------------------
 # ブループリント
@@ -81,6 +80,23 @@ def _party_text_from_book(book) -> tuple[str, str]:
     oblig_text = "\n".join(filter(None, oblig_lines))
     return right_text, oblig_text
 
+def _pack_descriptions(form) -> list[str]:
+    """フォームの左右欄をJSON配列に詰める（空は落とす）"""
+    s1 = (form.real_estate_description_1.data or "").strip()
+    s2 = (form.real_estate_description_2.data or "").strip()
+    out = []
+    if s1: out.append(s1)
+    if s2: out.append(s2)
+    # どちらも空なら空配列（DB側は NOT NULL だが default=list なのでOK）
+    return out
+
+def _unpack_descriptions(doc) -> tuple[str, str]:
+    """モデルのJSON配列を左右２欄に展開"""
+    parts = (doc.real_estate_descriptions or [])
+    left  = parts[0] if len(parts) > 0 else ""
+    right = parts[1] if len(parts) > 1 else ""
+    return left, right
+
 # --------------------------
 # Index（一覧）
 # --------------------------
@@ -106,12 +122,12 @@ def index() -> str:
 # --------------------------
 # Detail（詳細）
 # --------------------------
-@origin_bp.route("/<int:doc_id>")
-def detail(doc_id: int) -> str:
+@origin_bp.route("/<int:document_id>")
+def detail(document_id: int) -> str:
     doc = (
         OriginDocument.query
         .options(joinedload(OriginDocument.client))
-        .get_or_404(doc_id)
+        .get_or_404(document_id)
     )
     return render_template("origin/detail.html", document=doc)
 
@@ -122,7 +138,6 @@ def detail(doc_id: int) -> str:
 @origin_bp.route("/create", methods=["GET", "POST"])
 def create():
     form = OriginDocumentForm()
-
     client_id = request.args.get("client_id", type=int)
     if not client_id:
         flash("クライアントが指定されていません。", "danger")
@@ -130,95 +145,114 @@ def create():
 
     client = Client.query.get_or_404(client_id)
     form.client_id.data = client.id
-    back_url = request.args.get("back") or url_for("documents.index", client_id=client.id)
+    back_url = request.args.get("back") or url_for("client.documents_index", client_id=client.id)
+
+    book = client.entrusted_book
 
     if request.method == "GET":
-        # 当事者の初期値（クライアント一覧→テキスト化）
-        right_txt, oblig_txt = _party_text_from_book(client.entrusted_book)
+        # 当事者初期値
+        right_txt, oblig_txt = _party_text_from_book(book)
         form.right_holders.data = right_txt
         form.obligation_holders.data = oblig_txt
 
-        # ★ 登記原因の初期値（プルダウンの初期選択 & 文面の自動生成）
-        form.cause_type.data = CauseType.SALE.value  # 例：初期は「売買」
-        form.cause_text.data = render_cause_text(
+        # 不動産の表示（新規は空のまま：左右どちらにも入れられる）
+        form.real_estate_description_1.data = ""
+        form.real_estate_description_2.data = ""
+
+        # 登記原因の初期値
+        form.cause_type.data = CauseType.SALE.value
+        form.cause_suffix.data = ""
+        form.cause_fact.data = render_cause_fact(
             CauseType.from_id(form.cause_type.data),
-            contract_date=form.contract_date.data,   # 未入力なら None → 空文字になる
-            payment_date=form.payment_date.data,
+            contract_date=book.contract_date,
+            execution_date=book.execution_date,
         )
 
-        # 補足は空でOK（StringField）
-        form.cause_suffix.data = ""
-
-    # POST 保存処理
     if form.validate_on_submit():
         doc = OriginDocument(
             client_id=client.id,
-            real_estate_description=form.real_estate_description.data or "",
+            real_estate_descriptions=_pack_descriptions(form),  # ← ここ！
             right_holders=form.right_holders.data or "",
             obligation_holders=form.obligation_holders.data or "",
             cause_type_id=form.cause_type.data,
-            cause_text=form.cause_text.data or "",
-            contract_date=form.contract_date.data,
-            payment_date=form.payment_date.data,
-            created_at=datetime.utcnow(),
+            cause_fact=form.cause_fact.data or "",
         )
         db.session.add(doc)
         if _commit_with_flash("登記原因証明情報を作成しました。", "登記原因証明情報の作成に失敗しました。"):
-            return redirect(url_for("origin.detail", doc_id=doc.id), code=303)
+            return redirect(url_for("origin.detail", document_id=doc.id), code=303)
 
     elif form.is_submitted():
         for field, errs in form.errors.items():
             flash(f"{field}: {', '.join(errs)}", "danger")
 
-    return render_template("origin/form.html", form=form, client=client, is_edit=False, back_url=back_url)
+    return render_template(
+        "origin/form.html",
+        form=form,
+        client=client,
+        is_edit=False,
+        back_url=back_url,
+    )
 
 
 # --------------------------
 # Edit（更新）
 # --------------------------
-@origin_bp.route("/<int:doc_id>/edit", methods=["GET", "POST"])
-def edit(doc_id: int):
+@origin_bp.route("/<int:document_id>/edit", methods=["GET", "POST"])
+def edit(document_id: int):
     doc = (
         OriginDocument.query
         .options(joinedload(OriginDocument.client))
-        .get_or_404(doc_id)
+        .get_or_404(document_id)
     )
     form = OriginDocumentForm(obj=doc)
-    form.client_id.data = doc.client_id  # HiddenField 復元
+    form.client_id.data = doc.client_id
+
+    if request.method == "GET":
+        # 既存のJSON配列を左右欄に復元
+        left, right = _unpack_descriptions(doc)
+        form.real_estate_description_1.data = left
+        form.real_estate_description_2.data = right
 
     if form.validate_on_submit():
-        doc.real_estate_description = form.real_estate_description.data or ""
+        # 左右欄 -> JSON配列
+        doc.real_estate_descriptions = _pack_descriptions(form)
         doc.right_holders = form.right_holders.data or ""
         doc.obligation_holders = form.obligation_holders.data or ""
         doc.cause_type_id = form.cause_type.data
-        doc.cause_text = form.cause_text.data or ""
-        doc.contract_date = form.contract_date.data
-        doc.payment_date = form.payment_date.data
+        doc.cause_fact = form.cause_fact.data or ""
 
         if _commit_with_flash("登記原因証明情報を更新しました。", "登記原因証明情報の更新に失敗しました。"):
-            return redirect(url_for("origin.detail", doc_id=doc.id))
+            return redirect(url_for("origin.detail", document_id=doc.id))
 
-    return render_template("origin/form.html", form=form, document=doc, client=doc.client, is_edit=True)
+    return render_template(
+        "origin/form.html",
+        form=form,
+        document=doc,
+        client=doc.client,
+        is_edit=True,
+    )
 
 
 # --------------------------
 # Confirm Delete（確認）
 # --------------------------
-@origin_bp.route("/<int:doc_id>/confirm_delete")
-def confirm_delete(doc_id: int) -> str:
-    doc = OriginDocument.query.get_or_404(doc_id)
+@origin_bp.route("/<int:document_id>/confirm_delete")
+def confirm_delete(document_id: int) -> str:
+    doc = OriginDocument.query.get_or_404(document_id)
     cancel_url = url_for("documents.index", client_id=doc.client_id)
-    return render_template("origin/confirm_delete.html", document=doc, cancel_url=cancel_url)
+    return render_template("origin/confirm_delete.html",
+                           document=doc,
+                           cancel_url=cancel_url)
 
 
 # --------------------------
 # Delete（削除）
 # --------------------------
-@origin_bp.route("/<int:doc_id>/delete", methods=["POST"])
-def delete(doc_id: int):
-    doc = OriginDocument.query.get_or_404(doc_id)
+@origin_bp.route("/<int:document_id>/delete", methods=["POST"])
+def delete(document_id: int):
+    doc = OriginDocument.query.get_or_404(document_id)
     client_id = doc.client_id
     db.session.delete(doc)
     if _commit_with_flash("登記原因証明情報を削除しました。", "登記原因証明情報の削除に失敗しました。"):
         return redirect(url_for("documents.index", client_id=client_id))
-    return redirect(url_for("origin.detail", doc_id=doc.id))
+    return redirect(url_for("origin.detail", document_id=doc.id))

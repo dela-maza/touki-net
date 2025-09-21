@@ -47,8 +47,8 @@ document.querySelectorAll('button[data-doc-label]').forEach(button => {
                 stampImg.src = stampImageUrl;
                 stampImg.alt = "押印";
                 stampImg.style.position = 'absolute';
-                stampImg.style.left = '840px';
-                stampImg.style.top = '210px';
+                stampImg.style.left = '780px';
+                stampImg.style.top = '260px';
                 stampImg.style.width = '10%';
                 stampImg.style.height = 'auto';
                 mainFrame.appendChild(stampImg);

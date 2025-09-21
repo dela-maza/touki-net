@@ -1,0 +1,39 @@
+/* static/css/component/form-table.css */
+
+.form-table {
+    width: 100%;
+    border: 1px solid var(--border-color, #d0d7de);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;           /* ← 入力欄がはみ出さない */
+}
+
+/* 余計な色指定は外す（全体が青くなるので） */
+.form-table th,
+.form-table td {
+    padding: 0.5rem 0.75rem;
+    vertical-align: middle;
+}
+
+.form-table thead th {
+    background: var(--light-bg, #f6f8fa);
+    color: #57606a;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color, #d0d7de);
+}
+
+.form-table__input {            /* input をセル幅いっぱいに */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* モバイル時は縦積みに（任意） */
+@media (max-width: 640px) {
+    .form-table colgroup { display: none; }  /* 幅固定を外す */
+    .form-table thead { display: none; }
+    .form-table tr { display: grid; grid-template-columns: 1fr; gap: 6px; padding: 8px 0; }
+    .form-table td { border-top: 1px solid var(--border-color, #d0d7de); }
+}

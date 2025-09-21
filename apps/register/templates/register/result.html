@@ -1,0 +1,12 @@
+{% extends "_layout/page_base.html" %}
+{% block title %}Conversion Result{% endblock %}
+{% block content %}
+{% if html %} <div class="doc">{{ html|safe }}</div> {% endif %}
+{% if text %} <pre class="doc">{{ text }}</pre> {% endif %}
+{% if json_data %}
+<details style="margin-top:1rem;">
+    <summary>JSON</summary>
+    <pre>{{ (json_data if json_data is string else tojson(json_data)) }}</pre>
+</details>
+{% endif %}
+{% endblock %}

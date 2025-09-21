@@ -25,6 +25,7 @@ class ClientType(Enum):
     RIGHT_HOLDER = 1      # 権利者
     OBLIGATION_HOLDER = 2 # 義務者
     APPLICANT = 3         # 申請人
+    BANK_OBLIGATION = 4    # 抹消銀行（抵当権者）
 
     @property
     def label(self) -> str:
@@ -32,6 +33,7 @@ class ClientType(Enum):
             ClientType.RIGHT_HOLDER: "権利者",
             ClientType.OBLIGATION_HOLDER: "義務者",
             ClientType.APPLICANT: "申請人",
+            ClientType.BANK_OBLIGATION: "抹消銀行",
         }.get(self, "不明")
 
     @classmethod

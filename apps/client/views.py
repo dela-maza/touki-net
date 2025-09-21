@@ -1,4 +1,4 @@
-# apps/client/views.py
+### apps/client/views.py
 from datetime import datetime, time
 from apps.common.forms import CSRFOnlyForm
 from flask import Blueprint, render_template, redirect, url_for, flash, request
@@ -9,7 +9,9 @@ from apps.documents.required.models import RequiredDocument
 from apps.documents.delivery.models import DeliveryDocument
 from apps.documents.origin.models import OriginDocument
 from apps.documents.constants import DocumentType
-from apps.client.models import Client
+from apps.client.models import Client, CorporateProfile
+from apps.client.forms import CorporateProfileForm,AddressChangeForm
+from apps.client.constants import EntityType
 from apps.entrusted_book.models import EntrustedBook
 from apps.client.forms import ClientForm
 
@@ -33,6 +35,7 @@ def _date_to_dt(d):
     if d is None:
         return None
     return datetime.combine(d, time.min)
+
 
 # --- 安全側: dtがdateだった場合も素通りに ---
 def _dt_to_date(dt):
@@ -125,6 +128,7 @@ def documents_index(client_id: int):
         entrusted_book=client.entrusted_book,  # ← 必要なら
     )
 
+
 # --------------------------
 # Create（新規）
 # --------------------------
@@ -142,7 +146,7 @@ def create():
         client = Client(
             entrusted_book_id=form.entrusted_book_id.data,
             client_type_id=form.client_type_id.data,
-            entity_type_id=form.entity_type_id.data,          # ★追加
+            entity_type_id=form.entity_type_id.data,
             name=form.name.data,
             name_kana=form.name_kana.data,
             birth_date=_date_to_dt(form.birth_date.data),
@@ -158,14 +162,15 @@ def create():
         )
         db.session.add(client)
         db.session.commit()
-        flash("Client was created.")
+        flash("Client was created.", "success")
         return redirect(url_for("entrusted_book.detail", book_id=client.entrusted_book_id))
 
     return render_template("client/form.html", form=form, title="New Client")
+
+
 # --------------------------
 # Edit（更新）
 # --------------------------
-# Edit（更新）
 @client_bp.route("/<int:client_id>/edit", methods=["GET", "POST"])
 def edit(client_id):
     client = Client.query.get_or_404(client_id)
@@ -194,13 +199,11 @@ def edit(client_id):
         client.equity_denominator = form.equity_denominator.data
 
         db.session.commit()
-        flash("Client was updated.")
+        flash("Client was updated.", "success")
         return redirect(url_for("entrusted_book.detail", book_id=client.entrusted_book_id))
 
-    return render_template("client/form.html",
-                           form=form,
-                           is_edit=True,
-                           title="Edit Client")
+    return render_template("client/form.html", form=form, is_edit=True, title="Edit Client")
+
 
 # --------------------------
 # Confirm Delete（確認）
@@ -223,11 +226,10 @@ def confirm_delete(client_id):
 # --------------------------
 # Delete（削除）
 # --------------------------
-# Delete（削除）
 @client_bp.route("/<int:client_id>/delete", methods=["POST"])
 def delete(client_id):
     form = CSRFOnlyForm()
-    client = Client.query.get_or_404(client_id)                 # ★先に取得
+    client = Client.query.get_or_404(client_id)  # ★先に取得
     cancel_url = request.args.get("next") or url_for(
         "entrusted_book.detail", book_id=client.entrusted_book_id  # ★book_idにclient_idを入れていたのを修正
     )

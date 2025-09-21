@@ -10,8 +10,8 @@ class EntrustedBook(db.Model):
     name = db.Column(db.String(255), nullable=False)
     note = db.Column(db.Text, nullable=True)
 
-    contract_date = db.Column(db.Date, nullable=True) # 契約簿
-    execution_date  = db.Column(db.Date, nullable=True)
+    contract_date = db.Column(db.Date, nullable=True) # 契約日
+    execution_date  = db.Column(db.Date, nullable=True) # 実行日
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.now)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.now, onupdate=datetime.now)
 

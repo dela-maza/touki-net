@@ -1,0 +1,48 @@
+{# apps/register/templates/register/parse_result.html #}
+{% extends "_layout/page_base.html" %}
+{% block title %}Register - Parsed{% endblock %}
+
+{% block heading_icon %}
+<img src="{{ url_for('static', filename='icon/24/file.svg') }}" alt="" width="20" height="20">
+{% endblock %}
+{% block heading %}Parsed Result{% endblock %}
+
+{% block header_actions %}
+<a class="btn" href="{{ url_for('register.upload') }}">
+    <img src="{{ url_for('static', filename='icon/16/new.svg') }}" alt=""> 別ファイル
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-box">
+        <h2 class="header-title">概要</h2>
+        <table class="meta-table meta-table--plain" style="margin-top:8px;">
+            <tbody>
+            <tr><th>Token</th><td>{{ token }}</td></tr>
+            <tr><th>Source</th><td>{{ data.source }}</td></tr>
+            <tr><th>Kind</th><td>{{ data.kind }}</td></tr>
+            <tr><th>Company</th>
+                <td>
+                    {{ data.company.name }} / {{ data.company.company_number }}<br>
+                    {{ data.company.head_office }}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <h2 class="header-title" style="margin-top:16px;">Events</h2>
+        <ul>
+            {% for ev in data.events %}
+            <li>{{ ev.date }}：{{ ev.type }}</li>
+            {% endfor %}
+        </ul>
+
+        <div style="margin-top:16px;">
+            <a class="btn" href="{{ url_for('register.upload') }}">
+                <img src="{{ url_for('static', filename='icon/16/reply.svg') }}" alt=""> 戻る
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

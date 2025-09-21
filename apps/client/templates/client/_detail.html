@@ -1,6 +1,41 @@
 <!-- apps/client/templates/client/_detail.html -->
+{% macro row(label, value) -%}
+<tr>
+    <th>{{ label }}</th>
+    <td>{{ value if value is not none and value != '' else '-' }}</td>
+</tr>
+{%- endmacro %}
+
+{% macro actions(client) -%}
+<div class="row-actions flex-row">
+    <a class="btn icon" href="{{ url_for('client.documents_index', client_id=client.id) }}"
+       aria-label="Documents">
+        <img src="{{ url_for('static', filename='icon/16/file-directory.svg') }}" alt="">
+    </a>
+    <a class="btn icon" href="{{ url_for('client.edit', client_id=client.id) }}"
+       aria-label="Edit client">
+        <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="">
+    </a>
+    <a class="btn icon" href="{{ url_for('client.confirm_delete', client_id=client.id) }}"
+       aria-label="Delete client">
+        <img src="{{ url_for('static', filename='icon/16/trash.svg') }}" alt="">
+    </a>
+
+    <span class="divider" aria-hidden="true"></span>
+
+    {# ここは将来のアクションに差し替え予定のダミー #}
+    <a class="btn icon" href="{{ url_for('client.confirm_delete', client_id=client.id) }}"
+       aria-label="Corporate profile">
+        <img src="{{ url_for('static', filename='icon/16/organization.svg') }}" alt="">
+    </a>
+    <a class="btn icon" href="{{ url_for('client.confirm_delete', client_id=client.id) }}"
+       aria-label="Address change">
+        <img src="{{ url_for('static', filename='icon/16/truck.svg') }}" alt="">
+    </a>
+</div>
+{%- endmacro %}
+
 <div class="detail-section">
-    <!-- 見出しをカードのヘッダーとして一体化 -->
     <div class="section-header">
         <h2 class="section-header__title header-title">
             <img src="{{ url_for('static', filename='icon/24/person.svg') }}" alt="">
@@ -16,83 +51,40 @@
         </div>
     </div>
 
-    <!-- 一体化カード本体 -->
     <article class="card card--attach">
         {% if book.clients %}
         {% for client in book.clients %}
-        <!-- 行（クライアント1件） -->
+        {% set is_corp = client.corporate_profile is not none or client.entity_type.label == '法人' %}
+        {% set has_addr_change = client.address_change_flag | default(false) %}
+
         <section class="card-section">
             <header class="card-section__header">
                 <div class="card-section__inner">
-
-                    <h3 class="card-section___title ">
-                        {{ client.name or '-' }}
-                    </h3>
-
-                    <div class="row-actions">
-                        <a class="btn icon" href="{{ url_for('client.documents_index', client_id=client.id) }}"
-                           title="Documents">
-                            <img src="{{ url_for('static', filename='icon/16/file-directory.svg') }}" alt="">
-                        </a>
-                        <a class="btn icon" href="{{ url_for('client.edit', client_id=client.id) }}" title="Edit">
-                            <img src="{{ url_for('static', filename='icon/16/pencil.svg') }}" alt="">
-                        </a>
-                        <a class="btn icon" href="{{ url_for('client.confirm_delete', client_id=client.id) }}"
-                           title="Delete">
-                            <img src="{{ url_for('static', filename='icon/16/trash.svg') }}" alt="">
-                        </a>
-                    </div>
-
+                    <h3 class="card-section___title">{{ client.name or '-' }}</h3>
+                    {{ actions(client) }}
                 </div>
-
 
                 <div class="pill_group">
                     <span class="pill">{{ client.client_type.label }}</span>
                     <span class="pill">{{ client.entity_type.label }}</span>
                 </div>
-
             </header>
 
             <div class="card-section__body">
                 <table class="meta-table meta-table--plain">
                     <tbody>
-                    <tr>
-                        <th>ID</th>
-                        <td>{{ client.id }}</td>
-                    </tr>
+                    {{ row('ID', client.id) }}
+                    {{ row('Name', client.name) }}
+                    {{ row('Kana', client.name_kana) }}
+                    {{ row('Birth date', client.birth_date.strftime('%Y-%m-%d') if client.birth_date else '') }}
 
-                    <tr>
-                        <th>Name</th>
-                        <td>{{ client.name or '-' }}</td>
-                    </tr>
-                    <tr>
-                        <th>Kana</th>
-                        <td>{{ client.name_kana or '-' }}</td>
-                    </tr>
-                    <tr>
-                        <th>Birth date</th>
-                        <td>{{ client.birth_date.strftime('%Y-%m-%d') if client.birth_date else '-' }}</td>
-                    </tr>
-                    <tr>
-                        <th>Postal</th>
-                        <td>{{ client.postal_code_with_mark() }}</td>
-                    </tr>
-                    <tr>
-                        <th>Address</th>
-                        <td>{{ client.address or '-' }}</td>
-                    </tr>
-                    <tr>
-                        <th>Phone</th>
-                        <td>{{ client.phone_number or '-' }}</td>
-                    </tr>
-                    <tr>
-                        <th>Email</th>
-                        <td>{{ client.email or '-' }}</td>
-                    </tr>
-                    <tr>
-                        <th>Note</th>
-                        <td>{{ client.note or '-' }}</td>
-                    </tr>
+                    {{ row('Postal', client.postal_code_with_mark()) }}
+                    {{ row('Address', client.address) }}
+                    {{ row('Phone', client.phone_number) }}
+                    {{ row('Email', client.email) }}
+
+                    {{ row('Note', client.note) }}
+
                     <tr>
                         <th>Equity</th>
                         <td>
@@ -101,10 +93,23 @@
                             {% else %}-{% endif %}
                         </td>
                     </tr>
-                    <tr>
-                        <th>Updated</th>
-                        <td>{{ client.updated_at.strftime('%Y-%m-%d %H:%M') if client.updated_at else '' }}</td>
-                    </tr>
+
+                    {{ row('Updated', client.updated_at.strftime('%Y-%m-%d %H:%M') if client.updated_at else '') }}
+
+                    {# --- 追加情報（最後にまとめる） --- #}
+                    {% if is_corp or has_addr_change %}
+                    <tr class="row-divide"><td colspan="2"></td></tr>
+                    {% endif %}
+
+                    {% if is_corp and client.corporate_profile %}
+                    {{ row('Representative',
+                    ((client.representative_title or '') ~ ' ' ~ (client.representative_name or ''))|trim) }}
+                    {{ row('Company No.', client.company_number_display()) }}
+                    {% endif %}
+
+                    {% if has_addr_change %}
+                    {{ row('Address Change', 'あり') }}
+                    {% endif %}
                     </tbody>
                 </table>
             </div>
