@@ -170,7 +170,7 @@ def create():
             flash(f"必要書類の作成に失敗しました: {e}", "danger")
     else:
         # ここに来たらバリデーションNG。詳細を出す
-        for field, errs in form.errors.items():
+        for field, errs in form.errors.registry_item():
             flash(f"{field}: {', '.join(errs)}", "danger")
 
     # 失敗/初回表示

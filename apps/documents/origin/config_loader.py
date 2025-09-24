@@ -4,7 +4,7 @@ import os, configparser
 from functools import lru_cache
 from typing import List, Dict, Optional
 from datetime import date
-from apps.utils.common import to_japanese_era
+from apps.shared.wareki import iso_str_to_wareki
 
 from .constants import CauseType
 
@@ -54,7 +54,7 @@ def get_cause_templates(cause_type: CauseType) -> List[str]:
 # 2) プレースホルダを埋めて返す
 # ----------------------------
 def _fmt_date(d: Optional[date]) -> str:
-    return "" if not d else to_japanese_era(d)
+    return "" if not d else iso_str_to_wareki(d)
 
 
 def render_cause_lines(

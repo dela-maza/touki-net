@@ -1,0 +1,9 @@
+<!-- apps/register/commerce/pdf/templates/result.html -->
+
+<!doctype html><meta charset="utf-8">
+<h1>{{ filename }} の解析結果</h1>
+<h2>テキスト</h2>
+<pre>{{ text }}</pre>
+<h2>JSON</h2>
+<pre>{{ result | tojson(indent=2) }}</pre>
+<p><a href="{{ url_for('.upload') }}">戻る</a></p>

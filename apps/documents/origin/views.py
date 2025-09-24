@@ -7,7 +7,7 @@ from sqlalchemy.orm import joinedload
 from db import db
 from apps.entrusted_book.models import EntrustedBook
 from apps.client.models import Client
-from apps.utils.common import to_zenkaku_digits
+from apps.shared.base import digits_to_zenkaku
 from apps.client.constants import ClientType
 from apps.documents.origin.constants import CauseType
 from apps.documents.origin.models import OriginDocument
@@ -62,8 +62,8 @@ def _party_text_from_book(book) -> tuple[str, str]:
         num = getattr(c, "equity_numerator", None)
         den = getattr(c, "equity_denominator", None)
         if isinstance(num, int) and isinstance(den, int) and num >= 0 and den > 0:
-            num_zen = to_zenkaku_digits(str(num))
-            den_zen = to_zenkaku_digits(str(den))
+            num_zen = digits_to_zenkaku(str(num))
+            den_zen = digits_to_zenkaku(str(den))
             equity = f"（{num_zen}／{den_zen}） "
 
         addr = (c.address or "").strip()
@@ -182,7 +182,7 @@ def create():
             return redirect(url_for("origin.detail", document_id=doc.id), code=303)
 
     elif form.is_submitted():
-        for field, errs in form.errors.items():
+        for field, errs in form.errors.registry_item():
             flash(f"{field}: {', '.join(errs)}", "danger")
 
     return render_template(

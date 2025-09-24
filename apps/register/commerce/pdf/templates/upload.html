@@ -1,0 +1,27 @@
+<!-- apps/register/commerce/pdf/templates/upload.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8" />
+    <title>商業登記 PDF アップロード</title>
+</head>
+<body>
+<h1>商業登記 PDF アップロード</h1>
+
+<form method="post" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    <div>
+        {{ form.file.label }} {{ form.file() }}
+        {% if form.file.errors %}
+        <ul>
+            {% for e in form.file.errors %}<li>{{ e }}</li>{% endfor %}
+        </ul>
+        {% endif %}
+    </div>
+
+    <div>
+        {{ form.submit() }}
+    </div>
+</form>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!-- apps/register/commerce/pdf/templates/debug_sections.html -->
+<!doctype html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <title>{{ filename }} のセクション分割結果</title>
+    <style>
+        body { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+        header { padding: 8px 10px; border-bottom: 1px solid #ddd; background: #f6f8fa; }
+        .section { border: 1px solid #ccc; margin: 10px 0; }
+        .title { background: #fafafa; padding: 5px 8px; font-weight: bold; display:flex; justify-content:space-between; align-items:center; }
+        .badge { font-size: 12px; color: #555; }
+        pre { margin: 0; padding: 10px; white-space: pre-wrap; word-wrap: break-word; }
+        details { border-top: 1px dashed #ddd; padding: 6px 10px; }
+        summary { cursor: pointer; font-weight: 600; }
+        .footer { margin-top: 1em; }
+        .footer a { color: #0366d6; text-decoration: none; }
+    </style>
+</head>
+<body>
+<header><strong>{{ filename }}</strong> のセクション分割 (┣ 区切り)</header>
+
+{% if sections_with_items %}
+{% for sec_text, items in sections_with_items %}
+<div class="section">
+    <div class="title">
+        <span>Section {{ loop.index }}</span>
+        <span class="badge">{{ items|length }} item(s)</span>
+    </div>
+
+    <details open>
+        <summary>セクション全文</summary>
+        <pre>{{ sec_text }}</pre>
+    </details>
+
+    {% for item in items %}
+    {# item が [lines, subitems] 形式か、単なる lines かを吸収 #}
+    {% if item is sequence and item|length == 2 and (item[0] is sequence) %}
+    {% set item_lines = item[0] %}
+    {% set subitems = item[1] %}
+    {% else %}
+    {% set item_lines = item %}
+    {% set subitems = [] %}
+    {% endif %}
+
+    <details open>
+        <summary>項目 {{ loop.index }}</summary>
+        <pre>{{ item_lines|join('\n') }}</pre>
+
+        {% for sub in subitems %}
+        <details>
+            <summary>変更 {{ loop.index }}</summary>
+            <pre>{{ sub|join('\n') }}</pre>
+        </details>
+        {% endfor %}
+    </details>
+    {% endfor %}
+</div>
+{% endfor %}
+
+{% elif sections %}
+{% for sec in sections %}
+<div class="section">
+    <div class="title">Section {{ loop.index }}</div>
+    <pre>{{ item_lines|join('っっっっｔ') }}</pre>
+</div>
+{% endfor %}
+{% else %}
+<p>セクションが見つかりませんでした。</p>
+{% endif %}
+
+<div class="footer">
+    <a href="{{ url_for('.upload') | safe }}">戻る</a>
+</div>
+</body>
+</html>
+
+┃ │ 東京都西多摩郡瑞穂町箱根ヶ崎字樽口1028 │令和 6年 2月 1日移転┃',
+'┃ │ 番 ├-------------┨',
+'┃ │ │令和 6年 2月 1日登記┃'

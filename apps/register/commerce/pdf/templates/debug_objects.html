@@ -1,0 +1,51 @@
+<!-- apps/register/commerce/pdf/templates/debug_objects.html -->
+<!doctype html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <title>{{ filename }} のオブジェクト可視化</title>
+    <style>
+        body { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+        header { padding: 8px 10px; border-bottom: 1px solid #ddd; background: #f6f8fa; }
+        .section { border: 1px solid #ccc; margin: 10px 0; }
+        .title { background: #fafafa; padding: 6px 8px; font-weight: bold; }
+        pre { margin: 0; padding: 10px; white-space: pre-wrap; word-wrap: break-word; }
+        details { border-top: 1px dashed #ddd; padding: 6px 10px; }
+        summary { cursor: pointer; font-weight: 600; }
+        .footer { margin-top: 1em; }
+        .footer a { color: #0366d6; text-decoration: none; }
+    </style>
+</head>
+<body>
+<header><strong>{{ filename }}</strong> のオブジェクト可視化</header>
+
+{% if paired %}
+{% for sec, sec_json, values_json, histories_json in paired %}
+<div class="section">
+    <div class="title">{{ sec.title }}</div>
+
+    <details open>
+        <summary>Section JSON</summary>
+        <pre>{{ sec_json }}</pre>
+    </details>
+
+    <details>
+        <summary>values()</summary>
+        <pre>{{ values_json }}</pre>
+    </details>
+
+    <details>
+        <summary>histories()</summary>
+        <pre>{{ histories_json }}</pre>
+    </details>
+</div>
+{% endfor %}
+{% else %}
+<p>データが見つかりませんでした。</p>
+{% endif %}
+
+<div class="footer">
+    <a href="{{ url_for('.upload') }}">戻る</a>
+</div>
+</body>
+</html>

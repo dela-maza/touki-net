@@ -174,7 +174,7 @@ def format_property_description(data: dict) -> str:
     lines = []
     for section, contents in data.items():
         lines.append(f"【{section}】")
-        for key, val in contents.items():
+        for key, val in contents.registry_item():
             if isinstance(val, list):
                 lines.append(f"{key}:")
                 for item in val:

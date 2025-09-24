@@ -153,7 +153,7 @@ def create():
             flash(f"納品書の作成に失敗しました: {e}", "danger")
 
     elif form.is_submitted():  # POSTだがバリデーションNG
-        for field, errs in form.errors.items():
+        for field, errs in form.errors.registry_item():
             flash(f"{field}: {', '.join(errs)}", "danger")
 
     # 失敗/初回表示

@@ -72,7 +72,7 @@ def create():
 
     elif form.is_submitted():
         # バリデーションNG時の詳細メッセージ
-        for field, errs in form.errors.items():
+        for field, errs in form.errors.registry_item():
             flash(f"{field}: {', '.join(errs)}", "danger")
 
     return render_template(
@@ -98,7 +98,7 @@ def edit(book_id: int):
             return redirect(url_for("entrusted_book.detail", book_id=book.id), code=303)
 
     elif form.is_submitted():
-        for field, errs in form.errors.items():
+        for field, errs in form.errors.registry_item():
             flash(f"{field}: {', '.join(errs)}", "danger")
 
     return render_template(

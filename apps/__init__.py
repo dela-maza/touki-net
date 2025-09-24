@@ -12,7 +12,7 @@ from apps.documents.amount.views import amount_bp
 from apps.documents.required.views import required_bp
 from apps.documents.delivery.views import delivery_bp
 from apps.documents.origin.views import origin_bp
-from apps.register.views import register_bp
+from apps.register import register_bp
 from apps.property_description.views import property_bp
 from flask_wtf import CSRFProtect
 from flask_wtf.csrf import CSRFError, generate_csrf
@@ -108,4 +108,7 @@ def create_app():
     app.register_blueprint(delivery_bp)
     app.register_blueprint(origin_bp)
     app.register_blueprint(register_bp)
+        # register_bp:
+        # register_bp の中で register_commerce_bp を登録
+        # register_commerce_bp の中で register_commerce_pdf_bp を登録
     return app
